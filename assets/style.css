@@ -187,6 +187,18 @@ mark.user-mark-note {
 
 /* ── штамп сборки в меню разделов ── */
 .build-stamp { color: var(--ink-muted); font-size: .72em; text-align: center; margin: 12px 0 0; }
+.menu-author { color: var(--ink-muted); font-size: .82em; text-align: center; margin: 4px 0 0; }
+.menu-author a { color: var(--ink-muted); text-decoration: underline; }
+
+/* ── подвал: ненавязчивая подпись автора на каждой странице ── */
+.site-footer {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 28px max(16px, env(safe-area-inset-left)) max(28px, env(safe-area-inset-bottom));
+  color: var(--ink-muted); font-size: .82em; text-align: center;
+}
+.site-footer a { color: var(--ink-muted); text-decoration: underline; }
+.site-footer-mark { flex-shrink: 0; display: flex; color: var(--ink-muted); opacity: .7; }
+.site-footer-mark svg { width: 16px; height: 16px; display: block; }
 
 /* ── кнопка «в избранное» в шапке ── */
 #bookmarkBtn.active { color: var(--bruise); }
@@ -214,6 +226,23 @@ mark.user-mark-note {
 .crumbs { font-size: 13px; color: var(--ink-muted); margin-bottom: 10px; }
 .crumbs a { color: var(--ink-muted); }
 .work-meta { color: var(--ink-muted); font-size: 14px; margin: 0 0 16px; }
+
+/* ── источник заметки: раньше была одна приглушённая 13px-строка НАД
+   заголовком без слова «Источник» и без ссылки на полный текст — терялась.
+   Теперь заметный, но не кричащий блок сразу ПОД заголовком, включающий
+   и «Читать в тексте →» (раньше жил отдельно, далеко под текстом заметки). */
+.note-source {
+  margin: 0 0 1.3em; padding: 10px 14px; background: var(--surface-2); border-radius: 12px;
+  font-size: .92em; color: var(--ink-muted);
+}
+.note-source-label {
+  font-size: .72em; text-transform: uppercase; letter-spacing: .05em; font-weight: 700;
+  color: var(--ink-muted);
+}
+.note-source a { color: var(--ink); font-weight: 600; }
+.note-source-links { margin-top: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+/* Специфичнее .note-source a (класс+класс+тег > класс+тег) — без !important. */
+.note-source a.note-source-read { color: var(--bruise); font-weight: 600; }
 /* Внутри Telegram-мини-приложения (iOS и Android) долгий тап по тексту не
    поднимает нативное выделение вовсе — жест туда просто не доходит (это
    ограничение самого клиента, не CSS). Поэтому внутри Telegram выделение
@@ -321,12 +350,16 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .rel-block h2 { font-size: .82em; text-transform: uppercase; letter-spacing: .06em;
   color: var(--ink-muted); margin: 0 0 .6em; font-weight: 700; }
 .rel-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.rel-list li a {
+/* Только ПРЯМАЯ ссылка-строка списка (> вместо потомка) — иначе это правило
+   перебивает .p-note-link (нумерованные кружки 1/2/3 внутри строки, см. ниже):
+   при равной специфичности класс+тег vs класс+тег побеждает то, что ниже по
+   файлу, и кружки раздувались до тех же 10px/14px паддингов, теряя форму. */
+.rel-list > li > a {
   display: block; padding: 10px 14px; background: var(--surface-2); border-radius: 12px;
   color: var(--ink); font-size: .95em;
 }
-.rel-list li a:hover { background: var(--surface-3); text-decoration: none; }
-.rel-fulltext .rel-list li a { background: transparent; border: 1px solid var(--bruise); color: var(--bruise); }
+.rel-list > li > a:hover { background: var(--surface-3); text-decoration: none; }
+.rel-fulltext .rel-list > li > a { background: transparent; border: 1px solid var(--bruise); color: var(--bruise); }
 
 /* ── карточки/сетка ── */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }

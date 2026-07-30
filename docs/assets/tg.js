@@ -115,12 +115,30 @@
     try { return !!(tg.BackButton && tg.isVersionAtLeast && tg.isVersionAtLeast("6.1")); }
     catch (e) { return false; }
   }
-  if (backAvailable()) {
+  // Раньше закрывалась по кнопке «назад» только settingsSheet, а видимость
+  // самой кнопки считалась ОДИН раз при загрузке — только по наличию
+  // .back-link на странице. На страницах без него (например, главная)
+  // Telegram вообще не перехватывал аппаратную кнопку/жест «назад» на
+  // Android — открытое меню, композер или панель выделения закрывали не
+  // себя, а всё мини-приложение целиком. Теперь видимость и обработчик
+  // следят за ЛЮБОЙ открытой шторкой/панелью, а не только за одной.
+  function openOverlays() {
+    return Array.prototype.slice.call(document.querySelectorAll(".sheet, .sel-toolbar"))
+      .filter(function (el) { return !el.hidden; });
+  }
+  function updateBackButton() {
+    if (!backAvailable()) return;
     var hasBack = !!document.querySelector(".back-link");
-    if (hasBack) tg.BackButton.show(); else tg.BackButton.hide();
+    if (hasBack || openOverlays().length) tg.BackButton.show(); else tg.BackButton.hide();
+  }
+  if (backAvailable()) {
+    updateBackButton();
+    document.querySelectorAll(".sheet, .sel-toolbar").forEach(function (el) {
+      new MutationObserver(updateBackButton).observe(el, { attributes: true, attributeFilter: ["hidden"] });
+    });
     tg.onEvent("backButtonClicked", function () {
-      var sheet = document.getElementById("settingsSheet");
-      if (sheet && !sheet.hidden) { sheet.hidden = true; return; }
+      var open = openOverlays();
+      if (open.length) { open[open.length - 1].hidden = true; return; }
       if (window.history.length > 1) window.history.back();
     });
   }

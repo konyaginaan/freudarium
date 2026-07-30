@@ -146,6 +146,14 @@ def page(title: str, description: str, body_html: str, site_base: str,
 {body_html}
 </main>
 
+<!-- Ненавязчивая подпись автора внизу каждой страницы (в дополнение к
+     «О проекте» и пункту в меню ☰) — пока с тем же значком-силуэтом, что и
+     в шапке; когда пришлют собственное лого, заменить только эту иконку. -->
+<footer class="site-footer" data-pagefind-ignore>
+  <span class="site-footer-mark">{_PROFILE_MARK}</span>
+  <span>Автор — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a> в Telegram</span>
+</footer>
+
 <div class="toast" id="toast" data-pagefind-ignore></div>
 
 <div class="sel-toolbar" id="selToolbar" hidden data-pagefind-ignore>
@@ -221,6 +229,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
     <nav class="nav-list">{nav_html}</nav>
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
+    <p class="menu-author">Автор — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a></p>
     <p class="build-stamp">сборка {_BUILD_STAMP} · {asset_v("annotations.js")[:6]}</p>
   </div>
 </div>

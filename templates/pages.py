@@ -72,15 +72,6 @@ def render_note(note, ctx):
     body_html = mdconv.render_body(note["body"], ctx["resolve_link"], ctx["assets_base"])
 
     work = ctx["works_by_id"].get(note["source_work_id"]) if note.get("source_work_id") else None
-    crumbs = ""
-    if work:
-        wurl = ctx["work_url"](note["source_work_id"])
-        crumbs = (
-            f'<div class="crumbs"><a href="{html.escape(wurl)}">{html.escape(work["title"])}</a>'
-            f' · {html.escape(work["year"] or "")}'
-            + (f' · {html.escape(note["source_detail"])}' if note.get("source_detail") else "")
-            + "</div>"
-        )
 
     tags_html = ""
     if note["tags"]:
@@ -108,21 +99,30 @@ def render_note(note, ctx):
         + link_list(backlinks, "Сюда ссылаются")
     )
 
-    fulltext_html = ""
+    # «Читать в «Работа»» — раньше отдельным блоком-списком далеко под текстом
+    # заметки (после тегов), никак не связанным на вид с блоком источника.
+    # Смысл один и тот же («откуда эта мысль» + «где прочитать её в тексте
+    # целиком»), поэтому оба сведены в один блок .note-source сразу под
+    # заголовком: имя работы уже названо там, повторять его в самой ссылке
+    # не нужно — если ссылка одна, «Читать в тексте →»; если несколько мест
+    # в одной работе — та же нумерация кружками, что была.
+    fulltext_reads = []
     refs = note.get("full_text_refs") or []
     if refs:
         by_target = {}
         for ref in refs:
             by_target.setdefault(ref["target"], []).append(ref.get("anchor"))
-        items = []
         for target, anchors in by_target.items():
             first_url = ctx["fulltext_anchor_url"](target, anchors[0])
             if not first_url:
                 continue
-            w = ctx["works_by_id"].get(note.get("source_work_id"))
-            label = w["title"] if w else _display_title(target)
+            same_work = work and _display_title(target).startswith(work["title"])
+            if same_work:
+                read_label = "Читать в тексте →"
+            else:
+                read_label = f'Читать в «{html.escape(_display_title(target))}» →'
             if len(anchors) == 1:
-                items.append(f'<li><a href="{html.escape(first_url)}">Читать в «{html.escape(label)}»</a></li>')
+                fulltext_reads.append(f'<a class="note-source-read" href="{html.escape(first_url)}">{read_label}</a>')
             else:
                 # несколько мест в одной работе — нумерованные переходы к каждому,
                 # а не одинаковые на вид ссылки одна за другой
@@ -131,24 +131,35 @@ def render_note(note, ctx):
                     for i, a in enumerate(anchors)
                     if (spot_url := ctx["fulltext_anchor_url"](target, a))
                 )
-                items.append(
-                    f'<li><a href="{html.escape(first_url)}">Читать в «{html.escape(label)}»</a>'
-                    f'<span class="p-note-links">{spots}</span></li>'
+                fulltext_reads.append(
+                    f'<a class="note-source-read" href="{html.escape(first_url)}">{read_label}</a>'
+                    f'<span class="p-note-links">{spots}</span>'
                 )
-        if items:
-            fulltext_html = f'<section class="rel-block rel-fulltext"><ul class="rel-list">{"".join(items)}</ul></section>'
+
+    source_html = ""
+    if work:
+        wurl = ctx["work_url"](note["source_work_id"])
+        detail = f' · {html.escape(note["source_detail"])}' if note.get("source_detail") else ""
+        source_html = (
+            '<div class="note-source">'
+            '<span class="note-source-label">Источник</span> '
+            f'{html.escape(work["author"] or "Фрейд")} · '
+            f'<a href="{html.escape(wurl)}">{html.escape(work["title"])}</a>'
+            f' · {html.escape(work["year"] or "")}{detail}'
+            + ("".join(f'<div class="note-source-links">{r}</div>' for r in fulltext_reads) if fulltext_reads else "")
+            + "</div>"
+        )
 
     downloads_html = ctx["downloads_widget"](note)
 
     return f"""
 <article class="note-page">
-  {crumbs}
   <h1 class="note-title">{html.escape(_display_title(note["id"]))}</h1>
+  {source_html}
   <div class="note-body">
     {body_html}
   </div>
   {tags_html}
-  {fulltext_html}
   {downloads_html}
   {rel_html}
 </article>
