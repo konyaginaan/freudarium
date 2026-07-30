@@ -6,7 +6,14 @@ site_base — корень сайта (например "" локально ил
 домена); assets — всегда site_base + "/assets"."""
 import hashlib
 import html
+from datetime import datetime
 from pathlib import Path
+
+# Видимый штамп сборки (низ меню «Разделы») — чтобы с телефона можно было
+# сразу сказать, какая версия сайта реально открыта: вебвью Telegram кэширует
+# страницы упорнее обычного браузера, и «правки не доходят» иначе не отличить
+# от «правки сломаны».
+_BUILD_STAMP = datetime.now().strftime("%d.%m %H:%M")
 
 # Кэш-бастер: короткий хэш содержимого файла в query-параметре (?v=…).
 # Без него GitHub Pages/браузер/вебвью Telegram спокойно держат старые копии
@@ -163,6 +170,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
     <nav class="nav-list">{nav_html}</nav>
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
+    <p class="build-stamp">сборка {_BUILD_STAMP} · {asset_v("annotations.js")[:6]}</p>
   </div>
 </div>
 
