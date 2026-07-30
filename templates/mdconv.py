@@ -28,6 +28,7 @@ _INLINE_RE = re.compile(
     r"|(?P<wiki>\[\[[^\]]+\]\])"
     r"|(?P<mdlink>\[[^\]]+\]\(https?://[^\s)]+\))"
     r"|(?P<bold>\*\*.+?\*\*)"
+    r"|(?P<mark>==[^=\n]+==)"
     r"|(?P<italic>(?<!\*)\*[^*\n]+\*(?!\*))"
     r"|(?P<code>`[^`]+`)"
     r"|(?P<url>https?://[^\s<]+)"
@@ -63,6 +64,8 @@ def _inline(text: str, resolve_link, asset_base: str) -> str:
             )
         elif m.group("bold"):
             out.append(f"<strong>{html.escape(m.group('bold')[2:-2])}</strong>")
+        elif m.group("mark"):
+            out.append(f"<mark>{html.escape(m.group('mark')[2:-2])}</mark>")
         elif m.group("italic"):
             out.append(f"<em>{html.escape(m.group('italic')[1:-1])}</em>")
         elif m.group("code"):
@@ -83,14 +86,27 @@ def split_intro_blocks(body: str):
     текста. Границей считается первый блок, начинающийся с заголовка или
     с жирной метки вида «**Тезис.**» — оттуда начинается собственно текст.
     Возвращает (intro_или_None, rest) — intro is None, если коллапсировать нечего.
+
+    Если во всём теле не встретилось ни заголовка, ни жирной метки — цикл
+    раньше доходил до конца и «интро» съедало ВЕСЬ текст (подтверждённый баг:
+    у 24 из 47 полных текстов первая глава — обычная проза без «**Метка.**»,
+    и страница выглядела пустой, пока не развернёшь свёрнутый блок). Поэтому
+    сверху ограничение по объёму и числу блоков — настоящая цитата-преамбула
+    короткая, реальный текст работы — нет.
     """
+    MAX_INTRO_CHARS = 700
+    MAX_INTRO_BLOCKS = 4
     blocks = re.split(r"\n\s*\n", body.strip("\n "))
     i = 0
-    while i < len(blocks):
+    consumed = 0
+    while i < len(blocks) and i < MAX_INTRO_BLOCKS and consumed < MAX_INTRO_CHARS:
         first_line = blocks[i].strip().split("\n")[0]
         if HEADING_RE.match(first_line) or BOLD_LABEL_START_RE.match(first_line):
             break
+        consumed += len(blocks[i])
         i += 1
+    else:
+        i = 0  # предел объёма/числа блоков достигнут раньше стоп-условия — не коллапсируем
     if i == 0:
         return None, body
     return "\n\n".join(blocks[:i]), "\n\n".join(blocks[i:])
@@ -210,7 +226,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
                 # «**Тема** → [[a]], [[b]], ...» (карты областей) — заметки темы
                 # отдельными пунктами вложенного списка, а не одной строкой через запятую
                 sm = STATION_LINE_RE.match(item_text)
-                if sm and sm.group(2).count("[[") > 1:
+                if sm:
                     label_html = _inline(sm.group(1).strip(), resolve_link, asset_base)
                     sub_items = []
                     for wm in WIKILINK_RE.finditer(sm.group(2)):

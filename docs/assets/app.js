@@ -7,7 +7,10 @@
 
   // ── настройки оформления (localStorage; внутри Telegram дублируются в
   // CloudStorage — см. tg.js) ──
-  var DEFAULTS = { theme: "system", fontsize: "m", width: "normal" };
+  // "system" — не отдельная кнопка (раньше дублировала «Светлую», когда
+  // ОС светлая — путала), а неявное состояние: пока нет явного выбора,
+  // data-theme не ставится вовсе, и решает чистый CSS prefers-color-scheme.
+  var DEFAULTS = { theme: "system", fontsize: "m" };
   var KEY = "freud:settings";
 
   function loadSettings() {
@@ -22,7 +25,6 @@
     if (s.theme === "system") root.removeAttribute("data-theme");
     else root.setAttribute("data-theme", s.theme);
     root.setAttribute("data-fontsize", s.fontsize);
-    root.setAttribute("data-width", s.width);
     document.querySelectorAll(".seg").forEach(function (seg) {
       var key = seg.getAttribute("data-setting");
       seg.querySelectorAll("button").forEach(function (b) {
@@ -59,6 +61,41 @@
       localStorage.setItem(KEY, JSON.stringify(s));
     } catch (e) {}
   };
+
+  // ── «Добавить на экран „Домой“» ──
+  // Внутри Telegram — нативный Bot API addToHomeScreen (см. tg.js). Вне
+  // Telegram: в Chrome/Android есть системное событие beforeinstallprompt,
+  // на которое можно ответить программным приглашением; в Safari/iOS такого
+  // API нет вовсе — там только подсказка «Поделиться → На экран «Домой»».
+  var addBtn = document.getElementById("addToHomeBtn");
+  var addHint = document.getElementById("addToHomeHint");
+  var deferredInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    addBtn.hidden = false;
+  });
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  var isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+  if (window.freudAddToHomeScreen) {
+    addBtn.hidden = false; // внутри Telegram — кнопка доступна сразу
+  } else if (isIOS && !isStandalone) {
+    addHint.hidden = false;
+    addHint.textContent = "На iPhone/iPad: откройте меню «Поделиться» внизу экрана и выберите «На экран «Домой»».";
+  }
+  addBtn.addEventListener("click", function () {
+    if (window.freudAddToHomeScreen) {
+      window.freudAddToHomeScreen();
+      return;
+    }
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      deferredInstallPrompt.userChoice.finally(function () {
+        deferredInstallPrompt = null;
+        addBtn.hidden = true;
+      });
+    }
+  });
 
   // ── шторки: меню разделов и оформление (открывается из меню) ──
   var menuSheet = document.getElementById("menuSheet");

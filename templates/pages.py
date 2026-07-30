@@ -182,8 +182,11 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
 <article class="work-page">
   <div class="crumbs"><a href="{ctx["site_base"]}/works/">Все работы</a></div>
   <h1 class="note-title">{html.escape(work["title"])}</h1>
-  <p class="work-meta">{html.escape(work["author"] or "Фрейд")}, {html.escape(work["year"] or "")}
-    · {work["atomic_note_count"]} заметок</p>
+  <p class="work-meta">{html.escape(work["author"] or "Фрейд")}</p>
+  <div class="stat-tiles">
+    <div class="stat-tile"><span class="stat-num">{work["atomic_note_count"]}</span><span class="stat-label">заметок</span></div>
+    <div class="stat-tile stat-tile-dark"><span class="stat-num">{html.escape(work["year"] or "—")}</span><span class="stat-label">публикация</span></div>
+  </div>
   <div class="work-actions">{ft_html}</div>
   <div class="note-body">
     {body_html}
@@ -382,15 +385,22 @@ def render_home(works, hubs, tags_top, stats, ctx):
     tag_chips = "".join(_tag_chip(t, ctx["tag_url"]) for t in tags_top)
     sb = ctx["site_base"]
 
-    entry_points = "".join(
-        f'<a class="card" href="{sb}{href}"><span class="card-title">{label}</span>'
-        f'<span class="card-kicker">{sub}</span></a>'
-        for href, label, sub in [
-            ("/texts/", "Полные тексты", "Читать работу целиком, главами"),
-            ("/cases/", "Клинические случаи", "Ганс, Крыса, Шребер, Волк, Дора"),
-            (ctx["tag_url"]("сны") or "/tags/", "Сны", "Заметки-разборы сновидений"),
-            ("/maps/", "Карты областей", "Структурные заметки по темам"),
-        ]
+    # tag_url/hub_url и т.п. уже возвращают абсолютный путь с site_base —
+    # приписывать sb к ним ещё раз нельзя (раньше давало двойной префикс
+    # и 404 на карточке «Сны»); у остальных href — короткие относительные пути.
+    dreams_url = ctx["tag_url"]("сны") or f"{sb}/tags/"
+    entry_points = (
+        "".join(
+            f'<a class="card" href="{sb}{href}"><span class="card-title">{label}</span>'
+            f'<span class="card-kicker">{sub}</span></a>'
+            for href, label, sub in [
+                ("/texts/", "Полные тексты", "Читать работу целиком, главами"),
+                ("/cases/", "Клинические случаи", "Ганс, Крыса, Шребер, Волк, Дора"),
+                ("/maps/", "Карты областей", "Структурные заметки по темам"),
+            ]
+        )
+        + f'<a class="card" href="{dreams_url}"><span class="card-title">Сны</span>'
+        f'<span class="card-kicker">Заметки-разборы сновидений</span></a>'
     )
 
     return f"""

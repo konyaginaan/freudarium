@@ -116,18 +116,17 @@
   <div class="sheet-inner">
     <h3>Разделы</h3>
     <nav class="nav-list"><a class="nav-link" href="/freudarium/">Главная</a><a class="nav-link" href="/freudarium/works/">Все работы</a><a class="nav-link" href="/freudarium/cases/">Клинические случаи</a><a class="nav-link" href="/freudarium/texts/">Полные тексты</a><a class="nav-link" href="/freudarium/maps/">Карты областей</a><a class="nav-link" href="/freudarium/tags/">Все теги</a><a class="nav-link" href="/freudarium/about/">О проекте</a></nav>
-    <button class="btn" id="openSettingsBtn">Оформление</button>
+    <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
   </div>
 </div>
 
 <div class="sheet" id="settingsSheet" hidden data-pagefind-ignore>
   <div class="sheet-inner">
-    <h3>Оформление</h3>
+    <h3>Настройки</h3>
     <div class="settings-row">
       <span>Тема</span>
       <div class="seg" data-setting="theme">
-        <button data-value="system">Система</button>
         <button data-value="light">Светлая</button>
         <button data-value="sepia">Сепия</button>
         <button data-value="dark">Тёмная</button>
@@ -142,14 +141,8 @@
         <button data-value="xl">A</button>
       </div>
     </div>
-    <div class="settings-row">
-      <span>Ширина колонки</span>
-      <div class="seg" data-setting="width">
-        <button data-value="narrow">Узко</button>
-        <button data-value="normal">Средне</button>
-        <button data-value="wide">Широко</button>
-      </div>
-    </div>
+    <button class="btn" id="addToHomeBtn" hidden>Добавить на экран «Домой»</button>
+    <p class="settings-hint" id="addToHomeHint" hidden></p>
     <button class="sheet-close" data-close-sheet>Готово</button>
   </div>
 </div>

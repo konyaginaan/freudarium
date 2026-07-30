@@ -143,6 +143,10 @@ main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; }
   margin: 1em 0; padding: 4px 16px; border-left: 3px solid var(--flesh);
   color: var(--ink-muted); font-style: italic;
 }
+.note-body mark {
+  background: color-mix(in srgb, var(--flesh) 45%, transparent); color: var(--ink);
+  padding: .05em .25em; border-radius: 4px;
+}
 .note-body code {
   background: var(--surface-2); padding: .1em .35em; border-radius: 6px;
   font-family: "JetBrains Mono", monospace; font-size: .85em;
@@ -174,12 +178,12 @@ hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
 .src-details summary::-webkit-details-marker { display: none; }
 .src-details .note-meta, .src-details > p { color: var(--ink-muted); font-size: .92em; padding-bottom: 8px; }
 
-/* ── вложенный список заметок темы (карты областей) ── */
-ul.hub-links { list-style: none; margin: 6px 0 1.2em; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-ul.hub-links li a {
-  display: block; padding: 8px 12px; background: var(--surface-2); border-radius: 10px; font-size: .92em;
-}
-ul.hub-links li a:hover { background: var(--surface-3); text-decoration: none; }
+/* ── вложенный список заметок темы (карты областей): обычный маркированный
+   список, без карточек/кнопок — так одинаково выглядит что для одной, что
+   для нескольких заметок под темой ── */
+ul.hub-links { list-style: disc; margin: 4px 0 1.2em; padding-left: 1.3em; }
+ul.hub-links li { margin: 3px 0; }
+ul.hub-links li a { font-size: .95em; }
 
 /* ── аккордеон «Работы по годам» ── */
 details.decade { border-bottom: 1px solid var(--border); }
@@ -318,6 +322,17 @@ details.decade .rows .row:last-child { border-bottom: none; }
   content: ""; position: absolute; inset: auto 0 0 0; height: 40%;
   background: linear-gradient(to bottom, transparent, var(--surface));
 }
+/* Сама картинка светлая (пергамент на фоне) и не участвует в теме — в тёмной
+   теме она иначе выглядит «светлым пятном» наверху, будто тема не применилась.
+   Лёгкая тёмная вуаль поверх всего баннера решает это, не трогая исходный файл. */
+:root[data-theme="dark"] .hero-banner::before {
+  content: ""; position: absolute; inset: 0; background: rgba(10, 6, 12, .38); z-index: 1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="sepia"]) .hero-banner::before {
+    content: ""; position: absolute; inset: 0; background: rgba(10, 6, 12, .38); z-index: 1;
+  }
+}
 .hero { text-align: center; padding: 8px 0 8px; }
 .hero-logo { margin: 0 0 .2em; color: var(--ink); }
 .hero-logo svg { width: min(180px, 42vw); height: auto; }
@@ -335,6 +350,17 @@ details.decade .rows .row:last-child { border-bottom: none; }
   padding: 20px 20px max(20px, env(safe-area-inset-bottom));
 }
 .settings-row { display: flex; align-items: center; justify-content: space-between; margin: 14px 0; }
+.settings-hint { font-size: .85em; color: var(--ink-muted); margin: 8px 0 0; }
+
+/* ── статистика-плашки (работа): вариативнее, чем сплошной текст-строка ── */
+.stat-tiles { display: flex; gap: 10px; margin: 10px 0 16px; }
+.stat-tile {
+  flex: 1; background: var(--surface-2); border-radius: 14px; padding: 12px 16px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.stat-tile-dark { background: var(--bruise); color: var(--surface); }
+.stat-tile .stat-num { font-family: "Archivo", sans-serif; font-weight: 700; font-size: 1.6em; line-height: 1.1; }
+.stat-tile .stat-label { font-size: .78em; opacity: .8; }
 .seg { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; }
 .seg button { background: none; border: none; padding: 6px 12px; border-radius: 8px; color: var(--ink-muted); cursor: pointer; }
 .seg button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px var(--shadow); }
