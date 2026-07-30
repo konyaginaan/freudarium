@@ -236,7 +236,12 @@ mark.user-mark-note {
   margin: 1em 0; padding: 4px 16px; border-left: 3px solid var(--flesh);
   color: var(--ink-muted); font-style: italic;
 }
-.note-body mark {
+/* :not(.user-mark) — иначе эта правило (для ==подсветки== из markdown)
+   перебивает цвет личных выделений: та же специфичность (класс+тег), что и
+   у mark.user-mark-bruise/flesh/verdigris, а идёт в файле позже — при равной
+   специфичности побеждает более поздний по тексту, и ЛЮБОЙ выбранный цвет
+   личного выделения визуально становился этим (бежево-коричневым). */
+.note-body mark:not(.user-mark) {
   background: color-mix(in srgb, var(--flesh) 45%, transparent); color: var(--ink);
   padding: .05em .25em; border-radius: 4px;
 }
