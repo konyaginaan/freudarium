@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from templates import downloads, layout, mdconv, pages
+from templates import downloads, layout, mdconv, pages, provenance
 from templates import slugs as slugmod
 
 PROJECT_DIR = Path(__file__).parent
@@ -87,18 +87,39 @@ def main():
     def slug_of(nid):
         return slug_map.get(nid)
 
-    # ── главы полных текстов ──
+    # ── главы полных текстов + провенанс (перевод/пересказ/…, см.
+    # templates/provenance.py) ──
+    # ВАЖНО: n["body"] не мутируется — его читает downloads.reconstruct_md
+    # ниже (docs/dl/f/<slug>.md должен остаться точной копией файла
+    # хранилища). Главы считаются от provenance["body_rest"] (тело БЕЗ
+    # шапки) — так шапка не запекается в тело главы 1, и её больше не нужно
+    # вырезать эвристикой collapse_intro/split_intro_blocks на стороне
+    # рендера (см. templates/mdconv.py).
     fulltext_chapters = {}
     fulltext_anchor_chapter = {}
+    fulltext_prov = {}
+    _prov_counts = {}
     for n in notes:
         if n["type"] == "full_text":
-            chs = split_chapters(n["body"])
+            prov = provenance.describe(n["id"], n["body"])
+            fulltext_prov[n["id"]] = prov
+            _prov_counts[prov["cls"]] = _prov_counts.get(prov["cls"], 0) + 1
+            chs = split_chapters(prov["body_rest"])
             fulltext_chapters[n["id"]] = chs
             amap = {}
             for idx, ch in enumerate(chs):
                 for am in ANCHOR_RE.finditer(ch["body"]):
                     amap.setdefault(am.group(1), idx)
             fulltext_anchor_chapter[n["id"]] = amap
+    # Молчаливая потеря класса/текста здесь — тот же класс бага, что уже
+    # ломал сборку 29.07 (см. план) — печатаем счётчики и требуем сумму 47,
+    # чтобы будущая правка формулировки в хранилище не прошла незамеченной.
+    _prov_total = sum(_prov_counts.values())
+    print(f"[provenance] {_prov_counts} (всего {_prov_total})")
+    assert _prov_total == len(fulltext_chapters), (
+        f"provenance: {_prov_total} классифицировано, но {len(fulltext_chapters)} full_text-заметок — "
+        "кто-то не попал в fulltext_prov"
+    )
 
     def fulltext_base_url(nid):
         return su(f"/f/{slug_of(nid)}/")
@@ -209,6 +230,8 @@ def main():
         "tag_url": tag_url,
         "fulltext_anchor_url": fulltext_anchor_url,
         "fulltext_first_url": fulltext_first_url,
+        "fulltext_prov": fulltext_prov,
+        "work_to_fulltext": work_to_fulltext,
         "works_by_id": works_by_id,
         "backlinks_by_id": backlinks_by_id,
         "site_base": SITE_BASE,
@@ -296,17 +319,18 @@ def main():
             work_title = work["title"] if work else n["id"]
             base_url = fulltext_base_url(n["id"])
             anchor_notes = fulltext_anchor_notes.get(n["id"], {})
+            prov = fulltext_prov[n["id"]]
             for idx in range(len(chs)):
                 page_url = base_url if idx == 0 else f"{base_url}{idx + 1}/"
-                body_html = pages.render_fulltext_chapter(work_title, work, chs, idx, ctx, base_url, anchor_notes)
+                body_html = pages.render_fulltext_chapter(work_title, work, chs, idx, ctx, base_url, anchor_notes, prov)
                 back_href = work_url(work["id"]) if work else su("/")
                 emit_page(
                     page_url,
-                    f"{work_title} — {chs[idx]['title'] or 'полный текст'}",
+                    f"{work_title} — {chs[idx]['title'] or prov['label']}",
                     "",
                     body_html,
                     back_href=back_href,
-                    pagefind_filters={"type": "полный текст", "work": work_title},
+                    pagefind_filters={"type": pages.PROV_SEARCH_TYPE[prov["cls"]], "work": work_title},
                 )
 
     # ══════════════ теги ══════════════
@@ -399,7 +423,9 @@ def main():
     # На случай, если pagefind (WASM + Web Worker) не запустится в вебвью
     # Telegram — лёгкий JSON по заголовкам/тегам/работам, простой substring-
     # поиск на клиенте без воркеров и WASM, см. assets/search.js.
-    TYPE_LABEL_RU = {"atomic": "заметка", "conspect": "работа", "full_text": "полный текст", "hub": "карта"}
+    # full_text не входит — его метка «перевод»/«пересказ» решается по
+    # provenance (см. ветку ниже), одно значение на все full_text не годится.
+    TYPE_LABEL_RU = {"atomic": "заметка", "conspect": "работа", "hub": "карта"}
     search_index = []
     for n in notes:
         if n["type"] not in PUBLISHED_TYPES:
@@ -411,10 +437,14 @@ def main():
             works_by_id[n["id"]]["title"] if n["type"] == "conspect" and n["id"] in works_by_id else n["id"]
         )
         work = works_by_id.get(n.get("source_work_id"))
+        if n["type"] == "full_text":
+            type_label = pages.PROV_SEARCH_TYPE[fulltext_prov[n["id"]]["cls"]]
+        else:
+            type_label = TYPE_LABEL_RU.get(n["type"], n["type"])
         search_index.append({
             "title": title,
             "url": u,
-            "type": TYPE_LABEL_RU.get(n["type"], n["type"]),
+            "type": type_label,
             "work": work["title"] if work else None,
             "tags": n.get("tags") or [],
         })

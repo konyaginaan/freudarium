@@ -375,7 +375,7 @@ details.decade .rows .row:last-child { border-bottom: none; }
 /* ── строки-списки ── */
 .rows { display: flex; flex-direction: column; }
 .row {
-  display: flex; align-items: baseline; gap: 12px; padding: 10px 4px; color: var(--ink);
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px; padding: 10px 4px; color: var(--ink);
   border-bottom: 1px solid var(--border);
 }
 .row:hover { background: var(--surface-2); text-decoration: none; }
@@ -395,6 +395,37 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .btn-primary { background: var(--bruise); color: var(--surface); border-color: var(--bruise); }
 .btn-primary:hover { background: color-mix(in srgb, var(--bruise) 88%, var(--ink)); }
 .downloads { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── честность полных текстов: перевод / пересказ (см. templates/provenance.py) ── */
+.prov-chip {
+  display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .78em;
+  font-weight: 700; background: var(--surface-3); color: var(--ink-muted);
+}
+.prov-chip-translation { background: color-mix(in srgb, var(--verdigris) 32%, transparent); color: var(--ink); }
+.prov-chip-row { margin-left: auto; flex-shrink: 0; }
+.prov-banner {
+  margin: 14px 0; padding: 14px 16px; border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bruise) 10%, var(--surface-2)); border: 1px solid var(--border);
+}
+.prov-banner-translation {
+  margin: 8px 0 14px; padding: 0; background: none; border: none;
+  font-size: .88em; color: var(--ink-muted);
+}
+.prov-banner-translation a { color: var(--ink-muted); }
+.prov-banner-compact {
+  margin: 10px 0 14px; padding: 8px 14px; border-radius: 12px; background: var(--surface-2);
+  font-size: .88em; color: var(--ink-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.prov-explain { margin: 8px 0 0; color: var(--ink-muted); font-size: .92em; }
+.prov-actions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+/* :not(.btn-primary) — иначе на самой кнопке (текст на заливке bruise,
+   ожидает var(--surface) от .btn-primary) эта же специфичность (0,1,0),
+   но идёт позже в файле, красит текст в bruise поверх bruise-фона —
+   кнопка становится буквально невидимой. Нужен только для «голых» ссылок
+   без .btn (компактная плашка, строка сверки у перевода). */
+.prov-read:not(.btn-primary) { color: var(--bruise); font-weight: 600; }
+.prov-no-link { margin: 8px 0 0; color: var(--ink-muted); font-size: .9em; font-style: italic; }
+.prov-status { margin: 8px 0 0; color: var(--ink-muted); font-size: .82em; }
 
 /* ── глава полного текста: тёмная карточка-заголовок, как в референсе ── */
 .chapter-hero {

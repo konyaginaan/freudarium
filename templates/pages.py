@@ -4,10 +4,21 @@
 import html
 import re
 
-from . import mdconv
+from . import mdconv, provenance
 from .layout import asset_v
 
 _P_TAG_RE = re.compile(r'<p id="(p[a-zA-Z0-9]*)">(.*?)</p>', re.DOTALL)
+
+# Метка для pagefind/резервного поиска (build.py) — согласована с кнопками
+# фильтра в render_search() ниже: «полный текст» одним типом на всех не
+# годился (обещал перевод там, где его нет), а pagefind и search.js должны
+# возвращать одно и то же множество результатов на один и тот же фильтр.
+PROV_SEARCH_TYPE = {
+    "translation": "перевод",
+    "assembled": "пересказ",
+    "digest": "пересказ",
+    "retelling": "пересказ",
+}
 
 
 def _inject_note_markers(body_html, anchor_notes, note_url):
@@ -185,7 +196,18 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     fulltext_url = ctx.get("fulltext_first_url", lambda wid: None)(work["id"])
     ft_html = ""
     if fulltext_url:
-        ft_html = f'<a class="btn btn-primary" href="{html.escape(fulltext_url)}">Читать полный текст</a>'
+        # Решение о честности происходит ИМЕННО здесь — до клика, а не
+        # после: подпись кнопки и подпись класса определяют, что читатель
+        # ожидает получить, ещё на этой странице.
+        fid = ctx.get("work_to_fulltext", {}).get(work["id"])
+        prov = ctx.get("fulltext_prov", {}).get(fid) if fid else None
+        if prov and prov["cls"] != "translation":
+            ft_html = f'<a class="btn btn-primary" href="{html.escape(fulltext_url)}">Читать пересказ</a>'
+            if prov["ready_links"]:
+                label, url = prov["ready_links"][0]
+                ft_html += f' <a class="btn" href="{html.escape(url)}" target="_blank" rel="noopener">Читать настоящий перевод →</a>'
+        else:
+            ft_html = f'<a class="btn btn-primary" href="{html.escape(fulltext_url)}">Читать полный текст</a>'
 
     cards = "".join(_note_card(n, ctx, small=True) for n in atomic_notes)
     downloads_html = ctx["downloads_widget_work"](work)
@@ -213,12 +235,77 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
 """
 
 
-def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url, anchor_notes=None):
-    chapter = chapters[idx]
-    body_html = mdconv.render_body(
-        chapter["body"], ctx["resolve_link"], ctx["assets_base"], collapse_intro=(idx == 0)
+def _provenance_banner(prov, compact):
+    """Плашка честности «полного текста» — над навигацией по главам.
+    compact=False только на главе 1 (полный текст объяснения); compact=True
+    на главах 2+ — читатель, попавший туда из поиска, тоже должен видеть
+    предупреждение, а не только тот, кто начал с начала (это и было
+    прежней дырой: вступление попадало ТОЛЬКО в тело главы 1)."""
+    if prov["cls"] == "translation":
+        sync = ""
+        if prov["ready_links"]:
+            links = ", ".join(
+                f'<a href="{html.escape(u)}" target="_blank" rel="noopener">{html.escape(l)}</a>'
+                for l, u in prov["ready_links"]
+            )
+            sync = f' — сверить с готовым переводом: {links}'
+        status_suffix = f' · {html.escape(prov["status"])}' if prov["status"] else ""
+        return (
+            '<div class="prov-banner prov-banner-translation">'
+            f'<span class="prov-chip prov-chip-translation">{html.escape(prov["label"])}</span>{sync}{status_suffix}'
+            "</div>"
+        )
+
+    if prov["ready_links"]:
+        label, url = prov["ready_links"][0]
+        read_action = f'<a class="prov-read" href="{html.escape(url)}" target="_blank" rel="noopener">Читать настоящий перевод →</a>'
+    else:
+        read_action = '<span class="prov-no-link">перевода в открытом доступе не нашлось</span>'
+
+    if compact:
+        return (
+            '<div class="prov-banner prov-banner-compact">'
+            f'<span class="prov-chip">{html.escape(prov["label"])}</span> — это не перевод. {read_action}'
+            "</div>"
+        )
+
+    if prov["ready_links"]:
+        actions_html = "".join(
+            f'<a class="btn btn-primary prov-read" href="{html.escape(u)}" target="_blank" rel="noopener">'
+            + ("Читать настоящий перевод →" if len(prov["ready_links"]) == 1 else f"Читать: {html.escape(l)} →")
+            + "</a>"
+            for l, u in prov["ready_links"]
+        )
+    else:
+        actions_html = (
+            '<p class="prov-no-link">Готового перевода в открытом доступе найти не удалось — '
+            "библиография оригинала ниже, в «Источник и детали».</p>"
+        )
+    status_html = f'<p class="prov-status">Статус: {html.escape(prov["status"])}</p>' if prov["status"] else ""
+    return (
+        '<div class="prov-banner">'
+        f'<span class="prov-chip">{html.escape(prov["label"])}</span>'
+        '<p class="prov-explain">Это не перевод. ' + html.escape(prov["explanation"]) + "</p>"
+        f'<div class="prov-actions">{actions_html}</div>{status_html}'
+        "</div>"
     )
+
+
+def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url, anchor_notes=None, prov=None):
+    chapter = chapters[idx]
+    body_html = mdconv.render_body(chapter["body"], ctx["resolve_link"], ctx["assets_base"])
     body_html = _inject_note_markers(body_html, anchor_notes, ctx["note_url"])
+
+    banner_html = _provenance_banner(prov, compact=(idx != 0)) if prov else ""
+    # Раньше вступление (шапка файла) попадало в тело главы 1 и вырезалось
+    # оттуда эвристикой collapse_intro/split_intro_blocks (потолок 700
+    # символов/4 блока — источник несогласованности между файлами, см.
+    # templates/provenance.py). Теперь шапка приходит явным полем
+    # (prov["header_text"]), без эвристики и без риска утечь в тело.
+    source_details_html = ""
+    if idx == 0 and prov and prov["header_text"]:
+        header_html = mdconv.render_body(prov["header_text"], ctx["resolve_link"], ctx["assets_base"])
+        source_details_html = f'<details class="src-details"><summary>Источник и детали</summary>{header_html}</details>'
 
     nav_items = []
     for i, ch in enumerate(chapters):
@@ -245,9 +332,11 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
     <h1 class="chapter-title">{html.escape(title)}</h1>
     <div class="chapter-dashes"><span class="dash dash-bruise"></span><span class="dash dash-verdigris"></span></div>
   </header>
-  <div class="crumbs"><a href="{ctx["work_url"](work_meta["id"])}">{html.escape(work_title)}</a> · полный текст</div>
+  <div class="crumbs"><a href="{ctx["work_url"](work_meta["id"])}">{html.escape(work_title)}</a> · {"полный текст" if prov and prov["cls"] == "translation" else "пересказ"}</div>
+  {banner_html}
   {nav_html}
   <div class="note-body fulltext-body">
+    {source_details_html}
     {body_html}
   </div>
   {pager}
@@ -290,18 +379,42 @@ def render_cases(cases, ctx):
 
 def render_texts(entries, ctx):
     """entries: [(work_or_none, full_text_note, base_url)]"""
-    rows = "".join(
-        f'<a class="row" href="{base_url}">'
-        f'<span class="row-year">{html.escape((work["year"] if work else "") or "")}</span>'
-        f'<span class="row-title">{html.escape(work["title"] if work else _display_title(ft["id"]))}</span>'
-        f"</a>"
-        for work, ft, base_url in entries
-    )
+    prov_by = ctx.get("fulltext_prov", {})
+
+    def row(work, ft, base_url):
+        prov = prov_by.get(ft["id"])
+        chip = f'<span class="prov-chip prov-chip-row{" prov-chip-translation" if prov and prov["cls"] == "translation" else ""}">{html.escape(prov["label"])}</span>' if prov else ""
+        return (
+            f'<a class="row" href="{base_url}">'
+            f'<span class="row-year">{html.escape((work["year"] if work else "") or "")}</span>'
+            f'<span class="row-title">{html.escape(work["title"] if work else _display_title(ft["id"]))}</span>'
+            f"{chip}</a>"
+        )
+
+    translations = [e for e in entries if prov_by.get(e[1]["id"], {}).get("cls") == "translation"]
+    retellings = [e for e in entries if prov_by.get(e[1]["id"], {}).get("cls") != "translation"]
+
+    sections = ""
+    if translations:
+        sections += (
+            "<h2>Переводы с оригинала</h2>"
+            f'<div class="rows">{"".join(row(*e) for e in translations)}</div>'
+        )
+    if retellings:
+        sections += (
+            "<h2>Пересказы и изложения</h2>"
+            "<p class=\"work-meta\">Собраны из атомарных заметок или конспекта этого хранилища, "
+            "не переведены построчно с оригинала — подробнее на странице каждого текста.</p>"
+            f'<div class="rows">{"".join(row(*e) for e in retellings)}</div>'
+        )
+
     return f"""
 <article class="index-page">
   <h1 class="note-title">Полные тексты</h1>
-  <p class="work-meta">Переводы работ целиком, по главам — с переходами к заметкам, разбирающим конкретные абзацы.</p>
-  <div class="rows">{rows}</div>
+  <p class="work-meta">Часть работ переведена с оригинала целиком, по главам; часть — пересказана
+    или собрана из атомарных заметок этого хранилища. Какая есть какая — обозначено ниже
+    и на странице каждого текста; подробнее — на странице «О проекте».</p>
+  {sections}
 </article>
 """
 
@@ -316,6 +429,12 @@ def render_about(ctx):
     по порядку.</p>
     <p>Собрано по методу Zettelkasten в Obsidian и опубликовано как открытый
     сайт и Telegram-приложение.</p>
+    <p>Раздел «Полные тексты» — не всегда переводы. Часть работ переведена с
+    оригинала целиком; часть — пересказана своими словами или собрана из
+    атомарных заметок этого хранилища (в формате Тезис / Аргументы / Вывод —
+    для больших теоретических трудов, или изложения по конспекту). Пересказ
+    не выдаётся за перевод: на каждой такой странице сказано об этом прямо,
+    рядом — ссылка на настоящий перевод там, где он есть в открытом доступе.</p>
     <p>Автор проекта — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a> в Telegram.</p>
   </div>
 </article>
@@ -335,7 +454,8 @@ def render_search(ctx):
     <button class="search-filter active" data-type="">Всё</button>
     <button class="search-filter" data-type="заметка">Заметки</button>
     <button class="search-filter" data-type="работа">Работы</button>
-    <button class="search-filter" data-type="полный текст">Полные тексты</button>
+    <button class="search-filter" data-type="перевод">Переводы</button>
+    <button class="search-filter" data-type="пересказ">Пересказы</button>
     <button class="search-filter" data-type="карта">Карты</button>
   </div>
   <div class="search-results" id="searchResults"></div>
@@ -440,7 +560,7 @@ def render_home(works, hubs, tags_top, stats, ctx):
             f'<a class="card" href="{sb}{href}"><span class="card-title">{label}</span>'
             f'<span class="card-kicker">{sub}</span></a>'
             for href, label, sub in [
-                ("/texts/", "Полные тексты", "Читать работу целиком, главами"),
+                ("/texts/", "Полные тексты", "Переводы и пересказы целиком, по главам"),
                 ("/cases/", "Клинические случаи", "Ганс, Крыса, Шребер, Волк, Дора"),
                 ("/maps/", "Карты областей", "Структурные заметки по темам"),
             ]
