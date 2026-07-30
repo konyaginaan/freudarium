@@ -5,6 +5,46 @@
   var SITE_BASE = window.__SITE_BASE__ || "";
   var root = document.documentElement;
 
+  // ── блокировка скролла страницы, пока открыта любая полноэкранная шторка ──
+  // .sheet — фиксированный оверлей (position:fixed; inset:0) БЕЗ собственного
+  // скролла у самого оверлея; на части мобильных браузеров/вебвью жест
+  // прокрутки поверх такого оверлея всё равно докручивает <body> под ним —
+  // сама шторка визуально стоит на месте, а фон за ней уезжает. Простого
+  // overflow:hidden на body для этого недостаточно (не гасит touch-скролл в
+  // Safari/iOS) — рабочий приём: на время шторки сделать body position:fixed
+  // на текущей позиции скролла, а при закрытии вернуть как было. Общее для
+  // всех шторок (меню, настройки, скачивание, композер, отправка в чат) —
+  // следим за атрибутом hidden у каждой сразу здесь, а не в каждом файле,
+  // который её открывает.
+  var scrollLockY = 0;
+  var scrollLockCount = 0;
+  function lockPageScroll() {
+    if (scrollLockCount++ > 0) return;
+    scrollLockY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = -scrollLockY + "px";
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+  }
+  function unlockPageScroll() {
+    if (--scrollLockCount > 0) return;
+    scrollLockCount = 0;
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    window.scrollTo(0, scrollLockY);
+  }
+  document.querySelectorAll(".sheet").forEach(function (sheet) {
+    // Шторка уже могла быть скрыта/показана до того, как отработает этот
+    // код (например, noteComposer открывает annotations.js) — сверяемся с
+    // текущим hidden сразу, а дальше следим через MutationObserver.
+    if (!sheet.hidden) lockPageScroll();
+    new MutationObserver(function () {
+      if (sheet.hidden) unlockPageScroll(); else lockPageScroll();
+    }).observe(sheet, { attributes: true, attributeFilter: ["hidden"] });
+  });
+
   // ── всплывающее уведомление снизу (используется и здесь, и в tg.js) ──
   var toastEl = document.getElementById("toast");
   var toastTimer = null;
