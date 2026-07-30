@@ -561,7 +561,7 @@ def main():
 
     for asset_name in (
         "style.css", "app.js", "tg.js", "random.js", "search.js", "annotations.js", "mynotes.js",
-        "logo.svg", "hero-header.webp",
+        "comments.js", "logo.svg", "hero-header.webp",
     ):
         src = PROJECT_DIR / "assets" / asset_name
         if src.exists():

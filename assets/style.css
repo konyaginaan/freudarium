@@ -378,6 +378,44 @@ details.decade .rows .row:last-child { border-bottom: none; }
 }
 .chip-muted-btn:hover { color: var(--bruise); }
 
+/* ── публичная лента комментариев (assets/comments.js) ── */
+.comments-section { margin: 2.4em 0 0; }
+.comments-section h2 { font-size: .82em; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-muted); margin: 0 0 .8em; font-weight: 700; }
+.comments-empty { color: var(--ink-muted); font-style: italic; font-size: .92em; }
+.comments-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+.comment { background: var(--surface-2); border-radius: 12px; padding: 10px 14px; }
+.comment-reply-to { font-size: .78em; color: var(--ink-muted); margin-bottom: 4px; }
+.comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.comment-author { font-weight: 600; font-size: .9em; }
+.comment-time { color: var(--ink-muted); font-size: .78em; }
+.comment-delete {
+  margin-left: auto; background: none; border: none; color: var(--ink-muted);
+  cursor: pointer; font-size: .85em; padding: 0 2px;
+}
+.comment-delete:hover { color: var(--bruise); }
+.comment-text { margin: 0; white-space: pre-wrap; }
+.comment-reply-btn {
+  background: none; border: none; padding: 0; margin-top: 6px; font-size: .82em;
+  color: var(--ink-muted); text-decoration: underline; cursor: pointer;
+}
+.comment-reply-btn:hover { color: var(--bruise); }
+.comments-reply-banner {
+  display: flex; align-items: center; gap: 8px; font-size: .85em; color: var(--ink-muted);
+  background: var(--surface-2); border-radius: 10px; padding: 6px 12px; margin-bottom: 8px;
+}
+.comments-reply-banner[hidden] { display: none; }
+.comments-reply-banner .comments-reply-name { font-weight: 600; color: var(--ink); }
+.comments-reply-banner [data-cancel-reply] {
+  margin-left: auto; background: none; border: none; color: var(--ink-muted); cursor: pointer;
+}
+.comments-form textarea {
+  width: 100%; min-height: 70px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--ink); font: inherit; padding: 10px 12px; resize: vertical;
+}
+.comments-form { margin-top: 4px; }
+.comments-form .btn { margin-top: 8px; }
+
 .rel-block { margin: 2em 0; }
 .rel-block h2 { font-size: .82em; text-transform: uppercase; letter-spacing: .06em;
   color: var(--ink-muted); margin: 0 0 .6em; font-weight: 700; }

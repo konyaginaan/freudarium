@@ -296,5 +296,6 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <script src="{assets}/tg.js?v={asset_v("tg.js")}"></script>
 <script src="{assets}/app.js?v={asset_v("app.js")}"></script>
 <script src="{assets}/annotations.js?v={asset_v("annotations.js")}"></script>
+<script src="{assets}/comments.js?v={asset_v("comments.js")}"></script>
 </body>
 </html>"""

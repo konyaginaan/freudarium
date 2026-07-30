@@ -55,6 +55,26 @@ _FEEDBACK_LINK_HTML = (
     "Заметили неточность или хотите что-то сказать автору? Написать →</button></p>"
 )
 
+# Публичная лента комментариев (Фаза 5, продолжение, 31.07.2026) — видна
+# всем читателям, в отличие от _FEEDBACK_LINK_HTML выше (тот уходит только
+# автору в личку). Разметка статическая — сам список комментариев грузит
+# assets/comments.js с воркера уже на клиенте, в момент открытия страницы
+# (build.py не знает о комментариях, они не существуют на этапе сборки).
+_COMMENTS_SECTION_HTML = """
+<section class="comments-section" id="commentsSection" data-pagefind-ignore>
+  <h2>Комментарии</h2>
+  <div class="comments-list"><p class="comments-empty">Загрузка…</p></div>
+  <div class="comments-reply-banner" hidden>
+    В ответ <span class="comments-reply-name"></span>
+    <button type="button" data-cancel-reply aria-label="Отменить ответ">✕</button>
+  </div>
+  <form class="comments-form">
+    <textarea rows="3" placeholder="Написать комментарий… (нужен Telegram)"></textarea>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+  </form>
+</section>
+"""
+
 
 # Цветные чипы тегов (см. референс-макет «Дневник снов», подготовка 30.07.2026)
 # — тот же акцентный набор, что уже красит dash'и главы и подсветки выделений,
@@ -193,6 +213,7 @@ def render_note(note, ctx):
   {downloads_html}
   {rel_html}
   {_FEEDBACK_LINK_HTML}
+  {_COMMENTS_SECTION_HTML}
 </article>
 """
 
@@ -254,6 +275,7 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     <div class="card-grid">{cards}</div>
   </section>
   {_FEEDBACK_LINK_HTML}
+  {_COMMENTS_SECTION_HTML}
 </article>
 """
 
@@ -364,6 +386,7 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
   </div>
   {pager}
   {_FEEDBACK_LINK_HTML}
+  {_COMMENTS_SECTION_HTML}
 </article>
 """
 
@@ -403,6 +426,7 @@ def render_hub(hub_note, ctx):
   </div>
   {downloads_html}
   {_FEEDBACK_LINK_HTML}
+  {_COMMENTS_SECTION_HTML}
 </article>
 """
 
