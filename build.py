@@ -237,6 +237,7 @@ def main():
         "site_base": SITE_BASE,
         "assets_base": assets_base,
         "images_dir": IMAGES_DIR,
+        "by_id": by_id,
         "downloads_widget": downloads_widget,
         "downloads_widget_work": downloads_widget_work,
         "downloads_widget_hub": downloads_widget_hub,

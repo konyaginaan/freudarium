@@ -1,6 +1,7 @@
 """Рендер конкретных типов страниц: заметка, работа, глава полного текста,
 карта области, тег, главная. Возвращают HTML тела страницы (без обёртки —
 её добавляет layout.page)."""
+import hashlib
 import html
 import re
 
@@ -45,10 +46,18 @@ def _inject_note_markers(body_html, anchor_notes, note_url):
     return _P_TAG_RE.sub(repl, body_html)
 
 
+# Цветные чипы тегов (см. референс-макет «Дневник снов», подготовка 30.07.2026)
+# — тот же акцентный набор, что уже красит dash'и главы и подсветки выделений,
+# не новая палитра. hashlib, не hash() — тот рандомизирован по процессам
+# (PYTHONHASHSEED), один и тот же тег красился бы по-разному между сборками.
+_CHIP_VARIANTS = ("chip-bruise", "chip-flesh", "chip-verdigris")
+
+
 def _tag_chip(tag, tag_url):
+    variant = _CHIP_VARIANTS[int(hashlib.md5(tag.encode("utf-8")).hexdigest(), 16) % len(_CHIP_VARIANTS)]
     url = tag_url(tag)
     if url:
-        return f'<a class="chip" href="{html.escape(url)}">{html.escape(tag)}</a>'
+        return f'<a class="chip {variant}" href="{html.escape(url)}">{html.escape(tag)}</a>'
     return f'<span class="chip chip-muted">{html.escape(tag)}</span>'
 
 
@@ -349,10 +358,33 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
 def render_hub(hub_note, ctx):
     body_html = mdconv.render_body(hub_note["body"], ctx["resolve_link"], ctx["assets_base"], images_dir=ctx["images_dir"])
     downloads_html = ctx["downloads_widget_hub"](hub_note)
+
+    # Шапка-карточка по референсу дизайн-обогащения (30.07.2026) — та же
+    # тёмная «глава»-шапка, что у полных текстов (.chapter-hero), плюс пара
+    # stat-tiles: заметок в links_out хаба и работ, из которых они взяты.
+    # links_out хаба содержит не только атомарные заметки, но и ссылки на
+    # другие карты — считаем только type == "atomic", иначе число «заметок»
+    # завышено соседними хабами.
+    by_id = ctx.get("by_id", {})
+    linked_atomic = [
+        by_id[lid] for lid in hub_note.get("links_out", [])
+        if by_id.get(lid, {}).get("type") == "atomic"
+    ]
+    work_ids = {a["source_work_id"] for a in linked_atomic if a.get("source_work_id")}
+    title = _display_title(hub_note["id"])
+
     return f"""
 <article class="hub-page">
+  <header class="chapter-hero">
+    <div class="chapter-kicker"><span>КАРТА ОБЛАСТИ</span></div>
+    <h1 class="chapter-title">{html.escape(title)}</h1>
+    <div class="chapter-dashes"><span class="dash dash-bruise"></span><span class="dash dash-verdigris"></span></div>
+  </header>
   <div class="crumbs"><a href="{ctx["site_base"]}/maps/">Все карты областей</a></div>
-  <h1 class="note-title">{html.escape(_display_title(hub_note["id"]))}</h1>
+  <div class="stat-tiles">
+    <div class="stat-tile stat-tile-accent"><span class="stat-num">{len(linked_atomic)}</span><span class="stat-label">заметок в карте</span></div>
+    <div class="stat-tile"><span class="stat-num">{len(work_ids)}</span><span class="stat-label">работ</span></div>
+  </div>
   <div class="note-body">
     {body_html}
   </div>

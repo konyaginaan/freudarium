@@ -365,6 +365,10 @@ details.decade .rows .row:last-child { border-bottom: none; }
 }
 .chip-muted { color: var(--ink-muted); }
 .chip:hover { background: var(--surface-3); text-decoration: none; }
+.chip-bruise { background: color-mix(in srgb, var(--bruise) 30%, var(--surface-2)); color: var(--ink); }
+.chip-flesh { background: color-mix(in srgb, var(--flesh) 35%, var(--surface-2)); color: var(--ink); }
+.chip-verdigris { background: color-mix(in srgb, var(--verdigris) 35%, var(--surface-2)); color: var(--ink); }
+.chip-bruise:hover, .chip-flesh:hover, .chip-verdigris:hover { filter: brightness(0.95); }
 
 /* ── связи ── */
 .rel-block { margin: 2em 0; }
