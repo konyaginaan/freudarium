@@ -185,8 +185,8 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
   <h1 class="note-title">{html.escape(work["title"])}</h1>
   <p class="work-meta">{html.escape(work["author"] or "Фрейд")}</p>
   <div class="stat-tiles">
+    <div class="stat-tile stat-tile-accent"><span class="stat-num">{html.escape(work["year"] or "—")}</span><span class="stat-label">год написания</span></div>
     <div class="stat-tile"><span class="stat-num">{work["atomic_note_count"]}</span><span class="stat-label">заметок</span></div>
-    <div class="stat-tile stat-tile-dark"><span class="stat-num">{html.escape(work["year"] or "—")}</span><span class="stat-label">публикация</span></div>
   </div>
   <div class="work-actions">{ft_html}</div>
   <div class="note-body">
@@ -337,8 +337,8 @@ def render_search(ctx):
 def render_my_notes(ctx):
     return f"""
 <article class="mynotes-page">
-  <h1 class="note-title">Мои заметки</h1>
-  <p class="work-meta">Всё, что вы отметили при чтении, — закладки страниц, выделения, заметки с
+  <h1 class="note-title" id="mynotesTitle">Мои заметки</h1>
+  <p class="work-meta" id="mynotesIntro">Всё, что вы отметили при чтении, — закладки страниц, выделения, заметки с
     комментарием, — хранится у вас в браузере, а внутри Telegram ещё и синхронизируется между устройствами.</p>
   <div class="mynotes-empty" id="mynotesEmpty" hidden>Пока ничего нет — выделите текст на любой странице, чтобы отметить или прокомментировать его, или нажмите «В избранное» в шапке.</div>
   <div class="mynotes-list" id="mynotesList"></div>

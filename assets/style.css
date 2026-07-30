@@ -103,8 +103,14 @@ body:has(.hero-banner) .topbar { border-bottom-color: transparent; }
 }
 .back-link:hover { text-decoration: none; color: var(--bruise); }
 .brand {
+  /* Раньше centering было "внутри своегоflex-бокса", а не по всей ширине
+     шапки: back-link (когда есть) и topbar-actions разной ширины отъедают
+     asymmetric место по бокам, и оптический центр "Фрейдариум" уезжал влево
+     от истинного центра — ни туда, ни сюда. Проще и надёжнее — не пытаться
+     центрировать относительно всей шапки, а прижать к своему левому краю
+     (сразу после back-link, если он есть; у самого края — на главной). */
   flex: 1 1 auto; min-width: 0; font-weight: 700; color: var(--ink); font-size: 16px;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
+  display: flex; align-items: center; justify-content: flex-start; gap: 7px;
   overflow: hidden; white-space: nowrap;
 }
 .brand span { overflow: hidden; text-overflow: ellipsis; }
@@ -502,7 +508,11 @@ details.decade .rows .row:last-child { border-bottom: none; }
   flex: 1; background: var(--surface-2); border-radius: 14px; padding: 12px 16px;
   display: flex; flex-direction: column; gap: 2px;
 }
-.stat-tile-dark { background: var(--bruise); color: var(--surface); }
+/* Раньше вторая плашка была сплошной заливкой var(--bruise) — акцентный
+   цвет системы предназначен для единичных акцентов (связи, редкие пятна),
+   а не для больших плоскостей (см. дизайн-систему «Das Unheimliche»).
+   surface-3 — нейтральный, но заметно темнее surface-2 тон, спокойнее. */
+.stat-tile-accent { background: var(--surface-3); }
 .stat-tile .stat-num { font-family: "Archivo", sans-serif; font-weight: 700; font-size: 1.6em; line-height: 1.1; }
 .stat-tile .stat-label { font-size: .78em; opacity: .8; }
 .seg { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; }

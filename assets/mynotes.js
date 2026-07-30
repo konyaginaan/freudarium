@@ -8,6 +8,17 @@
 (function () {
   "use strict";
   var SITE_BASE = window.__SITE_BASE__ || "";
+  // «Закладки» в меню ☰ ведёт на ту же страницу с ?only=bookmarks — отдельного
+  // шаблона/скрипта не нужно, просто фильтруем тот же список и меняем
+  // заголовок; это не HTML-параметр в смысле сервера (сайт статический),
+  // просто читаем query-строку в браузере.
+  var onlyBookmarks = /(?:^|[?&])only=bookmarks(?:&|$)/.test(location.search);
+  if (onlyBookmarks) {
+    var titleEl = document.getElementById("mynotesTitle");
+    var introEl = document.getElementById("mynotesIntro");
+    if (titleEl) titleEl.textContent = "Закладки";
+    if (introEl) introEl.textContent = "Страницы, отмеченные «В избранное» в шапке — хранятся у вас в браузере, а внутри Telegram ещё и синхронизируются между устройствами.";
+  }
 
   function fmtDate(ts) {
     return new Date(ts).toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric" });
@@ -39,6 +50,7 @@
     var all = (window.freudAnnotationsAll ? window.freudAnnotationsAll() : []).slice().sort(function (a, b) {
       return b.createdAt - a.createdAt;
     });
+    if (onlyBookmarks) all = all.filter(function (a) { return a.type === "bookmark"; });
     document.getElementById("mynotesEmpty").hidden = all.length > 0;
     document.getElementById("mynotesList").innerHTML = all.map(renderCard).join("");
 

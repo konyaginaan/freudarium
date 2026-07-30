@@ -203,7 +203,10 @@
       // подставлять его вторично не нужно, иначе получится двойной префикс.
       if (lastRead && lastRead.url && lastRead.title) {
         heroPrimaryBtn.href = lastRead.url;
-        heroPrimaryBtn.textContent = "Продолжить: «" + lastRead.title + "»";
+        // Раньше показывали ещё и название заметки — кнопка выходила слишком
+        // длинной/тяжёлой рядом с «Поиск». Название и так видно на самой
+        // странице сразу после перехода — здесь достаточно факта «продолжить».
+        heroPrimaryBtn.textContent = "Продолжить чтение";
         if (heroRandomLink) heroRandomLink.hidden = false;
       }
     } catch (e) {}
