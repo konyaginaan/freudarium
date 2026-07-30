@@ -113,7 +113,7 @@
         return r.json();
       })
       .then(function () {
-        if (window.freudToast) window.freudToast("Отправлено автору", { duration: 3200 });
+        if (window.freudToast) window.freudToast("Отправлено администратору", { duration: 3200 });
         return true;
       })
       .catch(function (err) {

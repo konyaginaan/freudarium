@@ -201,14 +201,14 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <!-- Комментарий / «Предложить правку» — автору сайта в Telegram (не автору
      запроса, см. assets/tg.js:freudSendFeedback). Одна шторка на оба сценария:
      с цитатой (запущена из selToolbar по выделению — data-action="report")
-     и без (запущена кнопкой «Написать автору» внизу страницы заметки). -->
+     и без (запущена кнопкой «Написать администратору» внизу страницы заметки). -->
 <div class="sheet" id="feedbackSheet" hidden data-pagefind-ignore>
   <div class="sheet-inner">
-    <h3 id="feedbackSheetTitle">Написать автору</h3>
+    <h3 id="feedbackSheetTitle">Написать администратору</h3>
     <blockquote class="composer-quote" id="feedbackQuoteView" hidden></blockquote>
     <textarea name="feedback-text" class="composer-textarea" rows="4" placeholder="Ваше сообщение…"></textarea>
     <div class="composer-actions">
-      <button class="btn btn-primary" data-feedback-send>Отправить автору</button>
+      <button class="btn btn-primary" data-feedback-send>Отправить администратору</button>
       <button class="btn" data-close-sheet>Отмена</button>
     </div>
   </div>

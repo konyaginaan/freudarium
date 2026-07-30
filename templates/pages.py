@@ -52,7 +52,7 @@ def _inject_note_markers(body_html, anchor_notes, note_url):
 # selToolbar, у неё готовая цитата, отдельная кнопка тут не нужна.
 _FEEDBACK_LINK_HTML = (
     '<p class="feedback-link"><button class="chip-muted-btn" data-feedback-open>'
-    "Заметили неточность или хотите что-то сказать автору? Написать →</button></p>"
+    "Заметили неточность или хотите что-то сказать администратору? Написать →</button></p>"
 )
 
 # Публичная лента комментариев (Фаза 5, продолжение, 31.07.2026) — видна

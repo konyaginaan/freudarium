@@ -183,20 +183,20 @@
   // ── комментарий / «Предложить правку» — автору сайта, не в чат
   // отправителя (см. window.freudSendFeedback в assets/tg.js). Одна шторка
   // на оба сценария: с цитатой (из панели выделения, data-action="report")
-  // и без (кнопка «Написать автору» внизу страницы заметки, data-feedback-open). ──
+  // и без (кнопка «Написать администратору» внизу страницы заметки, data-feedback-open). ──
   var feedbackSheet = document.getElementById("feedbackSheet");
   var feedbackType = "comment";
   var feedbackQuote = "";
   function openFeedbackSheet(type, quote) {
     if (!feedbackSheet) return;
     if (!window.freudSendFeedback) {
-      if (window.freudToast) window.freudToast("Написать автору можно только внутри Telegram");
+      if (window.freudToast) window.freudToast("Написать администратору можно только внутри Telegram");
       return;
     }
     feedbackType = type;
     feedbackQuote = quote || "";
     feedbackSheet.querySelector("#feedbackSheetTitle").textContent =
-      type === "edit" ? "Предложить правку" : "Написать автору";
+      type === "edit" ? "Предложить правку" : "Написать администратору";
     var quoteView = feedbackSheet.querySelector("#feedbackQuoteView");
     if (feedbackQuote) {
       quoteView.textContent = feedbackQuote;
