@@ -177,6 +177,10 @@ def page(title: str, description: str, body_html: str, site_base: str,
     <div class="composer-actions">
       <button class="btn btn-primary" data-composer-save>Сохранить</button>
       <button class="btn" data-composer-cancel>Отмена</button>
+      <button class="icon-btn" data-composer-send aria-label="Отправить в чат" title="Отправить в чат">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2Z"/></svg>
+      </button>
     </div>
   </div>
 </div>

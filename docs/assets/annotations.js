@@ -545,6 +545,22 @@
       composerEditingId = null;
       clearCustomSelection();
     });
+    // Значок «Отправить» рядом с «Сохранить»/«Отмена» — независимое действие,
+    // как и в панели выделения: отправляет то, что сейчас в поле, в чат
+    // (выбор формата — тот же поп-ап), не требуя сначала жать «Сохранить».
+    composer.querySelector("[data-composer-send]").addEventListener("click", function () {
+      var quote = composer.querySelector("[name=quote]").value;
+      var comment = composer.querySelector("[name=comment]").value.trim();
+      composer.hidden = true;
+      composerEditingId = null;
+      window.getSelection().removeAllRanges();
+      clearCustomSelection();
+      openExportSheetFor({
+        quote: quote, comment: comment,
+        pageTitle: (document.querySelector(".note-title") || {}).textContent || document.title,
+        url: pageUrl(),
+      });
+    });
     composer.addEventListener("click", function (e) {
       if (e.target === composer) { composer.hidden = true; composerEditingId = null; }
     });

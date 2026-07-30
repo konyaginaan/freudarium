@@ -162,7 +162,8 @@ main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; ove
   width: 100%; min-height: 90px; border-radius: 12px; border: 1px solid var(--border);
   background: var(--surface-2); color: var(--ink); font: inherit; padding: 10px 12px; resize: vertical;
 }
-.composer-actions { display: flex; gap: 8px; margin-top: 12px; }
+.composer-actions { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.composer-actions [data-composer-send] { margin-left: auto; border: 1px solid var(--border); }
 
 /* ── подсветка личных пометок в тексте ── */
 mark.user-mark { padding: .02em .1em; border-radius: 3px; cursor: pointer; }
