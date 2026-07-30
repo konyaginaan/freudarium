@@ -442,6 +442,9 @@ details.decade .rows .row:last-child { border-bottom: none; }
 }
 .settings-row { display: flex; align-items: center; justify-content: space-between; margin: 14px 0; }
 .settings-hint { font-size: .85em; color: var(--ink-muted); margin: 8px 0 0; }
+.sheet-hint { font-size: .85em; color: var(--ink-muted); margin: 0 0 14px; }
+.dl-format { display: block; width: 100%; text-align: left; margin: 0 0 8px; }
+.dl-format[hidden] { display: none; }
 
 /* ── статистика-плашки (работа): вариативнее, чем сплошной текст-строка ── */
 .stat-tiles { display: flex; gap: 10px; margin: 10px 0 16px; }

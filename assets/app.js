@@ -125,7 +125,9 @@
     menuSheet.hidden = true;
     settingsSheet.hidden = false;
   });
-  [menuSheet, settingsSheet].forEach(function (sh) {
+  var downloadSheet = document.getElementById("downloadSheet");
+  [menuSheet, settingsSheet, downloadSheet].forEach(function (sh) {
+    if (!sh) return;
     sh.addEventListener("click", function (e) {
       if (e.target === sh || e.target.closest("[data-close-sheet]")) sh.hidden = true;
     });
@@ -247,48 +249,104 @@
     return new Blob([].concat(localParts, centralParts, [end]));
   }
 
+  // ── скачивание заметки: единая кнопка «Скачать» → поп-ап с форматом ──
+  // Раньше «Скачать .md» была обычной <a href download> ссылкой — на части
+  // мобильных браузеров (типично для iOS Safari) атрибут download на неё не
+  // распространяется, и вместо скачивания открывается сырой файл текстом,
+  // без шапки сайта и без кнопки «назад» — тупик. Теперь везде одинаково:
+  // содержимое получаем через fetch, собираем Blob и либо отправляем в чат
+  // (Telegram), либо скачиваем программно через ссылку на blob: — это не
+  // подвержено той же особенности браузеров, что и прямой download-атрибут
+  // на обычный URL.
+  function downloadOrSend(blob, name, hint) {
+    if (window.freudSendToChat) {
+      window.freudSendToChat(blob, name);
+      // freudSendToChat уже показывает свой тост об успехе/ошибке; отдельно
+      // добавляем короткую подсказку, как пользоваться файлом, чуть позже.
+      if (hint) setTimeout(function () { window.freudToast(hint, { duration: 5000 }); }, 3600);
+      return;
+    }
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    if (window.freudToast) window.freudToast(hint || "Скачано", { duration: 4000 });
+  }
+
+  function buildDocHtml(title, bodyText) {
+    var esc = function (s) {
+      var d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    };
+    return (
+      "<html><head><meta charset='utf-8'></head><body>" +
+      "<h2>" + esc(title) + "</h2>" +
+      "<pre style='white-space:pre-wrap;font-family:inherit'>" + esc(bodyText) + "</pre>" +
+      "</body></html>"
+    );
+  }
+
+  var pendingDownload = null; // { mdUrl, noteId, title }
   document.addEventListener("click", function (e) {
-    var btn = e.target.closest("[data-download-env]");
-    if (!btn) return;
-    e.preventDefault();
-    btn.disabled = true;
-    var origText = btn.textContent;
-    btn.textContent = "Собираю…";
-    var noteId = btn.getAttribute("data-download-env");
-    fetch(SITE_BASE + "/assets/related/" + encodeURIComponent(noteId) + ".json")
-      .then(function (r) { return r.json(); })
-      .then(function (rel) {
-        var urls = rel.files; // [{name, url}]
-        return Promise.all(
-          urls.map(function (f) {
-            return fetch(f.url).then(function (r) { return r.arrayBuffer(); }).then(function (buf) {
-              return { name: f.name, bytes: new Uint8Array(buf) };
-            });
-          })
-        );
-      })
-      .then(function (files) {
-        var blob = buildZip(files);
-        var name = noteId.slice(0, 60) + " (окружение).zip";
-        if (window.freudSendToChat) {
-          // Внутри Telegram — в чат с ботом (см. tg.js): tg.downloadFile
-          // не умеет в blob:-ссылки, а обычное скачивание в вебвью ненадёжно.
-          window.freudSendToChat(blob, name);
-          return;
+    var openBtn = e.target.closest("[data-open-download]");
+    if (openBtn) {
+      pendingDownload = {
+        mdUrl: openBtn.getAttribute("data-dl-md-url"),
+        noteId: openBtn.getAttribute("data-dl-note-id"),
+        title: openBtn.getAttribute("data-dl-title"),
+      };
+      if (downloadSheet) {
+        downloadSheet.querySelector('[data-dl-format="text"]').hidden = !window.freudSendTextToChat;
+        downloadSheet.hidden = false;
+      }
+      return;
+    }
+    var fmtBtn = e.target.closest("[data-dl-format]");
+    if (!fmtBtn || !pendingDownload) return;
+    var format = fmtBtn.getAttribute("data-dl-format");
+    var fileBase = pendingDownload.title.slice(0, 60);
+    downloadSheet.hidden = true;
+
+    if (format === "env") {
+      if (window.freudToast) window.freudToast("Собираю архив…", { duration: 4000 });
+      fetch(SITE_BASE + "/assets/related/" + encodeURIComponent(pendingDownload.noteId) + ".json")
+        .then(function (r) { return r.json(); })
+        .then(function (rel) {
+          return Promise.all(
+            rel.files.map(function (f) {
+              return fetch(f.url).then(function (r) { return r.arrayBuffer(); }).then(function (buf) {
+                return { name: f.name, bytes: new Uint8Array(buf) };
+              });
+            })
+          );
+        })
+        .then(function (files) {
+          downloadOrSend(buildZip(files), fileBase + " (окружение).zip",
+            "Распакуйте архив в папку с вашим хранилищем Obsidian — ссылки между заметками останутся рабочими.");
+        })
+        .catch(function (err) { console.warn("Не удалось собрать архив", err); });
+      return;
+    }
+
+    fetch(pendingDownload.mdUrl)
+      .then(function (r) { return r.text(); })
+      .then(function (mdText) {
+        if (format === "md") {
+          downloadOrSend(new Blob([mdText], { type: "text/markdown" }), fileBase + ".md",
+            "Откройте файл в Obsidian (или перетащите в окно приложения) — оформление и ссылки сохранены.");
+        } else if (format === "doc") {
+          downloadOrSend(new Blob([buildDocHtml(pendingDownload.title, mdText)], { type: "application/msword" }), fileBase + ".doc",
+            "Откройте файл в Word или любом текстовом редакторе.");
+        } else if (format === "text" && window.freudSendTextToChat) {
+          window.freudSendTextToChat(mdText);
+          setTimeout(function () {
+            if (window.freudToast) window.freudToast("Сообщение с текстом заметки придёт следующим в чате с ботом.", { duration: 5000 });
+          }, 3600);
         }
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
       })
-      .catch(function (err) {
-        console.warn("Не удалось собрать архив", err);
-      })
-      .finally(function () {
-        btn.disabled = false;
-        btn.textContent = origText;
-      });
+      .catch(function (err) { console.warn("Не удалось скачать заметку", err); });
   });
 })();

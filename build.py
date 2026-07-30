@@ -168,13 +168,17 @@ def main():
     assets_base = su("/assets")
 
     def downloads_widget(note):
+        import html as html_mod
         s = slug_of(note["id"])
         prefix = {"atomic": "n", "conspect": "w", "hub": "m", "full_text": "f"}[note["type"]]
         md_url = su(f"/dl/{prefix}/{s}.md")
+        title = note["id"]
         html = (
             f'<section class="rel-block downloads">'
-            f'<a class="btn" href="{md_url}" download>Скачать .md</a>'
-            f'<button class="btn" data-download-env="{note["id"]}">Скачать с окружением</button>'
+            f'<button class="btn" data-open-download'
+            f' data-dl-md-url="{md_url}"'
+            f' data-dl-note-id="{html_mod.escape(note["id"])}"'
+            f' data-dl-title="{html_mod.escape(title)}">Скачать</button>'
             f"</section>"
         )
         return html
