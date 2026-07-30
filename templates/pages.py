@@ -444,8 +444,9 @@ def render_home(works, hubs, tags_top, stats, ctx):
     <h1 class="hero-title">Фрейдариум</h1>
     <p>Атомарная база работ Зигмунда Фрейда — {stats["atomic"]} заметок,
       {stats["works"]} работ, полные тексты, связи между мыслями.</p>
-    <a class="btn btn-primary" href="{sb}/n/random/">Случайная заметка</a>
+    <a class="btn btn-primary" id="heroPrimaryBtn" href="{sb}/n/random/">Случайная заметка</a>
     <a class="btn" href="{sb}/search/">Поиск</a>
+    <a class="see-all" id="heroRandomLink" href="{sb}/n/random/" hidden>Или откройте случайную заметку →</a>
   </section>
 
   {ONBOARD_HTML}

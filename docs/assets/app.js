@@ -138,6 +138,37 @@
     window.location.href = SITE_BASE + "/search/";
   });
 
+  // ── «Продолжить чтение» на главной ──
+  // Запоминаем последнюю открытую заметку/полный текст (не главную и не
+  // страницы-указатели — там нечего продолжать) — используется на главной,
+  // чтобы для вернувшегося читателя первой кнопкой была не «Случайная
+  // заметка», а «Продолжить: …». Чтобы это не превращалось в нагромождение
+  // кнопок, «Случайная заметка» в этом случае не исчезает, а сжимается до
+  // маленькой ссылки под основной парой кнопок (см. .see-all в CSS — тот же
+  // приём, что у «Все теги →»).
+  var LAST_READ_KEY = "freud:last-read";
+  var contentBody = document.querySelector(".note-body, .fulltext-body");
+  var noteTitleEl = document.querySelector(".note-title");
+  if (contentBody && noteTitleEl) {
+    try {
+      localStorage.setItem(LAST_READ_KEY, JSON.stringify({ url: location.pathname, title: noteTitleEl.textContent }));
+    } catch (e) {}
+  }
+  var heroPrimaryBtn = document.getElementById("heroPrimaryBtn");
+  var heroRandomLink = document.getElementById("heroRandomLink");
+  if (heroPrimaryBtn) {
+    try {
+      var lastRead = JSON.parse(localStorage.getItem(LAST_READ_KEY) || "null");
+      // location.pathname уже содержит SITE_BASE (это реальный путь браузера) —
+      // подставлять его вторично не нужно, иначе получится двойной префикс.
+      if (lastRead && lastRead.url && lastRead.title) {
+        heroPrimaryBtn.href = lastRead.url;
+        heroPrimaryBtn.textContent = "Продолжить: «" + lastRead.title + "»";
+        if (heroRandomLink) heroRandomLink.hidden = false;
+      }
+    } catch (e) {}
+  }
+
   // ── приветственный дисклеймер на главной: закрывается один раз навсегда ──
   var ONBOARD_KEY = "freud:onboard-dismissed";
   var onboard = document.getElementById("onboardCard");
