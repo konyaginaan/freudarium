@@ -5,6 +5,19 @@
   var SITE_BASE = window.__SITE_BASE__ || "";
   var root = document.documentElement;
 
+  // ── всплывающее уведомление снизу (используется и здесь, и в tg.js) ──
+  var toastEl = document.getElementById("toast");
+  var toastTimer = null;
+  window.freudToast = function (text, opts) {
+    opts = opts || {};
+    clearTimeout(toastTimer);
+    toastEl.textContent = text;
+    toastEl.classList.add("show");
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove("show");
+    }, opts.duration || 2600);
+  };
+
   // ── настройки оформления (localStorage; внутри Telegram дублируются в
   // CloudStorage — см. tg.js) ──
   // "system" — не отдельная кнопка (раньше дублировала «Светлую», когда
@@ -251,9 +264,16 @@
       })
       .then(function (files) {
         var blob = buildZip(files);
+        var name = noteId.slice(0, 60) + " (окружение).zip";
+        if (window.freudSendToChat) {
+          // Внутри Telegram — в чат с ботом (см. tg.js): tg.downloadFile
+          // не умеет в blob:-ссылки, а обычное скачивание в вебвью ненадёжно.
+          window.freudSendToChat(blob, name);
+          return;
+        }
         var a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = noteId.slice(0, 60) + " (окружение).zip";
+        a.download = name;
         document.body.appendChild(a);
         a.click();
         a.remove();

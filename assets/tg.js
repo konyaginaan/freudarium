@@ -39,30 +39,47 @@
     });
   });
 
-  // ── скачивание внутри Telegram: обычные <a download> часто не срабатывают
-  // в вебвью — используем tg.downloadFile (Bot API 8.0+), иначе открываем
-  // во внешнем браузере ──
-  function canDownloadFile() {
-    try { return tg.isVersionAtLeast && tg.isVersionAtLeast("8.0") && !!tg.downloadFile; }
-    catch (e) { return false; }
-  }
+  // ── скачивание внутри Telegram: обычные <a download> в вебвью ненадёжны
+  // (и на blob:-ссылки вроде архива «с окружением» tg.downloadFile вообще
+  // не годится — ему нужен настоящий https-адрес). Вместо скачивания в
+  // файловую систему устройства файл присылается ботом в чат — надёжнее,
+  // с уведомлением, и остаётся под рукой. См. ~/projects/freudarium-server. ──
+  var SERVER_URL = "https://freudarium.norevia.workers.dev";
+
+  window.freudSendToChat = function (source, name) {
+    if (window.freudToast) window.freudToast("Отправляю в чат…", { duration: 4000 });
+    var endpoint = SERVER_URL + "/send?name=" + encodeURIComponent(name || "");
+    var opts = { method: "POST", headers: { "X-Tg-Init-Data": tg.initData } };
+    if (typeof source === "string") {
+      endpoint += "&url=" + encodeURIComponent(source);
+    } else {
+      opts.body = source; // Blob, собранный в браузере (архив «с окружением»)
+    }
+    fetch(endpoint, opts)
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || String(r.status)); });
+        return r.json();
+      })
+      .then(function () {
+        if (window.freudToast) window.freudToast("Файл отправлен в чат с ботом", { duration: 3200 });
+      })
+      .catch(function (err) {
+        console.warn("send to chat failed", err);
+        var msg = /chat not started/.test(String(err.message))
+          ? "Сначала откройте чат с ботом и отправьте /start — потом попробуйте снова"
+          : "Не получилось отправить — проверьте связь и попробуйте ещё раз";
+        if (window.freudToast) window.freudToast(msg, { duration: 4500 });
+      });
+  };
+
   document.addEventListener(
     "click",
     function (e) {
       var a = e.target.closest("a[download]");
-      if (!a) return;
+      if (!a || a.href.indexOf("blob:") === 0) return; // blob: обрабатывает app.js напрямую через freudSendToChat
       e.preventDefault();
-      var url = a.href;
-      var name = a.getAttribute("download") || url.split("/").pop();
-      if (canDownloadFile()) {
-        try {
-          tg.downloadFile({ url: url, file_name: name });
-          return;
-        } catch (err) {
-          console.warn("downloadFile failed, fallback to openLink", err);
-        }
-      }
-      try { tg.openLink(url); } catch (e2) { window.open(url, "_blank"); }
+      var name = a.getAttribute("download") || a.href.split("/").pop();
+      window.freudSendToChat(a.href, name);
     },
     true
   );

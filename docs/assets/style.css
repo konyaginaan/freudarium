@@ -114,6 +114,16 @@ body:has(.hero-banner) .topbar { border-bottom-color: transparent; }
 
 main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; }
 
+/* ── всплывающее уведомление снизу (отправка файла в чат и т.п.) ── */
+.toast {
+  position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom));
+  transform: translateX(-50%); z-index: 60; max-width: min(92vw, 420px);
+  background: var(--ink); color: var(--surface); padding: 12px 18px; border-radius: 14px;
+  font-size: .92em; text-align: center; box-shadow: 0 8px 24px var(--shadow);
+  opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* ── плавающая кнопка «назад» ── */
 .fab-back {
   /* На широких окнах текст лежит в центрированной колонке шириной --col-width,
