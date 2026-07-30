@@ -209,8 +209,14 @@ def page(title: str, description: str, body_html: str, site_base: str,
   </div>
 </div>
 
+<!-- tg.js — первым: определяет window.freudHomeScreenSupported/
+     freudAddToHomeScreen синхронно при загрузке, а app.js читает их тоже
+     синхронно (не лениво, не в обработчике) сразу при разборе, чтобы решить,
+     показывать ли кнопку «Добавить на экран „Домой“» — если бы tg.js
+     выполнялся позже, эти переменные ещё не существовали бы в момент
+     проверки, и кнопка внутри Telegram никогда бы не показывалась. -->
+<script src="{assets}/tg.js?v={asset_v("tg.js")}"></script>
 <script src="{assets}/app.js?v={asset_v("app.js")}"></script>
 <script src="{assets}/annotations.js?v={asset_v("annotations.js")}"></script>
-<script src="{assets}/tg.js?v={asset_v("tg.js")}"></script>
 </body>
 </html>"""
