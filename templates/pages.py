@@ -148,8 +148,8 @@ def render_note(note, ctx):
   </div>
   {tags_html}
   {fulltext_html}
-  {rel_html}
   {downloads_html}
+  {rel_html}
 </article>
 """
 
@@ -192,11 +192,11 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     {body_html}
   </div>
   {source_html}
+  {downloads_html}
   <section class="rel-block">
     <h2>Заметки этой работы</h2>
     <div class="card-grid">{cards}</div>
   </section>
-  {downloads_html}
 </article>
 """
 

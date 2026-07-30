@@ -106,14 +106,18 @@
     if (!toolbar) return;
     var range = sel.getRangeAt(0);
     var rect = range.getBoundingClientRect();
+    // offsetHeight у скрытого (display:none) элемента всегда 0 — снять
+    // hidden НАДО до замера, иначе панель встаёт поверх самого выделения
+    // вместо того, чтобы висеть над ним (баг, из-за которого казалось,
+    // что выделение «не работает» — панель пряталась под пальцем/курсором).
+    toolbar.hidden = false;
     var top = window.scrollY + rect.top - toolbar.offsetHeight - 10;
     var left = window.scrollX + rect.left + rect.width / 2;
     toolbar.style.top = Math.max(window.scrollY + 8, top) + "px";
     toolbar.style.left = left + "px";
-    toolbar.hidden = false;
   }
 
-  document.addEventListener("selectionchange", function () {
+  function handleSelectionUpdate() {
     var sel = window.getSelection();
     if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
       hideToolbar();
@@ -131,6 +135,18 @@
     }
     pendingQuote = text;
     showToolbarForSelection(sel);
+  }
+
+  document.addEventListener("selectionchange", handleSelectionUpdate);
+  // На части мобильных браузеров/вебвью selectionchange после жеста
+  // выделения (долгий тап → перетаскивание маркеров) приходит с задержкой
+  // или не приходит вовсе, пока палец не отпущен — дублируем на touchend/
+  // mouseup с небольшой паузой, чтобы Selection успел обновиться к моменту
+  // отпускания (без паузы sel.toString() иногда ещё пуст).
+  ["mouseup", "touchend"].forEach(function (evt) {
+    document.addEventListener(evt, function () {
+      setTimeout(handleSelectionUpdate, 30);
+    });
   });
 
   if (toolbar) {
@@ -175,9 +191,12 @@
     });
   }
 
-  // клик вне панели/композера — скрыть панель выделения
-  document.addEventListener("mousedown", function (e) {
-    if (toolbar && !toolbar.hidden && !toolbar.contains(e.target)) hideToolbar();
+  // клик вне панели/композера — скрыть панель выделения (touchstart тоже:
+  // на чистом тач-устройстве mousedown может не прийти вовсе)
+  ["mousedown", "touchstart"].forEach(function (evt) {
+    document.addEventListener(evt, function (e) {
+      if (toolbar && !toolbar.hidden && !toolbar.contains(e.target)) hideToolbar();
+    });
   });
 
   // ── закладка страницы ──

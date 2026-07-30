@@ -190,17 +190,19 @@
   }
 
   // ── добавить на домашний экран (Bot API 8.0+) ──
-  // Раньше кнопка показывалась всегда, стоило открыть сайт внутри Telegram,
-  // а по нажатию тихо ничего не делала, если tg.addToHomeScreen в принципе
-  // не было в этой версии клиента — снаружи выглядело как «не работает».
-  // Теперь честно проверяем возможность заранее и даём знать об ошибке.
-  function homeScreenSupported() {
-    try { return tg.isVersionAtLeast && tg.isVersionAtLeast("8.0") && !!tg.addToHomeScreen; }
-    catch (e) { return false; }
-  }
-  window.freudHomeScreenSupported = homeScreenSupported();
+  // Раньше решали по isVersionAtLeast('8.0') + наличию метода — это только
+  // «в принципе умеет», а не «что сейчас произойдёт». Реальный статус даёт
+  // checkHomeScreenStatus: 'unsupported' (в этой версии/на этом устройстве
+  // нет вовсе), 'unknown' (можно предложить), 'added' (уже добавлено —
+  // именно поэтому нажатие «ничего не делало»: addToHomeScreen тогда просто
+  // no-op по документации Telegram), 'missed' (пользователь раньше отказался).
+  var homeScreenMethodExists = false;
+  try { homeScreenMethodExists = tg.isVersionAtLeast && tg.isVersionAtLeast("8.0") && !!tg.checkHomeScreenStatus; }
+  catch (e) {}
+  window.freudHomeScreenSupported = homeScreenMethodExists;
+
   window.freudAddToHomeScreen = function () {
-    if (!homeScreenSupported()) {
+    if (!homeScreenMethodExists) {
       if (window.freudToast) {
         window.freudToast(
           "Эта версия Telegram не поддерживает добавление напрямую — откройте меню ⋮ в шапке мини-приложения (не нашего сайта, а самого Telegram) и поищите там «Добавить на главный экран».",
@@ -209,19 +211,32 @@
       }
       return;
     }
-    try {
-      tg.addToHomeScreen();
-    } catch (err) {
-      console.warn("addToHomeScreen failed", err);
-      if (window.freudToast) window.freudToast("Не получилось — попробуйте через меню ⋮ в шапке Telegram", { duration: 4500 });
-    }
+    tg.checkHomeScreenStatus(function (status) {
+      console.log("checkHomeScreenStatus", status);
+      if (status === "added") {
+        if (window.freudToast) window.freudToast("Уже добавлено на этом устройстве — ищите иконку на главном экране", { duration: 4000 });
+        return;
+      }
+      if (status === "unsupported") {
+        if (window.freudToast) {
+          window.freudToast("Устройство не поддерживает это — попробуйте через меню ⋮ в шапке Telegram", { duration: 4500 });
+        }
+        return;
+      }
+      try {
+        tg.addToHomeScreen();
+      } catch (err) {
+        console.warn("addToHomeScreen failed", err);
+        if (window.freudToast) window.freudToast("Не получилось — попробуйте через меню ⋮ в шапке Telegram", { duration: 4500 });
+      }
+    });
   };
   if (tg.onEvent) {
     tg.onEvent("homeScreenAdded", function () {
       if (window.freudToast) window.freudToast("Готово — иконка добавлена на главный экран", { duration: 3000 });
     });
-    tg.onEvent("homeScreenChecked", function (data) {
-      console.log("homeScreenChecked", data);
+    tg.onEvent("homeScreenFailed", function () {
+      if (window.freudToast) window.freudToast("Не получилось добавить иконку", { duration: 3500 });
     });
   }
 })();

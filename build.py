@@ -263,8 +263,7 @@ def main():
             pf_filters = {"type": "заметка"}
             if work:
                 pf_filters["work"] = work["title"]
-            emit_page(url, n["id"], snippet(n), body_html, back_href=back_href, back_label="К работе",
-                      pagefind_filters=pf_filters)
+            emit_page(url, n["id"], snippet(n), body_html, back_href=back_href, pagefind_filters=pf_filters)
 
         elif n["type"] == "conspect":
             work = works_by_id.get(n["id"])
@@ -278,13 +277,13 @@ def main():
             if work.get("source_note_id"):
                 source_note = by_id.get(work["source_note_id"])
             body_html = pages.render_work(n, work, atomic_notes, source_note, ctx)
-            emit_page(url, work["title"], snippet(n), body_html, back_href=su("/works/"), back_label="Все работы",
+            emit_page(url, work["title"], snippet(n), body_html, back_href=su("/works/"),
                       pagefind_filters={"type": "работа", "work": work["title"]})
 
         elif n["type"] == "hub":
             body_html = pages.render_hub(n, ctx)
             emit_page(url, pages._display_title(n["id"]), snippet(n), body_html, back_href=su("/maps/"),
-                      back_label="Карты областей", pagefind_filters={"type": "карта"})
+                      pagefind_filters={"type": "карта"})
 
         elif n["type"] == "full_text":
             chs = fulltext_chapters[n["id"]]
@@ -302,7 +301,6 @@ def main():
                     "",
                     body_html,
                     back_href=back_href,
-                    back_label=work_title,
                     pagefind_filters={"type": "полный текст", "work": work_title},
                 )
 
