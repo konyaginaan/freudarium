@@ -48,7 +48,7 @@
 
   function render() {
     if (!comments.length) {
-      listEl.innerHTML = '<p class="comments-empty">Комментариев пока нет — будьте первым.</p>';
+      listEl.innerHTML = '<p class="comments-empty">Комментариев пока нет — оставьте первый комментарий.</p>';
       return;
     }
     var byId = {};
