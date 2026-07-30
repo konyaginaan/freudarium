@@ -9,6 +9,18 @@
   var KEY = "freud:annotations";
   var CONTENT_SELECTOR = ".note-body, .fulltext-body";
 
+  // Внутри Telegram-мини-приложения (и на iOS, и на Android) долгий тап по
+  // тексту не поднимает нативное выделение вовсе — жест туда не доходит,
+  // это ограничение самого клиента. Поэтому там ведём выделение сами (см.
+  // «ВЫДЕЛЕНИЕ ДОЛГИМ ТАПОМ» ниже — механизм портирован из читалки Norevia,
+  // ~/projects/norevia, где та же проблема решена таким же способом).
+  // Проверяем именно в момент события, а не один раз при загрузке скрипта:
+  // тег tg.js идёт в разметке ПОСЛЕ annotations.js и подставляет класс
+  // .in-telegram позже, чем выполняется код этого файла целиком.
+  function inTelegram() {
+    return document.documentElement.classList.contains("in-telegram");
+  }
+
   function uid() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   }
@@ -102,22 +114,26 @@
     if (toolbar) toolbar.hidden = true;
   }
 
-  function showToolbarForSelection(sel) {
+  // offsetHeight у скрытого (display:none) элемента всегда 0 — снять hidden
+  // НАДО до замера, иначе панель встаёт поверх самого выделения вместо того,
+  // чтобы висеть над ним (баг, из-за которого казалось, что выделение «не
+  // работает» — панель пряталась под пальцем/курсором).
+  function positionToolbar(rect) {
     if (!toolbar) return;
-    var range = sel.getRangeAt(0);
-    var rect = range.getBoundingClientRect();
-    // offsetHeight у скрытого (display:none) элемента всегда 0 — снять
-    // hidden НАДО до замера, иначе панель встаёт поверх самого выделения
-    // вместо того, чтобы висеть над ним (баг, из-за которого казалось,
-    // что выделение «не работает» — панель пряталась под пальцем/курсором).
     toolbar.hidden = false;
     var top = window.scrollY + rect.top - toolbar.offsetHeight - 10;
     var left = window.scrollX + rect.left + rect.width / 2;
     toolbar.style.top = Math.max(window.scrollY + 8, top) + "px";
     toolbar.style.left = left + "px";
   }
+  function showToolbarForSelection(sel) {
+    positionToolbar(sel.getRangeAt(0).getBoundingClientRect());
+  }
 
   function handleSelectionUpdate() {
+    // Внутри Telegram нативный Selection всегда пуст (жест туда не доходит) —
+    // ведёт панель свой обработчик долгого тапа ниже.
+    if (inTelegram()) return;
     var sel = window.getSelection();
     if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
       hideToolbar();
@@ -149,6 +165,225 @@
     });
   });
 
+  // ── ВЫДЕЛЕНИЕ ДОЛГИМ ТАПОМ (своё, вместо нативного — только внутри Telegram) ──
+  // Портировано из читалки Norevia (~/projects/norevia/index.html): та же
+  // проблема (нативное выделение не поднимается в вебвью Telegram) решена
+  // там точно так же — долгий тап цепляет слово под пальцем по символьным
+  // смещениям, протяжка расширяет выделение до слова под пальцем, подсветка
+  // во время протяжки рисуется самим (не через Range.surroundContents,
+  // чтобы не мутировать DOM на каждый tick протяжки и не терять узлы карты).
+  var WORD_CHAR_RE = /[\p{L}\p{M}]/u;
+  var LONG_PRESS_MS = 350;
+  var LONG_PRESS_SLOP = 10; // px: больше — это скролл, а не удержание
+
+  function buildTextMap(container) {
+    var walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+    var nodes = [];
+    var text = "";
+    var n;
+    while ((n = walker.nextNode())) {
+      nodes.push({ node: n, start: text.length, end: text.length + n.nodeValue.length });
+      text += n.nodeValue;
+    }
+    return { text: text, nodes: nodes, container: container };
+  }
+
+  function caretAt(x, y) {
+    if (document.caretPositionFromPoint) {
+      var pos = document.caretPositionFromPoint(x, y);
+      if (!pos || pos.offsetNode.nodeType !== Node.TEXT_NODE) return null;
+      return { node: pos.offsetNode, offset: pos.offset };
+    }
+    if (document.caretRangeFromPoint) {
+      var r = document.caretRangeFromPoint(x, y);
+      if (!r || r.startContainer.nodeType !== Node.TEXT_NODE) return null;
+      return { node: r.startContainer, offset: r.startOffset };
+    }
+    return null;
+  }
+
+  function wordAtPoint(x, y, map) {
+    var pos = caretAt(x, y);
+    if (!pos) return null;
+    var holder = map.nodes.find(function (n) { return n.node === pos.node; });
+    if (!holder) return null;
+    var text = map.text;
+    var start = holder.start + pos.offset, end = start;
+    while (start > 0 && WORD_CHAR_RE.test(text[start - 1])) start--;
+    while (end < text.length && WORD_CHAR_RE.test(text[end])) end++;
+    var word = text.slice(start, end);
+    return word ? { word: word, start: start, end: end } : null;
+  }
+
+  function rangeFromOwnOffsets(map, start, end) {
+    var s = map.nodes.find(function (n) { return start >= n.start && start < n.end; });
+    var e = map.nodes.find(function (n) { return end > n.start && end <= n.end; });
+    if (!s || !e) return null;
+    var r = document.createRange();
+    r.setStart(s.node, start - s.start);
+    r.setEnd(e.node, end - e.start);
+    return r;
+  }
+
+  // pdf.js у Norevia режет текст на фрагменты и поэтому там склейка строк
+  // была обязательна; у нас разметка проще, но выделение всё равно может
+  // пересекать <em>/<code>/<mark> — Range.getClientRects() тогда тоже отдаёт
+  // по прямоугольнику на фрагмент. Склеиваем те, чьи вертикальные диапазоны
+  // пересекаются, в один сплошной прямоугольник на строку.
+  function mergeLineRects(rects) {
+    var sorted = Array.prototype.filter.call(rects, function (r) { return r.width && r.height; })
+      .sort(function (a, b) { return a.top - b.top; });
+    var lines = [];
+    sorted.forEach(function (r) {
+      var line = lines.find(function (l) { return r.top - 3 <= l.bottom && l.top - 3 <= r.bottom; });
+      if (!line) { lines.push({ top: r.top, bottom: r.bottom, left: r.left, right: r.right }); return; }
+      line.top = Math.min(line.top, r.top);
+      line.bottom = Math.max(line.bottom, r.bottom);
+      line.left = Math.min(line.left, r.left);
+      line.right = Math.max(line.right, r.right);
+    });
+    return lines;
+  }
+
+  function ensureOwnHlLayer(container) {
+    var layer = container.querySelector(":scope > .own-hl-layer");
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.className = "own-hl-layer";
+      container.appendChild(layer);
+    }
+    return layer;
+  }
+  function clearPreviewRects(container) {
+    var layer = container.querySelector(":scope > .own-hl-layer");
+    if (layer) layer.innerHTML = "";
+  }
+  function renderPreviewRects(container, range) {
+    clearPreviewRects(container);
+    var layer = ensureOwnHlLayer(container);
+    var base = container.getBoundingClientRect();
+    mergeLineRects(range.getClientRects()).forEach(function (r) {
+      var d = document.createElement("div");
+      d.className = "own-hl-rect";
+      d.style.cssText = "left:" + (r.left - base.left - 2) + "px;top:" + (r.top - base.top) + "px;" +
+        "width:" + (r.right - r.left + 4) + "px;height:" + (r.bottom - r.top) + "px;";
+      layer.appendChild(d);
+    });
+  }
+
+  var lpTimer = null, lpOrigin = null, lpContainer = null, lpMap = null, lpAnchor = null;
+  var selecting = false;
+  var customSelection = null; // {container, map, start, end, text}
+
+  function cancelLongPress() {
+    clearTimeout(lpTimer);
+    lpTimer = null;
+    lpOrigin = null;
+  }
+
+  function clearCustomSelection() {
+    if (customSelection) clearPreviewRects(customSelection.container);
+    customSelection = null;
+  }
+
+  function applyCustomSelection(container, map, start, end) {
+    var range = rangeFromOwnOffsets(map, start, end);
+    if (!range) return;
+    customSelection = { container: container, map: map, start: start, end: end, text: map.text.slice(start, end) };
+    renderPreviewRects(container, range);
+  }
+
+  function beginOwnSelection(x, y) {
+    if (!lpMap) return;
+    var word = wordAtPoint(x, y, lpMap);
+    if (!word) return;
+    selecting = true;
+    lpAnchor = word;
+    applyCustomSelection(lpContainer, lpMap, word.start, word.end);
+    try {
+      var tgApp = window.Telegram && window.Telegram.WebApp;
+      if (tgApp && tgApp.HapticFeedback) tgApp.HapticFeedback.impactOccurred("light");
+    } catch (e) {}
+  }
+
+  function extendOwnSelection(x, y) {
+    if (!selecting || !lpMap || !lpAnchor) return;
+    var word = wordAtPoint(x, y, lpMap);
+    if (!word) return;
+    // Слово под пальцем захватываем целиком, только если палец прошёл его
+    // середину — иначе на конце абзаца выделение утаскивало первое слово
+    // следующего.
+    var start = word.start, end = word.end;
+    var range = rangeFromOwnOffsets(lpMap, word.start, word.end);
+    if (range) {
+      var r = range.getBoundingClientRect();
+      if (r.width) {
+        var pastMiddle = x > r.left + r.width / 2;
+        if (word.start >= lpAnchor.end && !pastMiddle) end = word.start;
+        else if (word.end <= lpAnchor.start && pastMiddle) start = word.end;
+      }
+    }
+    applyCustomSelection(lpContainer, lpMap, Math.min(lpAnchor.start, start), Math.max(lpAnchor.end, end));
+  }
+
+  function finishOwnPointer() {
+    cancelLongPress();
+    if (!selecting) return;
+    selecting = false;
+    lpAnchor = null;
+    if (customSelection) {
+      pendingQuote = customSelection.text;
+      var range = rangeFromOwnOffsets(customSelection.map, customSelection.start, customSelection.end);
+      if (range) positionToolbar(range.getBoundingClientRect());
+    }
+  }
+
+  document.addEventListener("pointerdown", function (e) {
+    if (!inTelegram()) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    var container = e.target.closest && e.target.closest(CONTENT_SELECTOR);
+    // Тап вне контейнера с текстом (в т.ч. по самой панели) не должен
+    // сбрасывать уже готовое выделение — только новый тап ПО ТЕКСТУ его снимает.
+    if (!container) { lpMap = null; return; }
+    if (customSelection) clearCustomSelection();
+    lpContainer = container;
+    lpMap = buildTextMap(container);
+    lpOrigin = { x: e.clientX, y: e.clientY };
+    clearTimeout(lpTimer);
+    lpTimer = setTimeout(function () { beginOwnSelection(lpOrigin.x, lpOrigin.y); }, LONG_PRESS_MS);
+  });
+  document.addEventListener("pointermove", function (e) {
+    if (!inTelegram()) return;
+    if (selecting) { extendOwnSelection(e.clientX, e.clientY); return; }
+    if (lpOrigin && Math.hypot(e.clientX - lpOrigin.x, e.clientY - lpOrigin.y) > LONG_PRESS_SLOP) {
+      cancelLongPress();
+    }
+  });
+  document.addEventListener("pointerup", function () {
+    if (!inTelegram()) return;
+    finishOwnPointer();
+  });
+  document.addEventListener("pointercancel", function () {
+    if (!inTelegram()) return;
+    if (selecting) finishOwnPointer(); else cancelLongPress();
+  });
+  // Пока тянут выделение, страница не должна ехать под пальцем.
+  document.addEventListener("touchmove", function (e) {
+    if (inTelegram() && selecting) e.preventDefault();
+  }, { passive: false });
+  // На части Android-клиентов долгий тап всё же успевает поднять нативные
+  // «синие маркеры»/меню раньше нашего таймера — глушим их зарождение внутри
+  // текста заметки, чтобы не соревновались с собственным выделением.
+  document.addEventListener("selectstart", function (e) {
+    if (!inTelegram()) return;
+    var el = e.target && (e.target.nodeType === Node.TEXT_NODE ? e.target.parentElement : e.target);
+    if (el && el.closest && el.closest(CONTENT_SELECTOR)) e.preventDefault();
+  });
+  document.addEventListener("contextmenu", function (e) {
+    if (!inTelegram()) return;
+    if (e.target && e.target.closest && e.target.closest(CONTENT_SELECTOR)) e.preventDefault();
+  });
+
   if (toolbar) {
     toolbar.addEventListener("click", function (e) {
       var colorBtn = e.target.closest("[data-color]");
@@ -157,6 +392,7 @@
         add({ type: "highlight", color: colorBtn.getAttribute("data-color"), quote: pendingQuote });
         hideToolbar();
         window.getSelection().removeAllRanges();
+        clearCustomSelection();
         renderSavedMarks();
         if (window.freudToast) window.freudToast("Выделено");
       } else if (noteBtn) {
@@ -180,11 +416,13 @@
       add({ type: "note", quote: quote, comment: comment });
       composer.hidden = true;
       window.getSelection().removeAllRanges();
+      clearCustomSelection();
       renderSavedMarks();
       if (window.freudToast) window.freudToast("Заметка сохранена");
     });
     composer.querySelector("[data-composer-cancel]").addEventListener("click", function () {
       composer.hidden = true;
+      clearCustomSelection();
     });
     composer.addEventListener("click", function (e) {
       if (e.target === composer) composer.hidden = true;

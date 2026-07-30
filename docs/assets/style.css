@@ -199,11 +199,28 @@ mark.user-mark-note {
 .crumbs { font-size: 13px; color: var(--ink-muted); margin-bottom: 10px; }
 .crumbs a { color: var(--ink-muted); }
 .work-meta { color: var(--ink-muted); font-size: 14px; margin: 0 0 16px; }
-/* Telegram-вебвью (особенно iOS) по умолчанию подавляет нативное выделение
-   текста внутри мини-приложений — явный user-select нужен, чтобы его
-   переопределить (без этого правила выделение не появляется вообще). */
+/* Внутри Telegram-мини-приложения (iOS и Android) долгий тап по тексту не
+   поднимает нативное выделение вовсе — жест туда просто не доходит (это
+   ограничение самого клиента, не CSS). Поэтому внутри Telegram выделение
+   ведётся собственным механизмом (см. annotations.js, ownSelection —
+   портировано из читалки Norevia), а не браузерным Selection API.
+   user-select здесь всё равно оставлен text — для обычного браузера вне
+   Telegram, где нативное выделение работает и его незачем отключать. */
 .note-body, .fulltext-body {
+  /* z-index:0 создаёт свой стек-контекст — без него отрицательный z-index
+     оверлея ниже мог бы уйти НИЖЕ фона всей страницы вместо того, чтобы
+     просто спрятаться под текст этого контейнера. */
+  position: relative; z-index: 0;
   -webkit-user-select: text; user-select: text; -webkit-touch-callout: default;
+}
+/* Отрицательный z-index — единственный способ разместить абсолютно
+   спозиционированный слой ПОД обычным строчным текстом того же контейнера
+   (позиционированные потомки красятся поверх статичных, если только
+   z-index не отрицательный). Иначе подсветка легла бы поверх букв. */
+.own-hl-layer { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
+.own-hl-rect {
+  position: absolute; background: color-mix(in srgb, var(--bruise) 35%, transparent);
+  border-radius: 2px;
 }
 .note-body p { margin: 0 0 1em; }
 .note-body h2 { font-size: 1.25em; margin: 1.4em 0 .5em; }
