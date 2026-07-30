@@ -371,6 +371,13 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .chip-bruise:hover, .chip-flesh:hover, .chip-verdigris:hover { filter: brightness(0.95); }
 
 /* ── связи ── */
+.feedback-link { margin: 2em 0 0; }
+.chip-muted-btn {
+  background: none; border: none; padding: 0; font: inherit; font-size: .88em;
+  color: var(--ink-muted); text-decoration: underline; cursor: pointer; text-align: left;
+}
+.chip-muted-btn:hover { color: var(--bruise); }
+
 .rel-block { margin: 2em 0; }
 .rel-block h2 { font-size: .82em; text-transform: uppercase; letter-spacing: .06em;
   color: var(--ink-muted); margin: 0 0 .6em; font-weight: 700; }

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/freudarium/assets/style.css?v=858cc656">
+<link rel="stylesheet" href="/freudarium/assets/style.css?v=173a7418">
 <link rel="manifest" href="/freudarium/manifest.webmanifest">
 <meta name="theme-color" content="#EFE2D8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#2A1F2D" media="(prefers-color-scheme: dark)">
@@ -270,6 +270,7 @@
 <p id="p396">Теперь Фрейд подытожит эти обширные рассуждения о работе сновидения. Мы поставили вопрос: развёртывает ли душа при образовании сна все свои способности без помех, или лишь скованную в своей продуктивности часть их? Наши исследования подводят к тому, чтобы вовсе отвергнуть такую постановку вопроса как неадекватную положению дел. Но если мы всё же хотим остаться на той почве, к которой нас подталкивает сам вопрос, придётся признать оба, по видимости взаимоисключающих противоположностью, воззрения одновременно. Душевная работа при образовании сна распадается на два достижения: создание мыслей сновидения и превращение их в содержание сна. Мысли сновидения совершенно правильны и созданы со всей психической затратой, на какую мы способны; они принадлежат нашему не ставшему сознательным мышлению, из которого через определённое преобразование возникают и сознательные мысли. Сколько бы ни было в них достойного познания и загадочного, эти загадки не имеют особого отношения к сновидению и не заслуживают обсуждения среди проблем сна. Напротив, тот другой кусок работы, что превращает бессознательные мысли в содержание сна, своеобразен для сновидной жизни и характерен именно для неё. Эта собственно работа сновидения удаляется от образца бодрствующего мышления гораздо дальше, чем полагали даже решительнейшие принижатели психической деятельности при образовании сна. Она не небрежнее, не менее правильна, не более забывчива или неполна, чем бодрствующее мышление, — она нечто качественно совершенно иное и потому пока несравнимо с ним. Она вообще не мыслит, не считает, не судит — она ограничивается тем, что преобразует. Её можно исчерпывающе описать, если держать в поле зрения условия, которым должен удовлетворять её продукт. Этот продукт, сон, должен прежде всего быть изъят из-под цензуры, и с этой целью работа сновидения пользуется смещением психических интенсивностей вплоть до переоценки всех психических ценностей; мысли должны воспроизводиться исключительно или преимущественно в материале зрительных и слуховых следов памяти, и из этого требования для работы сновидения вырастает забота об изобразимости, которой она отвечает новыми смещениями. Должны создаваться (по-видимому) бóльшие интенсивности, чем те, что ночью доступны мыслям сновидения, и этой цели служит обильное сгущение, производимое с составными частями мыслей сновидения. На логические отношения материала мыслей обращается мало внимания; в конце концов они находят скрытое отображение в формальных особенностях сновидений. Аффекты мыслей сновидения подвергаются меньшим изменениям, чем их содержание представлений: как правило, они подавляются, а там, где сохраняются, отделяются от представлений и по своей однородности собираются вместе. Лишь один кусок работы сновидения — непостоянная по своему объёму переработка уже отчасти разбуженным бодрствующим мышлением — хоть сколько-то соответствует тому пониманию, какое авторы хотели придать всей деятельности образования сна в целом.<span class="p-note-links"><a class="p-note-link" href="/freudarium/n/itogovoe-rezyume-raboty-snovideniya-ona-ne-myslit-a-lish-preobrazuet-freyd-1900/" title="Заметка об этом месте">●</a></span></p>
   </div>
   <div class="chapter-pager"><a class="btn" href="/freudarium/f/tolkovanie-snovideniy-polnyy-tekst-freyd-1900/5/">← Предыдущая глава</a><a class="btn" href="/freudarium/f/tolkovanie-snovideniy-polnyy-tekst-freyd-1900/7/">Следующая глава →</a></div>
+  <p class="feedback-link"><button class="chip-muted-btn" data-feedback-open>Заметили неточность или хотите что-то сказать автору? Написать →</button></p>
 </article>
 
 </main>
@@ -296,6 +297,7 @@
   <button class="sel-color" data-color="verdigris" aria-label="Выделить зелёным"></button>
   <button class="sel-note-btn" data-action="note">Заметка</button>
   <button class="sel-note-btn" data-action="send">Отправить</button>
+  <button class="sel-note-btn" data-action="report">Правка</button>
 </div>
 
 <!-- Панель по тапу на уже сохранённое выделение/заметку (mark.user-mark в
@@ -324,6 +326,22 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2Z"/></svg>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Комментарий / «Предложить правку» — автору сайта в Telegram (не автору
+     запроса, см. assets/tg.js:freudSendFeedback). Одна шторка на оба сценария:
+     с цитатой (запущена из selToolbar по выделению — data-action="report")
+     и без (запущена кнопкой «Написать автору» внизу страницы заметки). -->
+<div class="sheet" id="feedbackSheet" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3 id="feedbackSheetTitle">Написать автору</h3>
+    <blockquote class="composer-quote" id="feedbackQuoteView" hidden></blockquote>
+    <textarea name="feedback-text" class="composer-textarea" rows="4" placeholder="Ваше сообщение…"></textarea>
+    <div class="composer-actions">
+      <button class="btn btn-primary" data-feedback-send>Отправить автору</button>
+      <button class="btn" data-close-sheet>Отмена</button>
     </div>
   </div>
 </div>
@@ -371,7 +389,7 @@
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
     <p class="menu-author">Автор — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a></p>
-    <p class="build-stamp">сборка 30.07 23:54 · f3f319</p>
+    <p class="build-stamp">сборка 31.07 00:11 · 4a1467</p>
   </div>
 </div>
 
@@ -407,8 +425,8 @@
      показывать ли кнопку «Добавить на экран „Домой“» — если бы tg.js
      выполнялся позже, эти переменные ещё не существовали бы в момент
      проверки, и кнопка внутри Telegram никогда бы не показывалась. -->
-<script src="/freudarium/assets/tg.js?v=230f2684"></script>
+<script src="/freudarium/assets/tg.js?v=1265e8b7"></script>
 <script src="/freudarium/assets/app.js?v=cd36321d"></script>
-<script src="/freudarium/assets/annotations.js?v=f3f31968"></script>
+<script src="/freudarium/assets/annotations.js?v=4a1467bf"></script>
 </body>
 </html>

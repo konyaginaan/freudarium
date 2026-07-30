@@ -97,6 +97,32 @@
       });
   };
 
+  // Комментарий / «Предложить правку» — уходят не в чат отправителя (как
+  // freudSendTextToChat выше), а автору сайта (см. ~/projects/freudarium-server,
+  // эндпоинт /feedback, секрет OWNER_CHAT_ID). payload: {type: "edit"|"comment",
+  // text, quote?, pageTitle, url}.
+  window.freudSendFeedback = function (payload) {
+    if (window.freudToast) window.freudToast("Отправляю…", { duration: 4000 });
+    return fetch(SERVER_URL + "/feedback", {
+      method: "POST",
+      headers: { "X-Tg-Init-Data": tg.initData, "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || String(r.status)); });
+        return r.json();
+      })
+      .then(function () {
+        if (window.freudToast) window.freudToast("Отправлено автору", { duration: 3200 });
+        return true;
+      })
+      .catch(function (err) {
+        console.warn("send feedback failed", err);
+        if (window.freudToast) window.freudToast("Не получилось отправить — проверьте связь и попробуйте ещё раз", { duration: 4500 });
+        return false;
+      });
+  };
+
   document.addEventListener(
     "click",
     function (e) {

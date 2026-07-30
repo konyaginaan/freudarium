@@ -180,6 +180,59 @@
     });
   }
 
+  // ── комментарий / «Предложить правку» — автору сайта, не в чат
+  // отправителя (см. window.freudSendFeedback в assets/tg.js). Одна шторка
+  // на оба сценария: с цитатой (из панели выделения, data-action="report")
+  // и без (кнопка «Написать автору» внизу страницы заметки, data-feedback-open). ──
+  var feedbackSheet = document.getElementById("feedbackSheet");
+  var feedbackType = "comment";
+  var feedbackQuote = "";
+  function openFeedbackSheet(type, quote) {
+    if (!feedbackSheet) return;
+    if (!window.freudSendFeedback) {
+      if (window.freudToast) window.freudToast("Написать автору можно только внутри Telegram");
+      return;
+    }
+    feedbackType = type;
+    feedbackQuote = quote || "";
+    feedbackSheet.querySelector("#feedbackSheetTitle").textContent =
+      type === "edit" ? "Предложить правку" : "Написать автору";
+    var quoteView = feedbackSheet.querySelector("#feedbackQuoteView");
+    if (feedbackQuote) {
+      quoteView.textContent = feedbackQuote;
+      quoteView.hidden = false;
+    } else {
+      quoteView.hidden = true;
+    }
+    var textarea = feedbackSheet.querySelector("[name=feedback-text]");
+    textarea.value = "";
+    feedbackSheet.hidden = false;
+    textarea.focus();
+  }
+  window.freudOpenFeedbackSheet = openFeedbackSheet;
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("[data-feedback-open]")) openFeedbackSheet("comment", "");
+  });
+  if (feedbackSheet) {
+    feedbackSheet.addEventListener("click", function (e) {
+      if (e.target === feedbackSheet || e.target.closest("[data-close-sheet]")) {
+        feedbackSheet.hidden = true;
+        return;
+      }
+      if (!e.target.closest("[data-feedback-send]")) return;
+      var text = feedbackSheet.querySelector("[name=feedback-text]").value.trim();
+      if (!text) return;
+      feedbackSheet.hidden = true;
+      window.freudSendFeedback({
+        type: feedbackType,
+        text: text,
+        quote: feedbackQuote,
+        pageTitle: (document.querySelector(".note-title, .chapter-title") || {}).textContent || document.title,
+        url: pageUrl(),
+      });
+    });
+  }
+
   function renderSavedMarks() {
     var container = document.querySelector(CONTENT_SELECTOR);
     if (!container) return;
@@ -494,6 +547,7 @@
       var colorBtn = e.target.closest("[data-color]");
       var noteBtn = e.target.closest("[data-action='note']");
       var sendBtn = e.target.closest("[data-action='send']");
+      var reportBtn = e.target.closest("[data-action='report']");
       if (colorBtn) {
         add({ type: "highlight", color: colorBtn.getAttribute("data-color"), quote: pendingQuote });
         hideToolbar();
@@ -513,6 +567,9 @@
           pageTitle: (document.querySelector(".note-title") || {}).textContent || document.title,
           url: pageUrl(),
         });
+      } else if (reportBtn) {
+        hideToolbar();
+        openFeedbackSheet("edit", pendingQuote);
       }
     });
   }

@@ -46,6 +46,16 @@ def _inject_note_markers(body_html, anchor_notes, note_url):
     return _P_TAG_RE.sub(repl, body_html)
 
 
+# Комментарий/«Предложить правку» автору (Фаза 5, 30.07.2026) — открывает
+# #feedbackSheet без цитаты (annotations.js: data-feedback-open). Правка с
+# цитатой запускается иначе — выделением текста и кнопкой «Правка» в
+# selToolbar, у неё готовая цитата, отдельная кнопка тут не нужна.
+_FEEDBACK_LINK_HTML = (
+    '<p class="feedback-link"><button class="chip-muted-btn" data-feedback-open>'
+    "Заметили неточность или хотите что-то сказать автору? Написать →</button></p>"
+)
+
+
 # Цветные чипы тегов (см. референс-макет «Дневник снов», подготовка 30.07.2026)
 # — тот же акцентный набор, что уже красит dash'и главы и подсветки выделений,
 # не новая палитра. hashlib, не hash() — тот рандомизирован по процессам
@@ -182,6 +192,7 @@ def render_note(note, ctx):
   {tags_html}
   {downloads_html}
   {rel_html}
+  {_FEEDBACK_LINK_HTML}
 </article>
 """
 
@@ -242,6 +253,7 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     <h2>Заметки этой работы</h2>
     <div class="card-grid">{cards}</div>
   </section>
+  {_FEEDBACK_LINK_HTML}
 </article>
 """
 
@@ -351,6 +363,7 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
     {body_html}
   </div>
   {pager}
+  {_FEEDBACK_LINK_HTML}
 </article>
 """
 
@@ -389,6 +402,7 @@ def render_hub(hub_note, ctx):
     {body_html}
   </div>
   {downloads_html}
+  {_FEEDBACK_LINK_HTML}
 </article>
 """
 

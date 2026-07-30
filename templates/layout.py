@@ -165,6 +165,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
   <button class="sel-color" data-color="verdigris" aria-label="Выделить зелёным"></button>
   <button class="sel-note-btn" data-action="note">Заметка</button>
   <button class="sel-note-btn" data-action="send">Отправить</button>
+  <button class="sel-note-btn" data-action="report">Правка</button>
 </div>
 
 <!-- Панель по тапу на уже сохранённое выделение/заметку (mark.user-mark в
@@ -193,6 +194,22 @@ def page(title: str, description: str, body_html: str, site_base: str,
         <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2Z"/></svg>
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Комментарий / «Предложить правку» — автору сайта в Telegram (не автору
+     запроса, см. assets/tg.js:freudSendFeedback). Одна шторка на оба сценария:
+     с цитатой (запущена из selToolbar по выделению — data-action="report")
+     и без (запущена кнопкой «Написать автору» внизу страницы заметки). -->
+<div class="sheet" id="feedbackSheet" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3 id="feedbackSheetTitle">Написать автору</h3>
+    <blockquote class="composer-quote" id="feedbackQuoteView" hidden></blockquote>
+    <textarea name="feedback-text" class="composer-textarea" rows="4" placeholder="Ваше сообщение…"></textarea>
+    <div class="composer-actions">
+      <button class="btn btn-primary" data-feedback-send>Отправить автору</button>
+      <button class="btn" data-close-sheet>Отмена</button>
     </div>
   </div>
 </div>
