@@ -517,11 +517,12 @@
       var quote = composer.querySelector("[name=quote]").value;
       var comment = composer.querySelector("[name=comment]").value.trim();
       if (!comment) return;
+      var saved;
       if (composerEditingId) {
-        update(composerEditingId, { comment: comment });
+        saved = update(composerEditingId, { comment: comment });
         if (window.freudToast) window.freudToast("Заметка обновлена");
       } else {
-        add({ type: "note", quote: quote, comment: comment });
+        saved = add({ type: "note", quote: quote, comment: comment });
         if (window.freudToast) window.freudToast("Заметка сохранена");
       }
       composerEditingId = null;
@@ -529,6 +530,10 @@
       window.getSelection().removeAllRanges();
       clearCustomSelection();
       renderSavedMarks();
+      // Сразу предлагаем отправить только что написанное в чат (MD/DOC/
+      // текст) — в листе есть «Отмена», так что это предложение, а не
+      // навязанное действие.
+      if (saved) openExportSheetFor(saved);
     });
     composer.querySelector("[data-composer-cancel]").addEventListener("click", function () {
       composer.hidden = true;
