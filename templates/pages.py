@@ -80,7 +80,7 @@ def _display_title(note_id: str) -> str:
 def render_note(note, ctx):
     """ctx: resolve_link, note_url, work_url, fulltext_anchor_url, tag_url,
     works_by_id, backlinks_by_id, site_base, assets_base"""
-    body_html = mdconv.render_body(note["body"], ctx["resolve_link"], ctx["assets_base"])
+    body_html = mdconv.render_body(note["body"], ctx["resolve_link"], ctx["assets_base"], images_dir=ctx["images_dir"])
 
     work = ctx["works_by_id"].get(note["source_work_id"]) if note.get("source_work_id") else None
 
@@ -179,13 +179,15 @@ def render_note(note, ctx):
 
 def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     body_html = mdconv.render_body(
-        conspect_note["body"], ctx["resolve_link"], ctx["assets_base"], collapse_intro=True
+        conspect_note["body"], ctx["resolve_link"], ctx["assets_base"],
+        collapse_intro=True, images_dir=ctx["images_dir"],
     )
 
     source_html = ""
     if source_note:
         source_body_html = mdconv.render_body(
-            source_note["body"], ctx["resolve_link"], ctx["assets_base"], collapse_intro=True
+            source_note["body"], ctx["resolve_link"], ctx["assets_base"],
+            collapse_intro=True, images_dir=ctx["images_dir"],
         )
         source_html = (
             '<section class="rel-block"><h2>Источник</h2>'
@@ -293,7 +295,7 @@ def _provenance_banner(prov, compact):
 
 def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url, anchor_notes=None, prov=None):
     chapter = chapters[idx]
-    body_html = mdconv.render_body(chapter["body"], ctx["resolve_link"], ctx["assets_base"])
+    body_html = mdconv.render_body(chapter["body"], ctx["resolve_link"], ctx["assets_base"], images_dir=ctx["images_dir"])
     body_html = _inject_note_markers(body_html, anchor_notes, ctx["note_url"])
 
     banner_html = _provenance_banner(prov, compact=(idx != 0)) if prov else ""
@@ -304,7 +306,7 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
     # (prov["header_text"]), без эвристики и без риска утечь в тело.
     source_details_html = ""
     if idx == 0 and prov and prov["header_text"]:
-        header_html = mdconv.render_body(prov["header_text"], ctx["resolve_link"], ctx["assets_base"])
+        header_html = mdconv.render_body(prov["header_text"], ctx["resolve_link"], ctx["assets_base"], images_dir=ctx["images_dir"])
         source_details_html = f'<details class="src-details"><summary>Источник и детали</summary>{header_html}</details>'
 
     nav_items = []
@@ -345,7 +347,7 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
 
 
 def render_hub(hub_note, ctx):
-    body_html = mdconv.render_body(hub_note["body"], ctx["resolve_link"], ctx["assets_base"])
+    body_html = mdconv.render_body(hub_note["body"], ctx["resolve_link"], ctx["assets_base"], images_dir=ctx["images_dir"])
     downloads_html = ctx["downloads_widget_hub"](hub_note)
     return f"""
 <article class="hub-page">

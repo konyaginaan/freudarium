@@ -12,6 +12,8 @@
 import html
 import re
 
+from . import svgs
+
 MDLINK_RE = re.compile(r"\[([^\]]+)\]\((https?://[^\s)]+)\)")
 WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]*))?\]\]")
 EMBED_RE = re.compile(r"!\[\[([^\]|]+)(?:\|([^\]]*))?\]\]")
@@ -35,7 +37,7 @@ _INLINE_RE = re.compile(
 )
 
 
-def _inline(text: str, resolve_link, asset_base: str) -> str:
+def _inline(text: str, resolve_link, asset_base: str, images_dir=None) -> str:
     """Инлайновая разметка внутри текста одного блока (text — «сырой», неэкранированный)."""
     out = []
     pos = 0
@@ -45,9 +47,12 @@ def _inline(text: str, resolve_link, asset_base: str) -> str:
             em = EMBED_RE.match(m.group("embed"))
             fname = em.group(1).strip()
             alt = html.escape((em.group(2) or fname).strip())
-            out.append(
-                f'<img class="note-embed" src="{asset_base}/images/{html.escape(fname)}" alt="{alt}" loading="lazy">'
-            )
+            if images_dir is not None and fname.lower().endswith(".svg"):
+                out.append(svgs.render_embed_cached(fname, images_dir))
+            else:
+                out.append(
+                    f'<img class="note-embed" src="{asset_base}/images/{html.escape(fname)}" alt="{alt}" loading="lazy">'
+                )
         elif m.group("wiki"):
             wm = WIKILINK_RE.match(m.group("wiki"))
             target = wm.group(1).strip()
@@ -112,28 +117,30 @@ def split_intro_blocks(body: str):
     return "\n\n".join(blocks[:i]), "\n\n".join(blocks[i:])
 
 
-def render_body(body: str, resolve_link, asset_base: str = "", collapse_intro: bool = False) -> str:
+def render_body(body: str, resolve_link, asset_base: str = "", collapse_intro: bool = False, images_dir=None) -> str:
     """
     resolve_link(id) -> url заметки на сайте, или None (тогда рендерится
     как обычный текст без ссылки — внешние/битые ссылки экспорта).
-    asset_base — префикс пути к /assets (для эмбедов-картинок).
+    asset_base — префикс пути к /assets (для эмбедов-картинок, если не SVG).
     collapse_intro — свернуть ведущий служебный блок (см. split_intro_blocks)
     в <details>, закрытый по умолчанию (для конспектов/источников/полных текстов).
+    images_dir — путь к каталогу «Изображения» в хранилище; если задан, эмбеды
+    ![[*.svg]] инлайнятся прямо в разметку (см. templates/svgs.py) вместо <img>.
     Возвращает готовый HTML (без обёртки <article>).
     """
     if collapse_intro:
         intro, rest = split_intro_blocks(body)
         if intro:
-            intro_html = _render_blocks(intro, resolve_link, asset_base)
-            rest_html = _render_blocks(rest, resolve_link, asset_base)
+            intro_html = _render_blocks(intro, resolve_link, asset_base, images_dir)
+            rest_html = _render_blocks(rest, resolve_link, asset_base, images_dir)
             return (
                 '<details class="src-details"><summary>Источник и детали</summary>'
                 f"{intro_html}</details>{rest_html}"
             )
-    return _render_blocks(body, resolve_link, asset_base)
+    return _render_blocks(body, resolve_link, asset_base, images_dir)
 
 
-def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
+def _render_blocks(body: str, resolve_link, asset_base: str = "", images_dir=None) -> str:
     blocks = re.split(r"\n\s*\n", body.strip("\n "))
     html_parts = []
     list_buffer = None  # ('ul'|'ol', [items])
@@ -160,7 +167,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
         if hm and len(stripped_lines) == 1:
             flush_list()
             level = min(len(hm.group(1)) + 1, 6)  # заметка внутри страницы — на уровень ниже
-            html_parts.append(f"<h{level}>{_inline(hm.group(2), resolve_link, asset_base)}</h{level}>")
+            html_parts.append(f"<h{level}>{_inline(hm.group(2), resolve_link, asset_base, images_dir)}</h{level}>")
             continue
 
         # Разделитель
@@ -178,7 +185,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
                     continue
                 mm = META_LINE_RE.match(l)
                 rows.append(
-                    f"<dt>{html.escape(mm.group(1))}</dt><dd>{_inline(mm.group(2), resolve_link, asset_base)}</dd>"
+                    f"<dt>{html.escape(mm.group(1))}</dt><dd>{_inline(mm.group(2), resolve_link, asset_base, images_dir)}</dd>"
                 )
             html_parts.append(f'<dl class="note-meta">{"".join(rows)}</dl>')
             continue
@@ -187,7 +194,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
         if all((not l) or l.startswith(">") for l in stripped_lines):
             flush_list()
             text = " ".join(l[1:].strip() for l in stripped_lines if l)
-            html_parts.append(f"<blockquote>{_inline(text, resolve_link, asset_base)}</blockquote>")
+            html_parts.append(f"<blockquote>{_inline(text, resolve_link, asset_base, images_dir)}</blockquote>")
             continue
 
         # Таблица (заголовок + строка-разделитель + строки данных)
@@ -203,9 +210,9 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
 
             head = cells(stripped_lines[0])
             body_rows = [cells(r) for r in stripped_lines[2:] if r.strip()]
-            thead = "".join(f"<th>{_inline(c, resolve_link, asset_base)}</th>" for c in head)
+            thead = "".join(f"<th>{_inline(c, resolve_link, asset_base, images_dir)}</th>" for c in head)
             tbody = "".join(
-                "<tr>" + "".join(f"<td>{_inline(c, resolve_link, asset_base)}</td>" for c in row) + "</tr>"
+                "<tr>" + "".join(f"<td>{_inline(c, resolve_link, asset_base, images_dir)}</td>" for c in row) + "</tr>"
                 for row in body_rows
             )
             html_parts.append(
@@ -227,7 +234,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
                 # отдельными пунктами вложенного списка, а не одной строкой через запятую
                 sm = STATION_LINE_RE.match(item_text)
                 if sm:
-                    label_html = _inline(sm.group(1).strip(), resolve_link, asset_base)
+                    label_html = _inline(sm.group(1).strip(), resolve_link, asset_base, images_dir)
                     sub_items = []
                     for wm in WIKILINK_RE.finditer(sm.group(2)):
                         target = wm.group(1).strip()
@@ -241,7 +248,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
                         f'{label_html}<ul class="hub-links">{"".join(sub_items)}</ul>'
                     )
                 else:
-                    list_buffer[1].append(_inline(item_text, resolve_link, asset_base))
+                    list_buffer[1].append(_inline(item_text, resolve_link, asset_base, images_dir))
             continue
         if all((not l) or re.match(r"^\d+\.\s+", l) for l in stripped_lines):
             if not (list_buffer and list_buffer[0] == "ol"):
@@ -249,7 +256,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
                 list_buffer = ("ol", [])
             for l in stripped_lines:
                 if l:
-                    list_buffer[1].append(_inline(re.sub(r"^\d+\.\s+", "", l), resolve_link, asset_base))
+                    list_buffer[1].append(_inline(re.sub(r"^\d+\.\s+", "", l), resolve_link, asset_base, images_dir))
             continue
 
         flush_list()
@@ -259,11 +266,14 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
             em = EMBED_RE.match(stripped_lines[0])
             if em:
                 fname = em.group(1).strip()
-                alt = html.escape((em.group(2) or fname).strip())
-                html_parts.append(
-                    f'<figure class="note-figure"><img src="{asset_base}/images/{html.escape(fname)}" '
-                    f'alt="{alt}" loading="lazy"></figure>'
-                )
+                if images_dir is not None and fname.lower().endswith(".svg"):
+                    html_parts.append(svgs.render_embed_cached(fname, images_dir))
+                else:
+                    alt = html.escape((em.group(2) or fname).strip())
+                    html_parts.append(
+                        f'<figure class="note-figure"><img src="{asset_base}/images/{html.escape(fname)}" '
+                        f'alt="{alt}" loading="lazy"></figure>'
+                    )
                 continue
 
         # Обычный абзац; ищем хвостовой block-id ^pN у полных текстов.
@@ -274,7 +284,7 @@ def _render_blocks(body: str, resolve_link, asset_base: str = "") -> str:
             anchor_id = bm.group(1)
             text = text[: bm.start()]
         attr = f' id="{html.escape(anchor_id)}"' if anchor_id else ""
-        html_parts.append(f"<p{attr}>{_inline(text, resolve_link, asset_base)}</p>")
+        html_parts.append(f"<p{attr}>{_inline(text, resolve_link, asset_base, images_dir)}</p>")
 
     flush_list()
     return "\n".join(html_parts)

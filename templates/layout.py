@@ -90,6 +90,9 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <title>{esc_title}</title>
 <meta name="description" content="{esc_desc}">
 <link rel="canonical" href="{html.escape(canonical_path)}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="{assets}/style.css?v={asset_v("style.css")}">
 <link rel="manifest" href="{site_base}/manifest.webmanifest">
 <meta name="theme-color" content="#EFE2D8" media="(prefers-color-scheme: light)">
@@ -215,6 +218,13 @@ def page(title: str, description: str, body_html: str, site_base: str,
     <button class="btn dl-format" data-dl-format="text">Текст в чат</button>
     <button class="btn dl-format" data-dl-format="env">С окружением (.zip, MD)</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
+  </div>
+</div>
+
+<div class="sheet" id="svgLightbox" hidden data-pagefind-ignore>
+  <div class="sheet-inner svg-lightbox-inner">
+    <button class="sheet-close svg-lightbox-close" data-close-sheet>Закрыть ✕</button>
+    <div class="svg-lightbox-stage"></div>
   </div>
 </div>
 

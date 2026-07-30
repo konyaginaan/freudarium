@@ -166,12 +166,44 @@
     settingsSheet.hidden = false;
   });
   var downloadSheet = document.getElementById("downloadSheet");
-  [menuSheet, settingsSheet, downloadSheet].forEach(function (sh) {
+  var svgLightbox = document.getElementById("svgLightbox");
+  [menuSheet, settingsSheet, downloadSheet, svgLightbox].forEach(function (sh) {
     if (!sh) return;
     sh.addEventListener("click", function (e) {
       if (e.target === sh || e.target.closest("[data-close-sheet]")) sh.hidden = true;
     });
   });
+
+  // ── лайтбокс для SVG-схем: на телефоне плотные многоколоночные схемы
+  // (1600px viewBox, сжатые в узкую колонку контента) читаются на пределе
+  // комфорта — по тапу схема переезжает (не клонируется — иначе задвоятся
+  // id внутри неё) в оверлей с фиксированной увеличенной шириной рендера
+  // и прокруткой, а при закрытии возвращается на своё место в тексте.
+  if (svgLightbox) {
+    var lightboxStage = svgLightbox.querySelector(".svg-lightbox-stage");
+    var lightboxHome = null; // {parent, next} — куда вернуть svg при закрытии
+    document.querySelectorAll("figure.svg-embed").forEach(function (fig) {
+      fig.setAttribute("role", "button");
+      fig.setAttribute("tabindex", "0");
+      function openLightbox() {
+        var svg = fig.querySelector("svg");
+        if (!svg) return;
+        lightboxHome = { parent: fig, next: svg.nextSibling };
+        lightboxStage.appendChild(svg);
+        svgLightbox.hidden = false;
+      }
+      fig.addEventListener("click", openLightbox);
+      fig.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(); }
+      });
+    });
+    new MutationObserver(function () {
+      if (svgLightbox.hidden && lightboxHome) {
+        lightboxHome.parent.insertBefore(lightboxStage.firstChild, lightboxHome.next);
+        lightboxHome = null;
+      }
+    }).observe(svgLightbox, { attributes: true, attributeFilter: ["hidden"] });
+  }
 
   // ── поиск ──
   document.getElementById("searchBtn").addEventListener("click", function () {

@@ -292,6 +292,27 @@ mark.user-mark-note {
 }
 .note-embed, .note-figure img { max-width: 100%; border-radius: 12px; display: block; margin: 1.2em 0; }
 .note-figure { margin: 1.4em 0; }
+.svg-embed {
+  margin: 1.4em 0; border: 1px solid var(--border); border-radius: 12px;
+  box-shadow: 0 4px 16px var(--shadow); overflow: hidden; cursor: zoom-in;
+}
+.svg-embed svg { display: block; width: 100%; height: auto; }
+
+/* ── лайтбокс схем: на телефоне плотные многоколоночные схемы (1600px
+   viewBox) в узкой колонке контента читаются на пределе — по тапу схема
+   переезжает сюда и рендерится на фиксированной увеличенной ширине с
+   прокруткой, вместо того чтобы сжиматься под ширину колонки текста. ── */
+#svgLightbox { align-items: center; justify-content: center; padding: 16px; }
+.svg-lightbox-inner {
+  position: relative; width: auto; max-width: 100%; max-height: 100%; border-radius: 16px;
+  padding: 44px 12px 12px; display: flex; flex-direction: column;
+}
+.svg-lightbox-close {
+  position: absolute; top: 8px; right: 8px; width: auto; margin: 0;
+  padding: 8px 14px; font-size: .85em;
+}
+.svg-lightbox-stage { overflow: auto; max-width: 90vw; max-height: 80vh; border-radius: 8px; }
+.svg-lightbox-stage svg { display: block; width: 700px; max-width: none; height: auto; }
 .link-broken { color: var(--ink-muted); border-bottom: 1px dotted var(--ink-muted); }
 .table-wrap { overflow-x: auto; margin: 1em 0; }
 table { border-collapse: collapse; width: 100%; }

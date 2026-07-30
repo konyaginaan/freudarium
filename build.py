@@ -236,6 +236,7 @@ def main():
         "backlinks_by_id": backlinks_by_id,
         "site_base": SITE_BASE,
         "assets_base": assets_base,
+        "images_dir": IMAGES_DIR,
         "downloads_widget": downloads_widget,
         "downloads_widget_work": downloads_widget_work,
         "downloads_widget_hub": downloads_widget_hub,
