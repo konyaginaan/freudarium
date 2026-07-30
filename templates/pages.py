@@ -5,6 +5,7 @@ import html
 import re
 
 from . import mdconv
+from .layout import asset_v
 
 _P_TAG_RE = re.compile(r'<p id="(p[a-zA-Z0-9]*)">(.*?)</p>', re.DOTALL)
 
@@ -329,7 +330,7 @@ def render_search(ctx):
   <div class="search-results" id="searchResults"></div>
   <p class="search-empty" id="searchEmpty" hidden>Ничего не нашлось.</p>
 </article>
-<script type="module" src="{ctx["assets_base"]}/search.js"></script>
+<script type="module" src="{ctx["assets_base"]}/search.js?v={asset_v("search.js")}"></script>
 """
 
 
@@ -362,7 +363,7 @@ def render_my_notes(ctx):
     <button class="sheet-close" data-close-sheet>Отмена</button>
   </div>
 </div>
-<script src="{ctx["assets_base"]}/mynotes.js" defer></script>
+<script src="{ctx["assets_base"]}/mynotes.js?v={asset_v("mynotes.js")}" defer></script>
 """
 
 

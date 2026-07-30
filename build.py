@@ -411,7 +411,7 @@ def main():
     )
     random_html = (
         '<article class="note-page"><p>Выбираем случайную заметку…</p></article>'
-        f'<script src="{assets_base}/random.js"></script>'
+        f'<script src="{assets_base}/random.js?v={layout.asset_v("random.js")}"></script>'
     )
     emit_page(su("/n/random/"), "Случайная заметка", "", random_html, back_href=su("/"))
 

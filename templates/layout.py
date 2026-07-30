@@ -4,8 +4,24 @@ assets. Также вешает pagefind-атрибуты (data-pagefind-*) дл
 
 site_base — корень сайта (например "" локально или "/freud" на Pages без
 домена); assets — всегда site_base + "/assets"."""
+import hashlib
 import html
 from pathlib import Path
+
+# Кэш-бастер: короткий хэш содержимого файла в query-параметре (?v=…).
+# Без него GitHub Pages/браузер/вебвью Telegram спокойно держат старые копии
+# style.css и скриптов ещё долго после деплоя — правки «не доходят» до
+# пользователя, хотя на сервере уже лежат новые файлы. Хэш меняется только
+# когда меняется сам файл, так что кэш сбрасывается ровно тогда, когда нужно.
+_ASSETS_DIR = Path(__file__).parent.parent / "assets"
+_ASSET_V: dict[str, str] = {}
+
+
+def asset_v(name: str) -> str:
+    if name not in _ASSET_V:
+        _ASSET_V[name] = hashlib.md5((_ASSETS_DIR / name).read_bytes()).hexdigest()[:8]
+    return _ASSET_V[name]
+
 
 SITE_NAME = "Фрейдариум"
 # Марка в шапке — тот же профиль, что и в главном логотипе, но без цветного
@@ -64,7 +80,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <title>{esc_title}</title>
 <meta name="description" content="{esc_desc}">
 <link rel="canonical" href="{html.escape(canonical_path)}">
-<link rel="stylesheet" href="{assets}/style.css">
+<link rel="stylesheet" href="{assets}/style.css?v={asset_v("style.css")}">
 <link rel="manifest" href="{site_base}/manifest.webmanifest">
 <meta name="theme-color" content="#EFE2D8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#2A1F2D" media="(prefers-color-scheme: dark)">
@@ -175,8 +191,8 @@ def page(title: str, description: str, body_html: str, site_base: str,
   </div>
 </div>
 
-<script src="{assets}/app.js"></script>
-<script src="{assets}/annotations.js"></script>
-<script src="{assets}/tg.js"></script>
+<script src="{assets}/app.js?v={asset_v("app.js")}"></script>
+<script src="{assets}/annotations.js?v={asset_v("annotations.js")}"></script>
+<script src="{assets}/tg.js?v={asset_v("tg.js")}"></script>
 </body>
 </html>"""
