@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1420" width="1600" height="1420" role="img" aria-labelledby="title desc">
+  <title id="title">Нарушение сна изнутри и извне</title>
+  <desc id="desc">
+    Нарушение намерения спать может идти извне (внешний раздражитель) или изнутри
+    (остатки дня → латентные мысли сновидения → подкрепление от Бсз, возможное
+    благодаря тому, что цензура во сне ослаблена). Отдельно, как оговорка —
+    анти-катексис частично сохраняется: цензура ослаблена, а не снята.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .node rect { fill: var(--surface-2); stroke: none; }
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 56px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .aside-card rect { fill: var(--surface-2); stroke: none; }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .fork-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 46px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+
+      .condition-label {
+        fill: var(--bruise);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 36px;
+        font-style: italic;
+        font-weight: 500;
+      }
+
+      .aside-divider {
+        stroke: var(--ink-muted);
+        stroke-width: 2;
+        stroke-dasharray: 4 12;
+        stroke-linecap: round;
+      }
+
+      .aside-title {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 48px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .aside-subtitle {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="11" markerHeight="11"
+            refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1420" fill="#EFE2D8"/>
+
+  <!-- Нарушение намерения спать -->
+  <g class="node" transform="translate(375 60)">
+    <rect width="850" height="150" rx="22" ry="22"/>
+    <text x="425" y="92">Нарушение намерения спать</text>
+  </g>
+
+  <!-- Развилка на извне / изнутри -->
+  <path class="connector" d="M800 210 V250 H400 V310" marker-end="url(#arrow)"/>
+  <path class="connector" d="M800 210 V250 H1200 V310" marker-end="url(#arrow)"/>
+  <text class="fork-label" x="560" y="245">извне</text>
+  <text class="fork-label" x="1040" y="245">изнутри</text>
+
+  <!-- Внешний раздражитель (лист) -->
+  <g class="node" transform="translate(50 310)">
+    <rect width="700" height="150" rx="22" ry="22"/>
+    <text x="350" y="92">Внешний раздражитель</text>
+  </g>
+
+  <!-- Остатки дня -->
+  <g class="node" transform="translate(850 310)">
+    <rect width="700" height="150" rx="22" ry="22"/>
+    <text x="350" y="92">Остатки дня</text>
+  </g>
+
+  <path class="connector" d="M1200 460 V540" marker-end="url(#arrow)"/>
+
+  <!-- Латентные мысли сновидения -->
+  <g class="node" transform="translate(850 540)">
+    <rect width="700" height="190" rx="22" ry="22"/>
+    <text x="350" y="76">
+      <tspan x="350" dy="0">Латентные мысли</tspan>
+      <tspan x="350" dy="62">сновидения</tspan>
+    </text>
+  </g>
+
+  <path class="connector" d="M1200 730 V880" marker-end="url(#arrow)"/>
+  <text class="condition-label" x="1215" y="755">возможно, т.к.</text>
+  <text class="condition-label" x="1215" y="799">цензура во сне</text>
+  <text class="condition-label" x="1215" y="843">ослаблена</text>
+
+  <!-- Подкрепление от Бсз -->
+  <g class="node" transform="translate(850 880)">
+    <rect width="700" height="150" rx="22" ry="22"/>
+    <text x="350" y="92">Подкрепление от Бсз</text>
+  </g>
+
+  <!-- Оговорка: не финальный вывод цепочки, а параллельное уточнение -->
+  <line class="aside-divider" x1="650" y1="1090" x2="1150" y2="1090"/>
+
+  <g class="aside-card" transform="translate(300 1120)">
+    <rect width="1000" height="230" rx="22" ry="22"/>
+    <text class="aside-title" x="500" y="92">Анти-катексис частично сохраняется</text>
+    <text class="aside-subtitle" x="500" y="152">цензура ослаблена, а не снята</text>
+  </g>
+</svg>

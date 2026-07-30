@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1500" width="1600" height="1500" role="img" aria-labelledby="title desc">
+  <title id="title">Все средства остроумия совпадают с работой сновидения</title>
+  <desc id="desc">
+    Четыре технические средства остроумия и их двойники в работе сновидения:
+    смещение, несуразность/абсурд, изображение через противоположность,
+    непрямое изображение.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 48px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1500" fill="#EFE2D8"/>
+
+  <text class="col-header" x="365" y="90">Техника остроумия</text>
+  <text class="col-header" x="1160" y="90">Двойник в работе сновидения</text>
+
+  <!-- Смещение -->
+  <g class="cell" transform="translate(40 140)">
+    <rect width="650" height="270" rx="22" ry="22"/>
+    <text x="40" y="150">Смещение</text>
+  </g>
+  <g class="cell" transform="translate(730 140)">
+    <rect width="830" height="270" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">сновидение обязано ему</tspan>
+      <tspan x="40" dy="52">своим отчуждающим видом,</tspan>
+      <tspan x="40" dy="52">мешающим узнать в нём</tspan>
+      <tspan x="40" dy="52">продолжение дневных мыслей</tspan>
+    </text>
+  </g>
+
+  <!-- Несуразность, абсурд -->
+  <g class="cell" transform="translate(40 440)">
+    <rect width="650" height="370" rx="22" ry="22"/>
+    <text x="40" y="200">
+      <tspan x="40" dy="0">Несуразность,</tspan>
+      <tspan x="40" dy="52">абсурд</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(730 440)">
+    <rect width="830" height="370" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">стоили сновидению</tspan>
+      <tspan x="40" dy="52">достоинства психического</tspan>
+      <tspan x="40" dy="52">продукта и склонили авторов</tspan>
+      <tspan x="40" dy="52">к допущению «распада</tspan>
+      <tspan x="40" dy="52">душевной деятельности»</tspan>
+      <tspan x="40" dy="52">во сне</tspan>
+    </text>
+  </g>
+
+  <!-- Изображение через противоположность -->
+  <g class="cell" transform="translate(40 850)">
+    <rect width="650" height="320" rx="22" ry="22"/>
+    <text x="40" y="150">
+      <tspan x="40" dy="0">Изображение</tspan>
+      <tspan x="40" dy="52">через</tspan>
+      <tspan x="40" dy="52">противоположность</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(730 850)">
+    <rect width="830" height="320" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">в сновидении настолько</tspan>
+      <tspan x="40" dy="52">употребительно, что с ним</tspan>
+      <tspan x="40" dy="52">привыкли считаться даже</tspan>
+      <tspan x="40" dy="52">насквозь заблуждающиеся</tspan>
+      <tspan x="40" dy="52">народные сонники</tspan>
+    </text>
+  </g>
+
+  <!-- Непрямое изображение -->
+  <g class="cell" transform="translate(40 1210)">
+    <rect width="650" height="250" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">Непрямое изображение</tspan>
+      <tspan x="40" dy="52">(намёк, мелочь,</tspan>
+      <tspan x="40" dy="52">символика, сравнение)</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(730 1210)">
+    <rect width="830" height="250" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">именно то, что отличает</tspan>
+      <tspan x="40" dy="52">способ выражения сновидения</tspan>
+      <tspan x="40" dy="52">от бодрственного мышления</tspan>
+    </text>
+  </g>
+</svg>

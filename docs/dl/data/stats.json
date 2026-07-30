@@ -1,0 +1,23 @@
+{
+  "generated_at": "2026-07-30T09:40:38.411690+00:00",
+  "total_notes": 2455,
+  "type_counts": {
+    "atomic": 2279,
+    "conspect": 49,
+    "source_note": 50,
+    "hub": 25,
+    "full_text": 47,
+    "dashboard": 1,
+    "tracker": 3,
+    "map": 1
+  },
+  "total_tags": 918,
+  "total_broken_links": 115,
+  "atomic_notes_without_tags": 7,
+  "total_works": 49,
+  "notes_with_embeds": 33,
+  "total_embeds": 52,
+  "missing_embed_files": [
+    "файл.svg"
+  ]
+}

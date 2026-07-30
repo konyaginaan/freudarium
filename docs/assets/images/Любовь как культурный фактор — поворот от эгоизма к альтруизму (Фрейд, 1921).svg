@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1350" width="1600" height="1350" role="img" aria-labelledby="title desc">
+  <title id="title">Опора либидо на жизненную потребность</title>
+  <desc id="desc">
+    Либидо опирается на жизненную потребность. Первые объекты — те, кто её удовлетворяет.
+    Затем линия расходится к половой любви к женщине и сублимированной любви к мужчине,
+    после чего обе ветви сходятся в повороте от эгоизма к альтруизму.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .node rect { fill: var(--surface-2); stroke: none; }
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 58px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .secondary {
+        font-size: 50px;
+        font-style: italic;
+        font-weight: 500;
+      }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .support-line {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+      }
+
+      .support-label {
+        fill: var(--bruise);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 46px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="11" markerHeight="11"
+            refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1350" fill="#EFE2D8"/>
+
+  <!-- Жизненная потребность -->
+  <g class="node" transform="translate(450 60)">
+    <rect width="700" height="130" rx="22" ry="22"/>
+    <text x="350" y="82">Жизненная потребность</text>
+  </g>
+
+  <!-- Опора: не причинная стрелка, а физическое наложение -->
+  <path class="support-line" d="M720 190 V260 M880 190 V260"/>
+  <text class="support-label" x="800" y="235">опора либидо</text>
+
+  <!-- Либидо -->
+  <g class="node" transform="translate(450 260)">
+    <rect width="700" height="130" rx="22" ry="22"/>
+    <text x="350" y="82">Либидо</text>
+  </g>
+
+  <path class="connector" d="M800 390 V470" marker-end="url(#arrow)"/>
+
+  <!-- Первые объекты -->
+  <g class="node" transform="translate(400 470)">
+    <rect width="800" height="220" rx="22" ry="22"/>
+    <text x="400" y="90">
+      <tspan x="400" dy="0">Первые объекты</tspan>
+      <tspan class="secondary" x="400" dy="62">те, кто её удовлетворяет</tspan>
+    </text>
+  </g>
+
+  <!-- Симметричное разветвление -->
+  <path class="connector" d="M800 690 V735 H385 V780" marker-end="url(#arrow)"/>
+  <path class="connector" d="M800 690 V735 H1090 V780" marker-end="url(#arrow)"/>
+
+  <g class="node" transform="translate(135 780)">
+    <rect width="500" height="200" rx="22" ry="22"/>
+    <text x="250" y="86">
+      <tspan x="250" dy="0">Половая любовь</tspan>
+      <tspan class="secondary" x="250" dy="60">к женщине</tspan>
+    </text>
+  </g>
+
+  <g class="node" transform="translate(715 780)">
+    <rect width="750" height="200" rx="22" ry="22"/>
+    <text x="375" y="86">
+      <tspan x="375" dy="0">Сублимированная любовь</tspan>
+      <tspan class="secondary" x="375" dy="60">к мужчине</tspan>
+    </text>
+  </g>
+
+  <!-- Симметричное схождение -->
+  <path class="connector" d="M385 980 V1025 H800 V1070" marker-end="url(#arrow)"/>
+  <path class="connector" d="M1090 980 V1025 H800 V1070" marker-end="url(#arrow)"/>
+
+  <g class="node" transform="translate(475 1070)">
+    <rect width="650" height="220" rx="22" ry="22"/>
+    <text x="325" y="88">
+      <tspan x="325" dy="0">Поворот от эгоизма</tspan>
+      <tspan class="secondary" x="325" dy="62">к альтруизму</tspan>
+    </text>
+  </g>
+</svg>

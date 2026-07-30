@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 586" role="img" aria-label="Объект утрачен. Психика сопротивляется отказу от объекта. Сопротивление побеждает — психоз желания, объект удерживается. Реальность побеждает — норма, работа скорби.">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&amp;family=JetBrains+Mono:wght@400&amp;display=swap');
+
+      :root {
+        --page:   #EFE2D8;
+        --card:   #E7DCD2;
+        --text:   #2A1F2D;
+        --muted:  #6B5F63;
+        --rule:   rgba(107, 95, 99, .38);
+        --mark-a: #6B3B4F;
+        --mark-b: #9EAF95;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --page:   #2A1F2D;
+          --card:   #372B39;
+          --text:   #EFE2D8;
+          --muted:  #A6979B;
+          --rule:   rgba(233, 208, 193, .28);
+          --mark-a: #A9677F;
+          --mark-b: #9EAF95;
+        }
+      }
+
+      .page      { fill: var(--page); }
+      .node      { fill: var(--card); }
+      .mark-a    { fill: var(--mark-a); }
+      .mark-b    { fill: var(--mark-b); }
+      .connector { fill: none; stroke: var(--rule); stroke-width: 1; vector-effect: non-scaling-stroke; }
+      .dot       { fill: var(--muted); opacity: .55; }
+
+      .title {
+        fill: var(--text);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 22px;
+        font-weight: 400;
+      }
+      .subtitle {
+        fill: var(--muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 16.5px;
+        font-weight: 400;
+        font-style: italic;
+      }
+      .edge-label {
+        fill: var(--muted);
+        font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+        font-size: 10px;
+        letter-spacing: .14em;
+      }
+    </style>
+  </defs>
+
+  <rect class="page" x="0" y="0" width="380" height="586" rx="16"/>
+
+  <!-- ствол -->
+  <path class="connector" d="M190 100 V132"/>
+  <circle class="dot" cx="190" cy="132" r="2.5"/>
+
+  <!-- развилка: спуск на левый рельс -->
+  <path class="connector" d="M190 236 V268 H44 V510"/>
+
+  <!-- отводы в ветви -->
+  <path class="connector" d="M44 360 H62"/>
+  <circle class="dot" cx="62" cy="360" r="2.5"/>
+  <path class="connector" d="M44 510 H62"/>
+  <circle class="dot" cx="62" cy="510" r="2.5"/>
+
+  <!-- узел 1 -->
+  <rect class="node" x="24" y="28" width="332" height="72" rx="12"/>
+  <text class="title" x="48" y="72">Объект утрачен</text>
+
+  <!-- узел 2 -->
+  <rect class="node" x="24" y="132" width="332" height="104" rx="12"/>
+  <text class="title" x="48" y="177">
+    <tspan x="48">Психика сопротивляется</tspan>
+    <tspan x="48" dy="28">отказу от объекта</tspan>
+  </text>
+
+  <!-- ветвь А -->
+  <text class="edge-label" x="92" y="298">сопротивление побеждает</text>
+  <rect class="node"   x="68" y="312" width="288" height="96" rx="12"/>
+  <rect class="mark-a" x="68" y="312" width="4"   height="96" rx="2"/>
+  <text class="title"    x="92" y="353">Психоз желания</text>
+  <text class="subtitle" x="92" y="379">объект удерживается</text>
+
+  <!-- ветвь Б -->
+  <text class="edge-label" x="92" y="448">реальность побеждает</text>
+  <rect class="node"   x="68" y="462" width="288" height="96" rx="12"/>
+  <rect class="mark-b" x="68" y="462" width="4"   height="96" rx="2"/>
+  <text class="title"    x="92" y="503">Норма</text>
+  <text class="subtitle" x="92" y="529">работа скорби</text>
+
+</svg>

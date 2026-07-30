@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 750" width="1600" height="750" role="img" aria-labelledby="title desc">
+  <title id="title">Формула самоуважения — три источника</title>
+  <desc id="desc">
+    Три источника самоуважения: первичный (остаток детского нарциссизма), из
+    всемогущества (подтверждённого опытом), из объект-либидо (удовлетворение
+    в отношениях с объектом).
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.chip { fill: var(--bruise); }
+      .row .chip-text {
+        fill: var(--surface);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row .body-text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="750" fill="#EFE2D8"/>
+
+  <!-- Первичный -->
+  <g class="row" transform="translate(80 40)">
+    <rect class="card" width="1440" height="190" rx="24" ry="24"/>
+    <rect class="chip" x="40" y="60" width="300" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="190" y="107">Первичный</text>
+    <text class="body-text" x="400" y="107">остаток детского нарциссизма</text>
+  </g>
+
+  <!-- Из всемогущества -->
+  <g class="row" transform="translate(80 280)">
+    <rect class="card" width="1440" height="190" rx="24" ry="24"/>
+    <rect class="chip" x="40" y="60" width="460" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="270" y="107">Из всемогущества</text>
+    <text class="body-text" x="560" y="107">
+      <tspan>подтверждённого опытом (исполнение Я-идеала)</tspan>
+    </text>
+  </g>
+
+  <!-- Из объект-либидо -->
+  <g class="row" transform="translate(80 520)">
+    <rect class="card" width="1440" height="190" rx="24" ry="24"/>
+    <rect class="chip" x="40" y="60" width="460" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="270" y="107">Из объект-либидо</text>
+    <text class="body-text" x="560" y="107">удовлетворение в отношениях с объектом</text>
+  </g>
+</svg>

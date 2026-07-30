@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 950" width="1600" height="950" role="img" aria-labelledby="title desc">
+  <title id="title">Три типа утраты объекта</title>
+  <desc id="desc">
+    Третий тип утраты — где утрата явно произошла, но неясно, что именно утрачено —
+    ключ к загадке меланхолии: он указывает на бессознательную утрату объекта любви.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.chip { fill: var(--bruise); }
+      .row .chip-text {
+        fill: var(--surface);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 34px;
+        font-weight: 600;
+      }
+      .row .body-text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="950" fill="#EFE2D8"/>
+
+  <!-- Объект умер -->
+  <g class="row" transform="translate(80 40)">
+    <rect class="card" width="1440" height="220" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="75" width="360" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="70" y="120">Объект умер</text>
+    <text class="body-text" x="450" y="90">
+      <tspan x="450" dy="0">утрата очевидна и осознана</tspan>
+      <tspan x="450" dy="54">— как при скорби</tspan>
+    </text>
+  </g>
+
+  <!-- Объект жив, но потерян как объект любви -->
+  <g class="row" transform="translate(80 300)">
+    <rect class="card" width="1440" height="260" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="60" width="900" height="140" rx="16" ry="16"/>
+    <text class="chip-text" x="70" y="105">
+      <tspan x="70" dy="0">Объект жив, но потерян</tspan>
+      <tspan x="70" dy="46">как объект любви</tspan>
+    </text>
+    <text class="body-text" x="990" y="90">
+      <tspan x="990" dy="0">утрата «идеальная»</tspan>
+      <tspan x="990" dy="54">(покинутая невеста)</tspan>
+      <tspan x="990" dy="54">— тоже осознана</tspan>
+    </text>
+  </g>
+
+  <!-- Неясно, что утрачено -->
+  <g class="row" transform="translate(80 600)">
+    <rect class="card" width="1440" height="300" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="60" width="1000" height="180" rx="16" ry="16"/>
+    <text class="chip-text" x="70" y="105">
+      <tspan x="70" dy="0">Утрата явно произошла,</tspan>
+      <tspan x="70" dy="46">но неясно, что именно</tspan>
+      <tspan x="70" dy="46">утрачено</tspan>
+    </text>
+    <text class="body-text" x="1090" y="90">
+      <tspan x="1090" dy="0">пациент не в силах</tspan>
+      <tspan x="1090" dy="54">осознанно воспринять,</tspan>
+      <tspan x="1090" dy="54">что потерял</tspan>
+    </text>
+  </g>
+</svg>

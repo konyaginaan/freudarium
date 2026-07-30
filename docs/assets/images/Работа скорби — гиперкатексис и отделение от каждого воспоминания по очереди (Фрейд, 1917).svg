@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1080" width="1600" height="1080" role="img" aria-labelledby="title desc">
+  <title id="title">Работа скорби — цикл отделения от воспоминания</title>
+  <desc id="desc">
+    Круговой процесс: воспоминание гиперкатектируется, затем отделяется, после чего
+    цикл переходит к следующему воспоминанию — и так повторяется, пока работа скорби
+    не будет исчерпана целиком.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .node rect { fill: var(--surface-2); stroke: none; }
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 54px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .loop-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="11" markerHeight="11"
+            refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="940" fill="#EFE2D8"/>
+
+  <!-- Воспоминание → Гиперкатектируется (верхняя дуга) -->
+  <path class="connector" d="M620 210 C 760 110, 840 110, 980 210" marker-end="url(#arrow)"/>
+
+  <!-- Гиперкатектируется → Отделяется (правая нисходящая дуга) -->
+  <path class="connector" d="M1080 320 C 1260 440, 1140 560, 1000 660" marker-end="url(#arrow)"/>
+
+  <!-- Отделяется → Воспоминание (левая восходящая дуга, цикл к следующему воспоминанию) -->
+  <path class="connector" d="M600 660 C 400 560, 260 440, 460 320" marker-end="url(#arrow)"/>
+
+  <text class="loop-label" x="800" y="970">
+    <tspan x="800" dy="0">повторяется для каждого воспоминания,</tspan>
+    <tspan x="800" dy="52">пока работа не исчерпана целиком</tspan>
+  </text>
+
+  <!-- Воспоминание -->
+  <g class="node" transform="translate(60 100)">
+    <rect width="560" height="220" rx="24" ry="24"/>
+    <text x="280" y="132">Воспоминание</text>
+  </g>
+
+  <!-- Гиперкатектируется -->
+  <g class="node" transform="translate(980 100)">
+    <rect width="560" height="220" rx="24" ry="24"/>
+    <text x="280" y="100">
+      <tspan x="280" dy="0">Гипер-</tspan>
+      <tspan x="280" dy="66">катектируется</tspan>
+    </text>
+  </g>
+
+  <!-- Отделяется -->
+  <g class="node" transform="translate(520 660)">
+    <rect width="560" height="220" rx="24" ry="24"/>
+    <text x="280" y="132">Отделяется</text>
+  </g>
+</svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 850" width="1600" height="850" role="img" aria-labelledby="title desc">
+  <title id="title">Нравственность массы — и ниже, и выше индивидуальной</title>
+  <desc id="desc">
+    Асимметрия: интеллектуально масса всегда глубоко ниже уровня отдельного человека,
+    а этически она может как превзойти этот уровень, так и опуститься глубоко ниже.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.chip { fill: var(--bruise); }
+      .row .chip-text {
+        fill: var(--surface);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row .body-text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="850" fill="#EFE2D8"/>
+
+  <!-- Интеллектуальная работа -->
+  <g class="row" transform="translate(80 60)">
+    <rect class="card" width="1440" height="300" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="120" width="420" height="90" rx="16" ry="16"/>
+    <text class="chip-text" x="250" y="177">Интеллектуально</text>
+    <text class="body-text" x="510" y="140">
+      <tspan x="510" dy="0">всегда глубоко ниже уровня</tspan>
+      <tspan x="510" dy="58">отдельного человека</tspan>
+    </text>
+  </g>
+
+  <!-- Этическое поведение -->
+  <g class="row" transform="translate(80 400)">
+    <rect class="card" width="1440" height="380" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="145" width="420" height="90" rx="16" ry="16"/>
+    <text class="chip-text" x="250" y="202">Этически</text>
+    <text class="body-text" x="510" y="130">
+      <tspan x="510" dy="0">может как настолько же</tspan>
+      <tspan x="510" dy="58">превзойти этот уровень, так</tspan>
+      <tspan x="510" dy="58">и опуститься глубоко ниже</tspan>
+    </text>
+  </g>
+</svg>

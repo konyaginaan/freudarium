@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1900" width="1600" height="1900" role="img" aria-labelledby="title desc">
+  <title id="title">Пять условий организации массы по Макдугаллу</title>
+  <desc id="desc">
+    Пять principal conditions подъёма душевной жизни массы на более высокий уровень:
+    континуальность состава, представление о самой массе, отношение к другим массам,
+    традиции и обычаи, расчленение структуры.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;family=JetBrains+Mono:wght@400&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.plaque { fill: var(--bruise); }
+      .row .plaque-text {
+        fill: var(--surface);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 40px;
+        text-anchor: middle;
+      }
+      .row .item-title {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-weight: 600;
+      }
+      .row .item-body {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 36px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1900" fill="#EFE2D8"/>
+
+  <!-- 1. Континуальность состава -->
+  <g class="row" transform="translate(50 40)">
+    <rect class="card" width="1500" height="320" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">1</text>
+    <text class="item-title" x="152" y="90">
+      <tspan x="152" dy="0">Континуальность состава</tspan>
+      <tspan x="152" dy="52">(основное)</tspan>
+    </text>
+    <text class="item-body" x="60" y="230">
+      <tspan x="60" dy="0">материальная — те же лица долгое время остаются в массе;</tspan>
+      <tspan x="60" dy="48">или формальная — позиции передаются сменяющим друг</tspan>
+      <tspan x="60" dy="48">друга лицам</tspan>
+    </text>
+  </g>
+
+  <!-- 2. Представление о самой массе -->
+  <g class="row" transform="translate(50 400)">
+    <rect class="card" width="1500" height="320" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">2</text>
+    <text class="item-title" x="152" y="90">Представление о самой массе</text>
+    <text class="item-body" x="60" y="180">
+      <tspan x="60" dy="0">у члена сложилось определённое представление о природе,</tspan>
+      <tspan x="60" dy="48">функции и притязаниях массы — отсюда его чувственное</tspan>
+      <tspan x="60" dy="48">отношение к массе как целому</tspan>
+    </text>
+  </g>
+
+  <!-- 3. Отношение к другим массам -->
+  <g class="row" transform="translate(50 760)">
+    <rect class="card" width="1500" height="270" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">3</text>
+    <text class="item-title" x="152" y="90">Отношение к другим массам</text>
+    <text class="item-body" x="60" y="180">
+      <tspan x="60" dy="0">масса поставлена в отношение к другим, похожим, но во</tspan>
+      <tspan x="60" dy="48">многом отклоняющимся образованиям — например, соперничает</tspan>
+    </text>
+  </g>
+
+  <!-- 4. Традиции, обычаи, установления -->
+  <g class="row" transform="translate(50 1080)">
+    <rect class="card" width="1500" height="220" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">4</text>
+    <text class="item-title" x="152" y="90">
+      <tspan x="152" dy="0">Традиции, обычаи,</tspan>
+      <tspan x="152" dy="52">установления</tspan>
+    </text>
+    <text class="item-body" x="60" y="200">особенно те, что касаются отношений членов друг к другу</text>
+  </g>
+
+  <!-- 5. Расчленение -->
+  <g class="row" transform="translate(50 1350)">
+    <rect class="card" width="1500" height="270" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">5</text>
+    <text class="item-title" x="152" y="90">Расчленение</text>
+    <text class="item-body" x="60" y="180">
+      <tspan x="60" dy="0">структура, выражающаяся в специализации и дифференциации</tspan>
+      <tspan x="60" dy="48">работы, выпадающей на долю отдельного человека</tspan>
+    </text>
+  </g>
+
+  <text class="item-body" x="800" y="1750" text-anchor="middle" font-style="italic">
+    при выполнении этих условий психические невыгоды массообразования снимаются
+  </text>
+</svg>

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" width="1600" height="1100" role="img" aria-labelledby="title desc">
+  <title id="title">Идентификация или влюблённость — объект на месте Я или Я-идеала</title>
+  <desc id="desc">
+    Различие идентификации и влюблённости сводится к альтернативе: ставится ли объект
+    на место Я (идентификация) или на место Я-идеала (влюблённость, фасцинация).
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 52px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: end;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1100" fill="#EFE2D8"/>
+
+  <!-- Заголовки колонок -->
+  <text class="col-header" x="700" y="130">Идентификация</text>
+  <text class="col-header" x="1290" y="130">Влюблённость</text>
+
+  <!-- Куда ставится объект -->
+  <text class="row-label" x="380" y="290">
+    <tspan x="380" dy="0">Куда ставится</tspan>
+    <tspan x="380" dy="46">объект</tspan>
+  </text>
+  <g class="cell" transform="translate(420 220)">
+    <rect width="550" height="150" rx="22" ry="22"/>
+    <text x="40" y="95">на место Я</text>
+  </g>
+  <g class="cell" transform="translate(990 220)">
+    <rect width="550" height="150" rx="22" ry="22"/>
+    <text x="40" y="95">на место Я-идеала</text>
+  </g>
+
+  <!-- Судьба объекта -->
+  <text class="row-label" x="380" y="480">Судьба объекта</text>
+  <g class="cell" transform="translate(420 400)">
+    <rect width="550" height="180" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">утрачен,</tspan>
+      <tspan x="40" dy="54">воздвигнут внутри</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(990 400)">
+    <rect width="550" height="180" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">сохранён</tspan>
+      <tspan x="40" dy="54">и сверхнагружен</tspan>
+    </text>
+  </g>
+
+  <!-- Что происходит с Я -->
+  <text class="row-label" x="380" y="750">
+    <tspan x="380" dy="0">Что происходит</tspan>
+    <tspan x="380" dy="46">с Я</tspan>
+  </text>
+  <g class="cell" transform="translate(420 630)">
+    <rect width="550" height="240" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">перестраивается</tspan>
+      <tspan x="40" dy="54">по образцу</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(990 630)">
+    <rect width="550" height="240" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">отдаётся,</tspan>
+      <tspan x="40" dy="54">обедняется,</tspan>
+      <tspan x="40" dy="54">молчит критика</tspan>
+    </text>
+  </g>
+</svg>

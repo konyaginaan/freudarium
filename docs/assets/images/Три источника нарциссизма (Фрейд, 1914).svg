@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1020" width="1600" height="1020" role="img" aria-labelledby="title desc">
+  <title id="title">Три источника изучения нарциссизма</title>
+  <desc id="desc">
+    Три источника помимо парафрении: органическая болезнь и ипохондрия — отзыв
+    либидинозного интереса от объектов; сон — нарциссический отзыв либидо
+    к желанию спать (сюда же вписывается эгоизм сновидений); любовь между полами.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.chip { fill: var(--bruise); }
+      .row .chip-text {
+        fill: var(--surface);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 36px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row .body-text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-weight: 500;
+      }
+      .row .body-quote {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 32px;
+        font-style: italic;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1020" fill="#EFE2D8"/>
+
+  <!-- Органическая болезнь -->
+  <g class="row" transform="translate(80 40)">
+    <rect class="card" width="1440" height="360" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="145" width="460" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="270" y="192">Органическая болезнь</text>
+    <text class="body-text" x="540" y="90">
+      <tspan x="540" dy="0">больной отзывает либидинозный</tspan>
+      <tspan x="540" dy="54">интерес от внешних объектов и от</tspan>
+      <tspan x="540" dy="54">объектов любви одновременно</tspan>
+    </text>
+    <text class="body-quote" x="540" y="320">«сосредоточена душа моя... в ноющей дупле зуба» (Буш)</text>
+  </g>
+
+  <!-- Сон -->
+  <g class="row" transform="translate(80 440)">
+    <rect class="card" width="1440" height="260" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="95" width="200" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="140" y="142">Сон</text>
+    <text class="body-text" x="280" y="90">
+      <tspan x="280" dy="0">нарциссический отзыв либидо к</tspan>
+      <tspan x="280" dy="54">единственному желанию спать</tspan>
+    </text>
+    <text class="body-quote" x="280" y="220">сюда же вписывается эгоизм сновидений</text>
+  </g>
+
+  <!-- Любовь между полами -->
+  <g class="row" transform="translate(80 740)">
+    <rect class="card" width="1440" height="230" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="80" width="480" height="70" rx="16" ry="16"/>
+    <text class="chip-text" x="280" y="127">Любовь между полами</text>
+    <text class="body-text" x="560" y="127">третий источник (без детализации)</text>
+  </g>
+</svg>

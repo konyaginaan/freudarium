@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">Два источника ошибки — Сцилла и Харибда</title>
+  <desc id="desc">
+    При оценке нежных чувств как преемников вытесненной чувственности нужно остерегаться
+    двух ошибок: недооценки вытесненного бессознательного и склонности мерить нормальное
+    меркой патологического.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .card rect { fill: var(--surface-2); stroke: none; }
+      .card .title {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 62px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .card .body {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 46px;
+        font-weight: 500;
+        font-style: italic;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#EFE2D8"/>
+
+  <!-- Сцилла -->
+  <g class="card" transform="translate(70 240)">
+    <rect width="700" height="420" rx="26" ry="26"/>
+    <text class="title" x="350" y="110">Сцилла</text>
+    <text class="body" x="350" y="220">
+      <tspan x="350" dy="0">недооценка</tspan>
+      <tspan x="350" dy="66">вытесненного</tspan>
+      <tspan x="350" dy="66">бессознательного</tspan>
+    </text>
+  </g>
+
+  <!-- Харибда -->
+  <g class="card" transform="translate(830 240)">
+    <rect width="700" height="420" rx="26" ry="26"/>
+    <text class="title" x="350" y="110">Харибда</text>
+    <text class="body" x="350" y="220">
+      <tspan x="350" dy="0">склонность мерить</tspan>
+      <tspan x="350" dy="66">нормальное непременно</tspan>
+      <tspan x="350" dy="66">меркой патологического</tspan>
+    </text>
+  </g>
+</svg>

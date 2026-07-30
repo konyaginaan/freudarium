@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 800" width="1600" height="800" role="img" aria-labelledby="title desc">
+  <title id="title">Ряд богов — гипотетическая хронология</title>
+  <desc id="desc">
+    Гипотетический хронологический ряд: богиня-мать, затем герой, затем бог-отец.
+    Оговорка Фрейда: лишь с возвышением никогда не забытого праотца божество
+    получило те черты, что мы знаем за ним сегодня.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;family=JetBrains+Mono:wght@400&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .node rect { fill: var(--surface-2); stroke: none; }
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 56px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .footnote {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+
+      .tag {
+        fill: var(--ink-muted);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 34px;
+        text-anchor: middle;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="11" markerHeight="11"
+            refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="800" fill="#EFE2D8"/>
+
+  <text class="tag" x="800" y="150">гипотетическая хронология →</text>
+
+  <!-- Богиня-мать -->
+  <g class="node" transform="translate(40 240)">
+    <rect width="440" height="160" rx="22" ry="22"/>
+    <text x="220" y="100">Богиня-мать</text>
+  </g>
+
+  <path class="connector" d="M480 320 H580" marker-end="url(#arrow)"/>
+
+  <!-- Герой -->
+  <g class="node" transform="translate(580 240)">
+    <rect width="440" height="160" rx="22" ry="22"/>
+    <text x="220" y="100">Герой</text>
+  </g>
+
+  <path class="connector" d="M1020 320 H1120" marker-end="url(#arrow)"/>
+
+  <!-- Бог-отец -->
+  <g class="node" transform="translate(1120 240)">
+    <rect width="440" height="160" rx="22" ry="22"/>
+    <text x="220" y="100">Бог-отец</text>
+  </g>
+
+  <!-- Оговорка Фрейда — визуально отделена, не равноправный узел цепочки -->
+  <text class="footnote" x="800" y="540">
+    <tspan x="800" dy="0">лишь с возвышением никогда не забытого</tspan>
+    <tspan x="800" dy="50">праотца божество получило те черты,</tspan>
+    <tspan x="800" dy="50">что мы знаем за ним сегодня</tspan>
+  </text>
+</svg>

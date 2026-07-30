@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-labelledby="title desc">
+  <title id="title">Быть или иметь — идентификация и выбор объекта</title>
+  <desc id="desc">
+    Сравнение идентификации и выбора объекта по четырём параметрам: формуле,
+    точке приложения, времени возникновения и результату для Я.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 46px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 54px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: end;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#EFE2D8"/>
+
+  <!-- Заголовки колонок -->
+  <text class="col-header" x="695" y="130">Идентификация</text>
+  <text class="col-header" x="1265" y="130">Выбор объекта</text>
+
+  <!-- Формула -->
+  <text class="row-label" x="380" y="300">Формула</text>
+  <g class="cell" transform="translate(420 220)">
+    <rect width="550" height="140" rx="22" ry="22"/>
+    <text x="40" y="87">отец — то, чем хочу быть</text>
+  </g>
+  <g class="cell" transform="translate(990 220)">
+    <rect width="550" height="140" rx="22" ry="22"/>
+    <text x="40" y="87">отец — то, что хочу иметь</text>
+  </g>
+
+  <!-- Точка приложения -->
+  <text class="row-label" x="380" y="450">
+    <tspan x="380" dy="0">Точка</tspan>
+    <tspan x="380" dy="52">приложения</tspan>
+  </text>
+  <g class="cell" transform="translate(420 400)">
+    <rect width="550" height="140" rx="22" ry="22"/>
+    <text x="40" y="87">субъект Я</text>
+  </g>
+  <g class="cell" transform="translate(990 400)">
+    <rect width="550" height="140" rx="22" ry="22"/>
+    <text x="40" y="87">объект Я</text>
+  </g>
+
+  <!-- Время -->
+  <text class="row-label" x="380" y="700">Время</text>
+  <g class="cell" transform="translate(420 580)">
+    <rect width="550" height="220" rx="22" ry="22"/>
+    <text x="40" y="82">
+      <tspan x="40" dy="0">возможна до всякого</tspan>
+      <tspan x="40" dy="58">сексуального выбора</tspan>
+      <tspan x="40" dy="58">объекта</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(990 580)">
+    <rect width="550" height="220" rx="22" ry="22"/>
+    <text x="40" y="112">
+      <tspan x="40" dy="0">предполагает</tspan>
+      <tspan x="40" dy="58">сексуальную цель</tspan>
+    </text>
+  </g>
+
+  <!-- Результат -->
+  <text class="row-label" x="380" y="920">Результат</text>
+  <g class="cell" transform="translate(420 840)">
+    <rect width="550" height="140" rx="22" ry="22"/>
+    <text x="40" y="82">
+      <tspan x="40" dy="0">Я перестраивается</tspan>
+      <tspan x="40" dy="52">по образцу</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(990 840)">
+    <rect width="550" height="140" rx="22" ry="22"/>
+    <text x="40" y="82">
+      <tspan x="40" dy="0">объект нагружается</tspan>
+      <tspan x="40" dy="52">либидо</tspan>
+    </text>
+  </g>
+</svg>

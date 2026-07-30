@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 950" width="1600" height="950" role="img" aria-labelledby="title desc">
+  <title id="title">Бунт Я против идеала — спонтанная и психогенная меланхолия</title>
+  <desc id="desc">
+    Единый механизм для двух видов меланхолии: при спонтанной Я-идеал сам развёртывает
+    особую строгость, которая автоматически влечёт его временное упразднение; при
+    психогенной Я подстрекается к бунту дурным обращением идеала при идентификации
+    с отвергнутым объектом.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.chip { fill: var(--bruise); }
+      .row .chip-text {
+        fill: var(--surface);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row .body-text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 48px;
+        font-weight: 500;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="950" fill="#EFE2D8"/>
+
+  <!-- Спонтанная -->
+  <g class="row" transform="translate(80 80)">
+    <rect class="card" width="1440" height="330" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="137" width="340" height="100" rx="18" ry="18"/>
+    <text class="chip-text" x="210" y="202">Спонтанная</text>
+    <text class="body-text" x="420" y="120">
+      <tspan x="420" dy="0">Я-идеал склонен к развёртыванию</tspan>
+      <tspan x="420" dy="58">особой строгости, которая</tspan>
+      <tspan x="420" dy="58">автоматически влечёт за собой его</tspan>
+      <tspan x="420" dy="58">временное упразднение</tspan>
+    </text>
+  </g>
+
+  <!-- Психогенная -->
+  <g class="row" transform="translate(80 460)">
+    <rect class="card" width="1440" height="410" rx="26" ry="26"/>
+    <rect class="chip" x="40" y="177" width="340" height="100" rx="18" ry="18"/>
+    <text class="chip-text" x="210" y="242">Психогенная</text>
+    <text class="body-text" x="420" y="100">
+      <tspan x="420" dy="0">Я подстрекается к бунту дурным</tspan>
+      <tspan x="420" dy="58">обращением со стороны своего</tspan>
+      <tspan x="420" dy="58">идеала, которое оно испытывает</tspan>
+      <tspan x="420" dy="58">в случае идентификации</tspan>
+      <tspan x="420" dy="58">с отвергнутым объектом</tspan>
+    </text>
+  </g>
+</svg>

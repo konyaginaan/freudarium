@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-labelledby="title desc">
+  <title id="title">Паника и невротическая тревога — аналогия двух источников страха</title>
+  <desc id="desc">
+    Тревога от величины реальной опасности и тревога от прекращения чувственных связей —
+    два разных источника, каждый со своей параллелью у отдельного человека и у массы.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: end;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#EFE2D8"/>
+
+  <text class="col-header" x="750" y="110">
+    <tspan x="750" dy="0">Тревога от величины</tspan>
+    <tspan x="750" dy="50">опасности</tspan>
+  </text>
+  <text class="col-header" x="1330" y="80">
+    <tspan x="1330" dy="0">Тревога от прекращения</tspan>
+    <tspan x="1330" dy="50">чувственных связей</tspan>
+  </text>
+
+  <!-- Отдельный человек -->
+  <text class="row-label" x="350" y="330">
+    <tspan x="350" dy="0">Отдельный</tspan>
+    <tspan x="350" dy="48">человек</tspan>
+  </text>
+  <g class="cell" transform="translate(390 250)">
+    <rect width="500" height="200" rx="22" ry="22"/>
+    <text x="40" y="90">
+      <tspan x="40" dy="0">обычный,</tspan>
+      <tspan x="40" dy="54">реальный страх</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(920 250)">
+    <rect width="640" height="200" rx="22" ry="22"/>
+    <text x="40" y="66">
+      <tspan x="40" dy="0">невротическая тревога</tspan>
+      <tspan x="40" dy="52">(оставление либидинозных</tspan>
+      <tspan x="40" dy="52">нагрузок)</tspan>
+    </text>
+  </g>
+
+  <!-- Масса -->
+  <text class="row-label" x="350" y="680">Масса</text>
+  <g class="cell" transform="translate(390 550)">
+    <rect width="500" height="290" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">паника при реально</tspan>
+      <tspan x="40" dy="52">возросшей опасности</tspan>
+      <tspan x="40" dy="52">(пожар в театре)</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(920 550)">
+    <rect width="640" height="290" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">паника при прекращении</tspan>
+      <tspan x="40" dy="52">связей, держащих массу</tspan>
+      <tspan x="40" dy="52">вместе</tspan>
+    </text>
+  </g>
+</svg>

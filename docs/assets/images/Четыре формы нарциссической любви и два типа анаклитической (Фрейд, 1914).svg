@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1250" width="1600" height="1250" role="img" aria-labelledby="title desc">
+  <title id="title">Шесть форм любви — нарциссическая и анаклитическая</title>
+  <desc id="desc">
+    Объект любви делится на нарциссическую ветвь (я сам, кем был, кем хотел бы быть,
+    часть себя) и анаклитическую ветвь (опекающая женщина, защищающий мужчина).
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .node rect { fill: var(--surface-2); stroke: none; }
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 50px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .branch text { font-size: 56px; }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="11" markerHeight="11"
+            refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1250" fill="#EFE2D8"/>
+
+  <!-- Объект любви (корень) -->
+  <g class="node" transform="translate(575 40)">
+    <rect width="450" height="150" rx="22" ry="22"/>
+    <text x="225" y="94">Объект любви</text>
+  </g>
+
+  <!-- Развилка на две ветви -->
+  <path class="connector" d="M800 190 V230 H450 V270" marker-end="url(#arrow)"/>
+  <path class="connector" d="M800 190 V230 H1150 V270" marker-end="url(#arrow)"/>
+
+  <!-- Нарциссическая (ветвь) -->
+  <g class="node branch" transform="translate(250 270)">
+    <rect width="400" height="140" rx="22" ry="22"/>
+    <text x="200" y="90">Нарциссическая</text>
+  </g>
+
+  <!-- Анаклитическая (ветвь) -->
+  <g class="node branch" transform="translate(950 270)">
+    <rect width="400" height="140" rx="22" ry="22"/>
+    <text x="200" y="90">Анаклитическая</text>
+  </g>
+
+  <!-- Список из четырёх листьев нарциссической ветви -->
+  <path class="connector" d="M450 410 V450" marker-end="url(#arrow)"/>
+
+  <g class="node" transform="translate(125 450)">
+    <rect width="650" height="170" rx="22" ry="22"/>
+    <text x="325" y="103">Я сам</text>
+  </g>
+
+  <g class="node" transform="translate(125 650)">
+    <rect width="650" height="170" rx="22" ry="22"/>
+    <text x="325" y="103">Кем был</text>
+  </g>
+
+  <g class="node" transform="translate(125 850)">
+    <rect width="650" height="170" rx="22" ry="22"/>
+    <text x="325" y="76">
+      <tspan x="325" dy="0">Кем хотел</tspan>
+      <tspan x="325" dy="60">бы быть</tspan>
+    </text>
+  </g>
+
+  <g class="node" transform="translate(125 1050)">
+    <rect width="650" height="170" rx="22" ry="22"/>
+    <text x="325" y="103">Часть себя</text>
+  </g>
+
+  <!-- Список из двух листьев анаклитической ветви -->
+  <path class="connector" d="M1150 410 V450" marker-end="url(#arrow)"/>
+
+  <g class="node" transform="translate(825 450)">
+    <rect width="650" height="170" rx="22" ry="22"/>
+    <text x="325" y="76">
+      <tspan x="325" dy="0">Опекающая</tspan>
+      <tspan x="325" dy="60">женщина</tspan>
+    </text>
+  </g>
+
+  <g class="node" transform="translate(825 650)">
+    <rect width="650" height="170" rx="22" ry="22"/>
+    <text x="325" y="76">
+      <tspan x="325" dy="0">Защищающий</tspan>
+      <tspan x="325" dy="60">мужчина</tspan>
+    </text>
+  </g>
+</svg>

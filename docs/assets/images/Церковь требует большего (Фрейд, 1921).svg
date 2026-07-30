@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">Церковь требует большего — идентификация с Христом</title>
+  <desc id="desc">
+    Церковь требует дополнения либидинозной позиции массы: и идентификации, и объектной
+    любви одновременно — больше, чем нужно, чтобы масса просто держалась, как в войске.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 50px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-style: italic;
+        font-weight: 600;
+        text-anchor: end;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#EFE2D8"/>
+
+  <text class="col-header" x="740" y="90">Войско</text>
+  <text class="col-header" x="1280" y="90">Церковь</text>
+
+  <!-- Вождь -->
+  <text class="row-label" x="380" y="290">Вождь</text>
+  <g class="cell" transform="translate(420 160)">
+    <rect width="620" height="260" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">идеал (объект</tspan>
+      <tspan x="40" dy="54">на месте</tspan>
+      <tspan x="40" dy="54">Я-идеала)</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(1060 160)">
+    <rect width="500" height="260" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">идеал и образец</tspan>
+      <tspan x="40" dy="54">для</tspan>
+      <tspan x="40" dy="54">идентификации</tspan>
+    </text>
+  </g>
+
+  <!-- Товарищи -->
+  <text class="row-label" x="380" y="620">Товарищи</text>
+  <g class="cell" transform="translate(420 480)">
+    <rect width="620" height="260" rx="22" ry="22"/>
+    <text x="40" y="150">идентификация</text>
+  </g>
+  <g class="cell" transform="translate(1060 480)">
+    <rect width="500" height="260" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">идентификация</tspan>
+      <tspan x="40" dy="54">и объектная</tspan>
+      <tspan x="40" dy="54">любовь</tspan>
+    </text>
+  </g>
+</svg>

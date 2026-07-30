@@ -1,0 +1,343 @@
+/* «Das Unheimliche» — токены, перенесённые из SVG-схем базы Фрейда (см.
+   Фрейд/Служебное/Заметки с визуальными элементами — трекер.md). */
+:root {
+  --surface: #EFE2D8;
+  --surface-2: #E9D0C1;
+  --surface-3: #DBB9A9;
+  --ink: #2A1F2D;
+  --ink-muted: #6B5F63;
+  --bruise: #6B3B4F;
+  --flesh: #C08B7A;
+  --verdigris: #9EAF95;
+  --border: color-mix(in srgb, var(--ink) 12%, transparent);
+  --shadow: color-mix(in srgb, var(--ink) 18%, transparent);
+  --radius: 16px;
+  --col-width: 640px;
+  --font-body: 18px;
+  --line-height: 1.65;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"],
+:root:not([data-theme="light"]):not([data-theme="sepia"]) {
+  @media (prefers-color-scheme: dark) {
+    --surface: #201823;
+    --surface-2: #2C2129;
+    --surface-3: #3A2C31;
+    --ink: #EFE2D8;
+    --ink-muted: #B8A9AE;
+    --bruise: #D98CA6;
+    --flesh: #C08B7A;
+    --verdigris: #9EAF95;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #201823;
+  --surface-2: #2C2129;
+  --surface-3: #3A2C31;
+  --ink: #EFE2D8;
+  --ink-muted: #B8A9AE;
+  --bruise: #D98CA6;
+  color-scheme: dark;
+}
+:root[data-theme="sepia"] {
+  --surface: #F1E7D6;
+  --surface-2: #E6D5B8;
+  --ink: #3A2E22;
+  --ink-muted: #7A6B54;
+  --bruise: #7A4326;
+  color-scheme: light;
+}
+
+:root[data-width="narrow"] { --col-width: 520px; }
+:root[data-width="wide"] { --col-width: 800px; }
+:root[data-fontsize="s"] { --font-body: 16px; }
+:root[data-fontsize="m"] { --font-body: 18px; }
+:root[data-fontsize="l"] { --font-body: 21px; }
+:root[data-fontsize="xl"] { --font-body: 24px; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; }
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: "EB Garamond", Georgia, serif;
+  font-size: var(--font-body);
+  line-height: var(--line-height);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, .brand, .btn, .chip, .row-count, button {
+  font-family: "Archivo", system-ui, sans-serif;
+}
+a { color: var(--bruise); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.icon { width: 22px; height: 22px; display: block; }
+
+/* ── шапка ── */
+.topbar {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px max(16px, env(safe-area-inset-left)) 10px max(16px, env(safe-area-inset-right));
+  padding-top: max(10px, env(safe-area-inset-top));
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+.back-link {
+  display: flex; align-items: center; gap: 4px; color: var(--ink);
+  font-size: 14px; font-weight: 600;
+  flex: 0 1 auto; min-width: 0; max-width: 42%;
+}
+.back-link .icon { flex-shrink: 0; }
+.back-link span {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+}
+.back-link:hover { text-decoration: none; color: var(--bruise); }
+.brand {
+  flex: 1 1 auto; min-width: 0; font-weight: 700; color: var(--ink); font-size: 16px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  overflow: hidden; white-space: nowrap;
+}
+.brand span { overflow: hidden; text-overflow: ellipsis; }
+.brand-mark { flex-shrink: 0; display: flex; color: var(--ink); }
+.brand-mark svg { width: 22px; height: 22px; display: block; }
+.topbar-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.icon-btn {
+  background: none; border: none; color: var(--ink); cursor: pointer;
+  padding: 6px; border-radius: 10px; display: flex;
+}
+.icon-btn:hover { background: var(--surface-2); }
+
+main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; }
+
+/* ── плавающая кнопка «назад» ── */
+.fab-back {
+  /* На широких окнах текст лежит в центрированной колонке шириной --col-width,
+     а не во всю ширину экрана — кнопка у самого края окна оказывалась далеко
+     от текста, до неё было неудобно тянуться. Считаем позицию от края РЕАЛЬНОЙ
+     колонки: на узких экранах (колонка ⁠= почти вся ширина) выражение уходит в
+     минус и max() откатывается к простому отступу от края окна как раньше. */
+  position: fixed;
+  left: max(16px, calc(50% - min(var(--col-width), 100vw - 40px) / 2 - 68px));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 40; width: 52px; height: 52px; border-radius: 50%;
+  background: var(--bruise); color: var(--surface); border: none;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px var(--shadow); cursor: pointer;
+}
+.fab-back[hidden] { display: none; }
+
+/* ── типографика заметки ── */
+.note-title { font-size: 1.6em; line-height: 1.25; margin: 0 0 .3em; }
+.crumbs { font-size: 13px; color: var(--ink-muted); margin-bottom: 10px; }
+.crumbs a { color: var(--ink-muted); }
+.work-meta { color: var(--ink-muted); font-size: 14px; margin: 0 0 16px; }
+.note-body p { margin: 0 0 1em; }
+.note-body h2 { font-size: 1.25em; margin: 1.4em 0 .5em; }
+.note-body h3 { font-size: 1.1em; margin: 1.2em 0 .4em; }
+.note-body blockquote {
+  margin: 1em 0; padding: 4px 16px; border-left: 3px solid var(--flesh);
+  color: var(--ink-muted); font-style: italic;
+}
+.note-body code {
+  background: var(--surface-2); padding: .1em .35em; border-radius: 6px;
+  font-family: "JetBrains Mono", monospace; font-size: .85em;
+}
+.note-embed, .note-figure img { max-width: 100%; border-radius: 12px; display: block; margin: 1.2em 0; }
+.note-figure { margin: 1.4em 0; }
+.link-broken { color: var(--ink-muted); border-bottom: 1px dotted var(--ink-muted); }
+.table-wrap { overflow-x: auto; margin: 1em 0; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: .92em; }
+dl.note-meta { font-size: .85em; color: var(--ink-muted); margin: 0 0 1.4em; }
+dl.note-meta dt { font-weight: 600; display: inline; }
+dl.note-meta dd { display: inline; margin: 0 0 0 4px; }
+dl.note-meta dd::after { content: "\A"; white-space: pre; }
+hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+
+/* ── свёрнутый служебный блок (источник/цитата/архивная ссылка) ── */
+.src-details {
+  margin: 0 0 1.4em; padding: 4px 0; border-bottom: 1px solid var(--border);
+}
+.src-details summary {
+  cursor: pointer; color: var(--ink-muted); font-size: .85em; padding: 6px 0;
+  list-style: none; display: flex; align-items: center; gap: 6px;
+}
+.src-details summary::before {
+  content: "›"; display: inline-block; transition: transform .15s ease; font-size: 1.1em;
+}
+.src-details[open] summary::before { transform: rotate(90deg); }
+.src-details summary::-webkit-details-marker { display: none; }
+.src-details .note-meta, .src-details > p { color: var(--ink-muted); font-size: .92em; padding-bottom: 8px; }
+
+/* ── вложенный список заметок темы (карты областей) ── */
+ul.hub-links { list-style: none; margin: 6px 0 1.2em; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+ul.hub-links li a {
+  display: block; padding: 8px 12px; background: var(--surface-2); border-radius: 10px; font-size: .92em;
+}
+ul.hub-links li a:hover { background: var(--surface-3); text-decoration: none; }
+
+/* ── аккордеон «Работы по годам» ── */
+details.decade { border-bottom: 1px solid var(--border); }
+details.decade summary {
+  cursor: pointer; padding: 12px 4px; font-family: "Archivo", sans-serif; font-weight: 700;
+  list-style: none; display: flex; align-items: center; gap: 8px;
+}
+details.decade summary::-webkit-details-marker { display: none; }
+details.decade summary::before { content: "›"; transition: transform .15s ease; color: var(--ink-muted); }
+details.decade[open] summary::before { transform: rotate(90deg); }
+.decade-count { color: var(--ink-muted); font-weight: 400; font-size: .85em; }
+details.decade .rows .row:last-child { border-bottom: none; }
+
+/* ── теги ── */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.chip {
+  background: var(--surface-2); color: var(--ink); padding: 5px 12px;
+  border-radius: 999px; font-size: 13px;
+}
+.chip-muted { color: var(--ink-muted); }
+.chip:hover { background: var(--surface-3); text-decoration: none; }
+
+/* ── связи ── */
+.rel-block { margin: 2em 0; }
+.rel-block h2 { font-size: .82em; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-muted); margin: 0 0 .6em; font-weight: 700; }
+.rel-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.rel-list li a {
+  display: block; padding: 10px 14px; background: var(--surface-2); border-radius: 12px;
+  color: var(--ink); font-size: .95em;
+}
+.rel-list li a:hover { background: var(--surface-3); text-decoration: none; }
+.rel-fulltext .rel-list li a { background: transparent; border: 1px solid var(--bruise); color: var(--bruise); }
+
+/* ── карточки/сетка ── */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }
+.card {
+  background: var(--surface-2); border-radius: 14px; padding: 14px 16px; color: var(--ink);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.card:hover { background: var(--surface-3); text-decoration: none; }
+.card-sm { padding: 10px 14px; }
+.card-kicker { font-size: 11px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: .04em; }
+.card-title { font-size: .95em; line-height: 1.35; }
+
+/* ── строки-списки ── */
+.rows { display: flex; flex-direction: column; }
+.row {
+  display: flex; align-items: baseline; gap: 12px; padding: 10px 4px; color: var(--ink);
+  border-bottom: 1px solid var(--border);
+}
+.row:hover { background: var(--surface-2); text-decoration: none; }
+.row-year { color: var(--ink-muted); font-size: .85em; width: 3.5em; flex-shrink: 0; }
+.row-title { flex: 1; }
+.row-count { color: var(--ink-muted); font-size: .85em; }
+
+/* ── кнопки: заполненная (действие) vs контурная (второстепенное) —
+   ссылки на заметки (.rel-list/.card) остаются на surface-2, поэтому кнопки
+   должны выглядеть иначе, а не как ещё одна карточка-ссылка ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px;
+  border-radius: 999px; background: transparent; color: var(--bruise);
+  border: 1.5px solid var(--bruise); font-size: .9em; cursor: pointer; margin: 4px 8px 4px 0;
+}
+.btn:hover { background: color-mix(in srgb, var(--bruise) 10%, transparent); text-decoration: none; }
+.btn-primary { background: var(--bruise); color: var(--surface); border-color: var(--bruise); }
+.btn-primary:hover { background: color-mix(in srgb, var(--bruise) 88%, var(--ink)); }
+.downloads { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ── глава полного текста ── */
+.chapter-nav { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 20px; }
+.chapter-link { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-muted); }
+.chapter-link.active { background: var(--bruise); color: var(--surface); }
+.chapter-pager { display: flex; justify-content: space-between; margin-top: 2em; }
+.fulltext-body p[id] { scroll-margin-top: 80px; }
+.p-note-links { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
+.p-note-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: var(--surface-2); color: var(--bruise); font-size: 11px;
+  font-family: "Archivo", sans-serif; font-weight: 700; vertical-align: middle;
+}
+.p-note-link:hover { background: var(--surface-3); text-decoration: none; }
+
+/* ── меню разделов ── */
+.nav-list { display: flex; flex-direction: column; margin: 8px 0 16px; }
+.nav-link { padding: 12px 4px; color: var(--ink); border-bottom: 1px solid var(--border); font-size: .95em; }
+.nav-link:hover { color: var(--bruise); text-decoration: none; }
+
+/* ── дисклеймер-приветствие на главной ── */
+.onboard {
+  background: var(--surface-2); border-radius: var(--radius); padding: 18px 20px;
+  margin: 4px 0 28px; font-size: .92em; color: var(--ink-muted); position: relative;
+}
+.onboard strong { color: var(--ink); }
+.onboard-close {
+  position: absolute; top: 10px; right: 10px; background: none; border: none;
+  color: var(--ink-muted); font-size: 18px; cursor: pointer; line-height: 1; padding: 4px;
+}
+
+/* ── поиск ── */
+.search-box {
+  display: flex; align-items: center; gap: 8px; background: var(--surface-2);
+  border-radius: 14px; padding: 10px 14px; margin: 8px 0 20px;
+}
+.search-box input {
+  flex: 1; border: none; background: none; font: inherit; color: var(--ink); outline: none;
+}
+.search-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.search-filter {
+  font-size: 12px; padding: 5px 12px; border-radius: 999px; background: var(--surface-2);
+  color: var(--ink-muted); border: none; cursor: pointer; font-family: "Archivo", sans-serif;
+}
+.search-filter.active { background: var(--bruise); color: var(--surface); }
+.search-results { display: flex; flex-direction: column; gap: 4px; }
+.search-result {
+  display: block; padding: 12px 14px; border-radius: 12px; color: var(--ink);
+}
+.search-result:hover { background: var(--surface-2); text-decoration: none; }
+.search-result .sr-kicker { display: block; font-size: 11px; color: var(--ink-muted); text-transform: uppercase; margin-bottom: 2px; }
+.search-result .sr-excerpt { font-size: .85em; color: var(--ink-muted); display: block; margin-top: 2px; }
+.search-result mark { background: var(--flesh); color: var(--ink); border-radius: 3px; }
+.search-empty { color: var(--ink-muted); padding: 20px 4px; }
+
+/* ── главная ── */
+/* ── баннер на главной: пробный вариант, легко убрать одним классом ── */
+.hero-banner {
+  margin: -24px calc(50% - 50vw) 20px; width: 100vw;
+  position: relative; overflow: hidden; margin-top: max(-24px, calc(-1 * env(safe-area-inset-top) - 24px));
+}
+.hero-banner img {
+  display: block; width: 100%; height: min(60vw, 560px); min-height: 280px;
+  object-fit: cover; object-position: center 28%;
+}
+.hero-banner::after {
+  content: ""; position: absolute; inset: auto 0 0 0; height: 40%;
+  background: linear-gradient(to bottom, transparent, var(--surface));
+}
+.hero { text-align: center; padding: 8px 0 8px; }
+.hero-logo { margin: 0 0 .2em; color: var(--ink); }
+.hero-logo svg { width: min(180px, 42vw); height: auto; }
+.hero p { color: var(--ink-muted); }
+.see-all { display: inline-block; margin-top: 8px; font-size: .9em; }
+
+/* ── настройки (шторка) ── */
+.sheet {
+  position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, black 40%, transparent);
+  display: flex; align-items: flex-end;
+}
+.sheet[hidden] { display: none; }
+.sheet-inner {
+  background: var(--surface); width: 100%; border-radius: 20px 20px 0 0;
+  padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+}
+.settings-row { display: flex; align-items: center; justify-content: space-between; margin: 14px 0; }
+.seg { display: flex; background: var(--surface-2); border-radius: 10px; padding: 3px; }
+.seg button { background: none; border: none; padding: 6px 12px; border-radius: 8px; color: var(--ink-muted); cursor: pointer; }
+.seg button.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px var(--shadow); }
+.sheet-close { width: 100%; margin-top: 8px; background: var(--bruise); color: var(--surface); border: none; padding: 12px; border-radius: 12px; }
+
+@media (min-width: 900px) {
+  main { padding-top: 40px; }
+  .card-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}

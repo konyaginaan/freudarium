@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">Формула либидинозной конституции первичной массы</title>
+  <desc id="desc">
+    Один и тот же объект на месте Я-идеала — вертикальная связь с Я каждого из трёх
+    членов массы (механизм влюблённости и гипноза). Между членами — горизонтальная
+    идентификация (пунктир), которая является следствием общей вертикальной связи,
+    а не самостоятельной причинностью.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .node rect {
+        fill: var(--surface-2);
+        stroke: none;
+      }
+
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 54px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .id-line {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-dasharray: 3 12;
+      }
+
+      .id-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="8" markerHeight="8"
+            refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="900" fill="#EFE2D8"/>
+
+  <!-- Один и тот же объект на месте Я-идеала -->
+  <g class="node" transform="translate(460 60)">
+    <rect width="680" height="170" rx="22" ry="22"/>
+    <text x="340" y="72">
+      <tspan x="340" dy="0">Один и тот же объект</tspan>
+      <tspan x="340" dy="62">на месте Я-идеала</tspan>
+    </text>
+  </g>
+
+  <!-- Вертикальные сплошные связи к трём членам массы -->
+  <path class="connector" d="M800 230 V290 C800 340, 380 360, 320 400" marker-end="url(#arrow)"/>
+  <path class="connector" d="M800 230 V420" marker-end="url(#arrow)"/>
+  <path class="connector" d="M800 230 V290 C800 340, 1220 360, 1280 400" marker-end="url(#arrow)"/>
+
+  <!-- Я члена 1 -->
+  <g class="node" transform="translate(120 420)">
+    <rect width="400" height="150" rx="22" ry="22"/>
+    <text x="200" y="92">Я члена 1</text>
+  </g>
+
+  <!-- Я члена 2 -->
+  <g class="node" transform="translate(600 420)">
+    <rect width="400" height="150" rx="22" ry="22"/>
+    <text x="200" y="92">Я члена 2</text>
+  </g>
+
+  <!-- Я члена 3 -->
+  <g class="node" transform="translate(1080 420)">
+    <rect width="400" height="150" rx="22" ry="22"/>
+    <text x="200" y="92">Я члена 3</text>
+  </g>
+
+  <!-- Горизонтальная идентификация — пунктир, без стрелок: не причинность -->
+  <path class="id-line" d="M520 495 H600"/>
+  <path class="id-line" d="M1000 495 H1080"/>
+  <path class="id-line" d="M320 630 C 320 720, 1280 720, 1280 630"/>
+
+  <text class="id-label" x="800" y="712">идентификация</text>
+
+  <text class="id-label" x="800" y="800">
+    <tspan x="800" dy="0">вертикаль (отношение к вождю) первична —</tspan>
+    <tspan x="800" dy="44">горизонталь ей следует</tspan>
+  </text>
+</svg>

@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">Мания и меланхолия — колебания отношения Я и Я-идеала</title>
+  <desc id="desc">
+    Мания: Я и Я-идеал слились — триумф и самоублаготворённость. Меланхолия: резкий
+    разлад двух инстанций — чрезмерно чувствительный идеал беспощадно судит Я.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-style: italic;
+        font-weight: 600;
+        text-anchor: end;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="#EFE2D8"/>
+
+  <text class="col-header" x="620" y="80">Отношение Я и Я-идеала</text>
+  <text class="col-header" x="1240" y="80">Феноменология</text>
+
+  <!-- Мания -->
+  <text class="row-label" x="240" y="230">Мания</text>
+  <g class="cell" transform="translate(260 140)">
+    <rect width="560" height="200" rx="22" ry="22"/>
+    <text x="40" y="90">
+      <tspan x="40" dy="0">Я и Я-идеал</tspan>
+      <tspan x="40" dy="52">слились</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(850 140)">
+    <rect width="730" height="200" rx="22" ry="22"/>
+    <text x="40" y="66">
+      <tspan x="40" dy="0">триумф, не нарушаемый</tspan>
+      <tspan x="40" dy="52">самокритикой; отпадение</tspan>
+      <tspan x="40" dy="52">торможений и самоупрёков</tspan>
+    </text>
+  </g>
+
+  <!-- Меланхолия -->
+  <text class="row-label" x="240" y="620">Меланхолия</text>
+  <g class="cell" transform="translate(260 400)">
+    <rect width="560" height="380" rx="22" ry="22"/>
+    <text x="40" y="180">
+      <tspan x="40" dy="0">резкий разлад</tspan>
+      <tspan x="40" dy="52">двух инстанций</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(850 400)">
+    <rect width="730" height="380" rx="22" ry="22"/>
+    <text x="40" y="86">
+      <tspan x="40" dy="0">чрезмерно чувствительный</tspan>
+      <tspan x="40" dy="52">идеал беспощадно выносит</tspan>
+      <tspan x="40" dy="52">своё осуждение Я в бреде</tspan>
+      <tspan x="40" dy="52">малоценности</tspan>
+      <tspan x="40" dy="52">и самоуничижении</tspan>
+    </text>
+  </g>
+</svg>

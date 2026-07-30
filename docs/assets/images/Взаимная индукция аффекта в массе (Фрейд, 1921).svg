@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-labelledby="title desc">
+  <title id="title">Взаимная индукция аффекта в массе</title>
+  <desc id="desc">
+    Круговой механизм заражения по Макдугаллу: замеченные признаки аффекта у другого
+    вызывают тот же аффект автоматически у меня, критика молчит, я усиливаю аффект
+    других — и цикл возвращается к первому шагу, взаимно усиливаясь.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;family=JetBrains+Mono:wght@400&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .node rect { fill: var(--surface-2); stroke: none; }
+      .node text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 52px;
+        font-weight: 600;
+      }
+
+      .plaque rect { fill: var(--bruise); }
+      .plaque text {
+        fill: var(--surface);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 42px;
+        text-anchor: middle;
+      }
+
+      .connector {
+        fill: none;
+        stroke: var(--ink-muted);
+        stroke-width: 3.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+
+    <marker id="arrow" markerWidth="11" markerHeight="11"
+            refX="9" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#6B5F63"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#EFE2D8"/>
+
+  <!-- 01 → 02: верхняя дуга -->
+  <path class="connector" d="M620 270 C 760 130, 840 130, 980 270" marker-end="url(#arrow)"/>
+
+  <!-- 02 → 03: правая нисходящая дуга -->
+  <path class="connector" d="M1080 400 C 1260 520, 1140 640, 980 690" marker-end="url(#arrow)"/>
+
+  <!-- 03 → 01: левая восходящая дуга (цикл замыкается) -->
+  <path class="connector" d="M620 690 C 460 640, 340 520, 460 400" marker-end="url(#arrow)"/>
+
+  <!-- Карточка 01 -->
+  <g class="node" transform="translate(60 100)">
+    <rect width="560" height="340" rx="24" ry="24"/>
+    <g class="plaque" transform="translate(28 34)">
+      <rect width="88" height="88" rx="16" ry="16"/>
+      <text x="44" y="60">01</text>
+    </g>
+    <text x="140" y="90">
+      <tspan x="140" dy="0">Замеченные</tspan>
+      <tspan x="140" dy="62">признаки</tspan>
+      <tspan x="140" dy="62">аффекта у</tspan>
+      <tspan x="140" dy="62">другого</tspan>
+    </text>
+  </g>
+
+  <!-- Карточка 02 -->
+  <g class="node" transform="translate(980 100)">
+    <rect width="560" height="340" rx="24" ry="24"/>
+    <g class="plaque" transform="translate(28 34)">
+      <rect width="88" height="88" rx="16" ry="16"/>
+      <text x="44" y="60">02</text>
+    </g>
+    <text x="140" y="90">
+      <tspan x="140" dy="0">Тот же</tspan>
+      <tspan x="140" dy="62">аффект</tspan>
+      <tspan x="140" dy="62">автоматически</tspan>
+      <tspan x="140" dy="62">у меня</tspan>
+    </text>
+  </g>
+
+  <!-- Карточка 03 -->
+  <g class="node" transform="translate(520 660)">
+    <rect width="560" height="340" rx="24" ry="24"/>
+    <g class="plaque" transform="translate(28 34)">
+      <rect width="88" height="88" rx="16" ry="16"/>
+      <text x="44" y="60">03</text>
+    </g>
+    <text x="140" y="90">
+      <tspan x="140" dy="0">Критика</tspan>
+      <tspan x="140" dy="62">молчит, я</tspan>
+      <tspan x="140" dy="62">усиливаю</tspan>
+      <tspan x="140" dy="62">аффект других</tspan>
+    </text>
+  </g>
+</svg>

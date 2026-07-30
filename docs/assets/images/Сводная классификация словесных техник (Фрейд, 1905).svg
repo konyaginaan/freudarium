@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1450" width="1600" height="1450" role="img" aria-labelledby="title desc">
+  <title id="title">Сводная классификация словесных техник остроумия</title>
+  <desc id="desc">
+    Три группы техник остроумия: сгущение; употребление того же материала;
+    двусмысленность — с подвидами. Сгущение остаётся вышестоящей категорией:
+    употребление того же материала — частный случай сгущения, двусмысленность —
+    идеальный случай употребления того же материала.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;family=JetBrains+Mono:wght@400&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+        --bruise: #6B3B4F;
+      }
+
+      .row rect.card { fill: var(--surface-2); stroke: none; }
+      .row rect.plaque { fill: var(--bruise); }
+      .row .plaque-text {
+        fill: var(--surface);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 38px;
+        text-anchor: middle;
+      }
+      .row .item-title {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 46px;
+        font-weight: 600;
+      }
+      .row .sub-item {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 34px;
+        font-weight: 500;
+      }
+      .sub-letter {
+        fill: var(--bruise);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 30px;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1450" fill="#EFE2D8"/>
+
+  <!-- I. Сгущение -->
+  <g class="row" transform="translate(50 40)">
+    <rect class="card" width="1500" height="260" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">I</text>
+    <text class="item-title" x="152" y="90">Сгущение</text>
+    <text class="sub-item" x="152" y="170">
+      <tspan><tspan class="sub-letter">a)</tspan> со смешанным словообразованием</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">b)</tspan> с модификацией</tspan>
+    </text>
+  </g>
+
+  <!-- II. Употребление того же материала -->
+  <g class="row" transform="translate(50 340)">
+    <rect class="card" width="1500" height="420" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">II</text>
+    <text class="item-title" x="152" y="90">
+      <tspan x="152" dy="0">Употребление того же</tspan>
+      <tspan x="152" dy="54">материала</tspan>
+    </text>
+    <text class="sub-item" x="152" y="270">
+      <tspan><tspan class="sub-letter">c)</tspan> целое и части</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">d)</tspan> перестановка</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">e)</tspan> лёгкая модификация</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">f)</tspan> те же слова полными и пустыми</tspan>
+    </text>
+  </g>
+
+  <!-- III. Двусмысленность -->
+  <g class="row" transform="translate(50 800)">
+    <rect class="card" width="1500" height="500" rx="26" ry="26"/>
+    <rect class="plaque" x="32" y="32" width="90" height="90" rx="16" ry="16"/>
+    <text class="plaque-text" x="77" y="86">III</text>
+    <text class="item-title" x="152" y="90">Двусмысленность</text>
+    <text class="sub-item" x="152" y="170">
+      <tspan><tspan class="sub-letter">g)</tspan> имя и предметное значение</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">h)</tspan> метафорическое и вещественное</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">i)</tspan> собственно двусмысленность (игра слов)</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">k)</tspan> двузначность</tspan>
+      <tspan x="152" dy="48"><tspan class="sub-letter">l)</tspan> двусмысленность с намёком</tspan>
+    </text>
+  </g>
+
+  <text class="row sub-item" x="800" y="1370" text-anchor="middle" font-style="italic">
+    сгущение — вышестоящая категория; остальные группы сводятся к его частным случаям
+  </text>
+</svg>

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1050" width="1600" height="1050" role="img" aria-labelledby="title desc">
+  <title id="title">Престиж как парализующая критику власть</title>
+  <desc id="desc">
+    Два вида престижа по Лебону: приобретённый (от имени, богатства, традиции) —
+    малой объяснительной ценности; личный, присущий немногим и делающий их вождями, —
+    ближе к сути, но не объяснён.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .cell rect { fill: var(--surface-2); stroke: none; }
+      .cell text {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 40px;
+        font-weight: 500;
+      }
+      .col-header {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .row-label {
+        fill: var(--ink-muted);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 42px;
+        font-style: italic;
+        font-weight: 500;
+        text-anchor: end;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1050" fill="#EFE2D8"/>
+
+  <text class="col-header" x="770" y="90">Откуда берётся</text>
+  <text class="col-header" x="1320" y="90">
+    <tspan x="1320" dy="0">Объяснительная</tspan>
+    <tspan x="1320" dy="50">ценность</tspan>
+  </text>
+
+  <!-- Приобретённый -->
+  <text class="row-label" x="360" y="360">
+    <tspan x="360" dy="0">Приобре-</tspan>
+    <tspan x="360" dy="50">тённый</tspan>
+  </text>
+  <g class="cell" transform="translate(400 200)">
+    <rect width="700" height="330" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">у лиц — от имени,</tspan>
+      <tspan x="40" dy="54">богатства, репутации;</tspan>
+      <tspan x="40" dy="54">у воззрений — от</tspan>
+      <tspan x="40" dy="54">традиции</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(1140 200)">
+    <rect width="420" height="330" rx="22" ry="22"/>
+    <text x="40" y="106">
+      <tspan x="40" dy="0">мала: отсылает</tspan>
+      <tspan x="40" dy="54">к прошлому</tspan>
+    </text>
+  </g>
+
+  <!-- Личный -->
+  <text class="row-label" x="360" y="770">Личный</text>
+  <g class="cell" transform="translate(400 570)">
+    <rect width="700" height="330" rx="22" ry="22"/>
+    <text x="40" y="76">
+      <tspan x="40" dy="0">присущ немногим,</tspan>
+      <tspan x="40" dy="54">которые через него</tspan>
+      <tspan x="40" dy="54">и становятся вождями —</tspan>
+      <tspan x="40" dy="54">как магнитные чары</tspan>
+    </text>
+  </g>
+  <g class="cell" transform="translate(1140 570)">
+    <rect width="420" height="330" rx="22" ry="22"/>
+    <text x="40" y="106">
+      <tspan x="40" dy="0">ближе к сути,</tspan>
+      <tspan x="40" dy="54">но не объяснён</tspan>
+    </text>
+  </g>
+</svg>

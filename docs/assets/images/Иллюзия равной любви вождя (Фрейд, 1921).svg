@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 750" width="1600" height="750" role="img" aria-labelledby="title desc">
+  <title id="title">Иллюзия равной любви вождя как переработка орды</title>
+  <desc id="desc">
+    Отношение отца ко всем: в первобытной орде — одинаковое преследование и страх;
+    в искусственной массе (церковь, войско) — иллюзия одинаковой любви; в семье —
+    равная любовь действительно возможна.
+  </desc>
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&amp;display=swap');
+
+      :root {
+        --surface: #EFE2D8;
+        --surface-2: #E9D0C1;
+        --ink: #2A1F2D;
+        --ink-muted: #6B5F63;
+      }
+
+      .card rect { fill: var(--surface-2); stroke: none; }
+      .card .title {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 44px;
+        font-weight: 600;
+        text-anchor: middle;
+      }
+      .card .body {
+        fill: var(--ink);
+        font-family: "EB Garamond", Georgia, serif;
+        font-size: 38px;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <rect width="1600" height="750" fill="#EFE2D8"/>
+
+  <!-- Первобытная орда -->
+  <g class="card" transform="translate(40 100)">
+    <rect width="480" height="500" rx="24" ry="24"/>
+    <text class="title" x="240" y="90">
+      <tspan x="240" dy="0">Первобытная</tspan>
+      <tspan x="240" dy="56">орда</tspan>
+    </text>
+    <text class="body" x="240" y="280">
+      <tspan x="240" dy="0">одинаковое</tspan>
+      <tspan x="240" dy="50">преследование</tspan>
+      <tspan x="240" dy="50">и страх</tspan>
+    </text>
+  </g>
+
+  <!-- Искусственная масса -->
+  <g class="card" transform="translate(560 100)">
+    <rect width="480" height="500" rx="24" ry="24"/>
+    <text class="title" x="240" y="90">
+      <tspan x="240" dy="0">Искусственная</tspan>
+      <tspan x="240" dy="56">масса</tspan>
+    </text>
+    <text class="body" x="240" y="290">
+      <tspan x="240" dy="0">иллюзия</tspan>
+      <tspan x="240" dy="50">одинаковой</tspan>
+      <tspan x="240" dy="50">любви</tspan>
+    </text>
+  </g>
+
+  <!-- Семья -->
+  <g class="card" transform="translate(1080 100)">
+    <rect width="480" height="500" rx="24" ry="24"/>
+    <text class="title" x="240" y="90">Семья</text>
+    <text class="body" x="240" y="290">
+      <tspan x="240" dy="0">равная любовь</tspan>
+      <tspan x="240" dy="50">действительно</tspan>
+      <tspan x="240" dy="50">возможна</tspan>
+    </text>
+  </g>
+</svg>
