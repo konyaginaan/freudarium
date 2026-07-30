@@ -2,12 +2,12 @@
   "name": "Фрейдариум",
   "short_name": "Фрейдариум",
   "description": "Атомарная база работ Зигмунда Фрейда",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/freudarium/",
+  "scope": "/freudarium/",
   "display": "standalone",
   "background_color": "#EFE2D8",
   "theme_color": "#EFE2D8",
   "icons": [
-    { "src": "/assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    { "src": "/freudarium/assets/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }
