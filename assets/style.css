@@ -425,8 +425,16 @@ details.decade .rows .row:last-child { border-bottom: none; }
 /* ── главная ── */
 /* ── баннер на главной: пробный вариант, легко убрать одним классом ── */
 .hero-banner {
-  margin: -24px calc(50% - 50vw) 20px; width: 100vw;
-  position: relative; overflow: hidden; margin-top: max(-24px, calc(-1 * env(safe-area-inset-top) - 24px));
+  /* Раньше расширялись через margin: calc(50% - 50vw) — реальный layout-
+     оверфлоу, который main глушит через overflow-x:hidden (см. комментарий
+     у main выше), а заодно и обрезает по ширине колонки: overflow:hidden
+     режет любое содержимое, выходящее за паддинг-бокс, включая специально
+     вылезающий full-bleed баннер. transform не создаёт layout-оверфлоу
+     (в отличие от margin/width), поэтому не обрезается и не требует
+     overflow-x нигде — тот же визуальный результат без побочного эффекта. */
+  width: 100vw; margin-left: 50%; transform: translateX(-50%);
+  margin-bottom: 20px; margin-top: max(-24px, calc(-1 * env(safe-area-inset-top) - 24px));
+  position: relative; overflow: hidden;
 }
 .hero-banner img {
   display: block; width: 100%; height: min(60vw, 560px); min-height: 280px;
