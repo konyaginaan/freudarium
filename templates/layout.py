@@ -250,6 +250,11 @@ def page(title: str, description: str, body_html: str, site_base: str,
     stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </button>
 
+<button class="fab-top" id="fabTop" aria-label="Наверх" hidden data-pagefind-ignore>
+  <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+    stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
 <div class="sheet" id="menuSheet" hidden data-pagefind-ignore>
   <div class="sheet-inner">
     <h3>Разделы</h3>
@@ -297,5 +302,11 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <script src="{assets}/app.js?v={asset_v("app.js")}"></script>
 <script src="{assets}/annotations.js?v={asset_v("annotations.js")}"></script>
 <script src="{assets}/comments.js?v={asset_v("comments.js")}"></script>
+<!-- hub-keywords.js — не файл из assets/, а сгенерированный build.py
+     словарь понятие→карта (word-list меняется вместе с логикой куда чаще,
+     чем сам по себе), поэтому версионируем общим хэшем с conceptlinks.js,
+     а не своим отдельным (его нет в исходном дереве assets/ для asset_v). -->
+<script src="{assets}/hub-keywords.js?v={asset_v("conceptlinks.js")}"></script>
+<script src="{assets}/conceptlinks.js?v={asset_v("conceptlinks.js")}"></script>
 </body>
 </html>"""

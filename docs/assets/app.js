@@ -205,6 +205,23 @@
     }).observe(svgLightbox, { attributes: true, attributeFilter: ["hidden"] });
   }
 
+  // ── фильтр на странице «Все теги» (387 штук одним списком — искать
+  // проще, чем листать) — простой клиентский substring-фильтр, без
+  // pagefind: тут точное совпадение по названию тега, не полнотекстовый
+  // поиск по содержимому. ──
+  var tagFilterInput = document.getElementById("tagFilterInput");
+  var tagRows = document.getElementById("tagRows");
+  if (tagFilterInput && tagRows) {
+    var tagRowEls = Array.prototype.slice.call(tagRows.querySelectorAll(".row"));
+    tagFilterInput.addEventListener("input", function () {
+      var q = tagFilterInput.value.trim().toLowerCase();
+      tagRowEls.forEach(function (row) {
+        var title = row.querySelector(".row-title").textContent.toLowerCase();
+        row.hidden = q.length > 0 && title.indexOf(q) === -1;
+      });
+    });
+  }
+
   // ── поиск ──
   document.getElementById("searchBtn").addEventListener("click", function () {
     window.location.href = SITE_BASE + "/search/";
@@ -285,6 +302,23 @@
     }
     updateFab();
     window.addEventListener("resize", updateFab);
+  }
+
+  // Плавающая кнопка «наверх» — зеркало «назад» с правого края той же
+  // колонки (см. .fab-top в style.css). В отличие от «назад» показывается
+  // не всегда, а только когда прокрутили вниз — наверху страницы ей
+  // некуда вести. Без rAF-троттлинга: сама проверка — одно чтение scrollY
+  // и запись hidden, дешевле, чем сам троттлинг.
+  var fabTop = document.getElementById("fabTop");
+  if (fabTop) {
+    fabTop.addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    function updateFabTop() {
+      fabTop.hidden = window.scrollY < 600;
+    }
+    updateFabTop();
+    window.addEventListener("scroll", updateFabTop, { passive: true });
   }
 
   // ── «Скачать с окружением»: сама заметка + все её связи (links_out +

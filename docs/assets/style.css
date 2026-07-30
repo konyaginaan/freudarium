@@ -77,6 +77,12 @@ h1, h2, h3, .brand, .btn, .chip, .row-count, button {
 }
 a { color: var(--bruise); text-decoration: none; }
 a:hover { text-decoration: underline; }
+/* Автоссылка понятия на карту области (assets/conceptlinks.js) — тот же
+   цвет, что у обычных ссылок в тексте, но пунктирное подчёркивание вместо
+   сплошного при ховере: подсказка, что это найденное автоматически
+   упоминание понятия, а не авторская ссылка. */
+.concept-link { border-bottom: 1px dotted var(--bruise); }
+.concept-link:hover { text-decoration: none; border-bottom-style: solid; }
 .icon { width: 22px; height: 22px; display: block; }
 
 /* ── шапка ── */
@@ -220,6 +226,19 @@ mark.user-mark-note {
   box-shadow: 0 6px 18px var(--shadow); cursor: pointer;
 }
 .fab-back[hidden] { display: none; }
+
+/* ── плавающая кнопка «наверх» — зеркало «назад» с правого края той же
+   центрированной колонки (см. комментарий у .fab-back выше). ── */
+.fab-top {
+  position: fixed;
+  right: max(16px, calc(50% - min(var(--col-width), 100vw - 40px) / 2 - 68px));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 40; width: 52px; height: 52px; border-radius: 50%;
+  background: var(--bruise); color: var(--surface); border: none;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px var(--shadow); cursor: pointer;
+}
+.fab-top[hidden] { display: none; }
 
 /* ── типографика заметки ── */
 .note-title { font-size: 1.6em; line-height: 1.25; margin: 0 0 .3em; }
@@ -419,17 +438,24 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .rel-block { margin: 2em 0; }
 .rel-block h2 { font-size: .82em; text-transform: uppercase; letter-spacing: .06em;
   color: var(--ink-muted); margin: 0 0 .6em; font-weight: 700; }
-.rel-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+/* Маркированный список без плашек-обводок (раньше каждая ссылка была
+   отдельной коробкой на surface-2 — по фидбогу пользователя 31.07.2026,
+   хотелось обычный список со маркерами). display:flex на <ul> убрал бы
+   буллиты — по спеке flex-item не генерирует ::marker — поэтому список
+   снова обычный блочный, а отступ между строками через margin у <li>. */
+.rel-list { list-style: disc; margin: 0; padding-left: 1.3em; }
+.rel-list li { margin: 0 0 6px; }
+.rel-list li:last-child { margin-bottom: 0; }
 /* Только ПРЯМАЯ ссылка-строка списка (> вместо потомка) — иначе это правило
    перебивает .p-note-link (нумерованные кружки 1/2/3 внутри строки, см. ниже):
    при равной специфичности класс+тег vs класс+тег побеждает то, что ниже по
    файлу, и кружки раздувались до тех же 10px/14px паддингов, теряя форму. */
 .rel-list > li > a {
-  display: block; padding: 10px 14px; background: var(--surface-2); border-radius: 12px;
+  display: inline; padding: 0; background: none; border-radius: 0;
   color: var(--ink); font-size: .95em;
 }
-.rel-list > li > a:hover { background: var(--surface-3); text-decoration: none; }
-.rel-fulltext .rel-list > li > a { background: transparent; border: 1px solid var(--bruise); color: var(--bruise); }
+.rel-list > li > a:hover { background: none; color: var(--bruise); text-decoration: underline; }
+.rel-fulltext .rel-list > li > a { background: none; border: none; color: var(--bruise); }
 
 /* ── карточки/сетка ── */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 12px 0; }
@@ -452,6 +478,11 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .row-year { color: var(--ink-muted); font-size: .85em; width: 3.5em; flex-shrink: 0; }
 .row-title { flex: 1; }
 .row-count { color: var(--ink-muted); font-size: .85em; }
+.tag-filter-input {
+  width: 100%; margin: 0 0 14px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--ink); font: inherit; padding: 10px 14px;
+}
+.row[hidden] { display: none; }
 
 /* ── кнопки: заполненная (действие) vs контурная (второстепенное) —
    ссылки на заметки (.rel-list/.card) остаются на surface-2, поэтому кнопки
@@ -666,4 +697,19 @@ details.decade .rows .row:last-child { border-bottom: none; }
 @media (min-width: 900px) {
   main { padding-top: 40px; }
   .card-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  /* Потолок в 560px был рассчитан на мобильную ширину (60vw узкого экрана) —
+     на широком окне та же картинка выглядела приземисто-широкой (фидбек
+     пользователя 31.07.2026). Выше потолок, тот же object-fit:cover. */
+  .hero-banner img { height: min(45vw, 760px); }
+  /* Шапка и все шторки были растянуты на всю ширину окна, а текст лежит
+     в центрированной колонке --col-width — на широком экране разъезжались
+     (фидбек пользователя 31.07.2026). Фон/подложка шапки по-прежнему во
+     всю ширину — сдвигаем только содержимое теми же боковыми отступами,
+     что и у main; шторки — ограничиваем и центрируем по той же колонке. */
+  .topbar {
+    padding-left: max(16px, calc(50% - min(var(--col-width), 100vw - 40px) / 2));
+    padding-right: max(16px, calc(50% - min(var(--col-width), 100vw - 40px) / 2));
+  }
+  .sheet { justify-content: center; }
+  .sheet-inner { width: 100%; max-width: var(--col-width); }
 }

@@ -387,13 +387,51 @@ def main():
     )
     simple_list_page(su("/maps/"), "Карты областей", f'<div class="card-grid">{hub_cards}</div>', su("/"))
 
+    # ── автоссылки понятий в тексте заметок на карты областей (фидбек
+    # пользователя 31.07.2026): «невроз», «сексуальность» и т.п. в прозе
+    # должны вести на соответствующую карту. Ключ строим из СОБСТВЕННЫХ
+    # тегов хаба, не из заголовка — тот часто многословный и почти
+    # никогда не встречается в прозе дословно. Берём только теги,
+    # размеченные ровно на ОДНОМ хабе — иначе неясно, куда вести (у
+    # «религия» и «метапсихология» в корпусе по два хаба — пропускаем).
+    # Дефис в теге («невроз-навязчивости») — склейка для слага, в прозе
+    # слова идут через пробел, возвращаем как было.
+    _HUB_KEYWORD_GENERIC_TAGS = {"концепт", "Фрейд", "синтез", "хаб", "ключевая-мысль"}
+    # Слишком общеупотребимые вне психоаналитического контекста слова —
+    # риск ложных срабатываний на неродственных упоминаниях (проверено на
+    # корпусе 31.07.2026: это САМЫЕ частые обычные слова среди тегов-
+    # кандидатов, не специфичные именно для этой карты).
+    _HUB_KEYWORD_TOO_GENERIC = {"техника", "культура", "экономия", "удовольствие", "сны"}
+    tag_to_hub_ids: dict[str, list[str]] = {}
+    for h in hubs:
+        for t in h.get("tags") or []:
+            if t in _HUB_KEYWORD_GENERIC_TAGS:
+                continue
+            tag_to_hub_ids.setdefault(t, []).append(h["id"])
+    hub_keywords: dict[str, str] = {}
+    for t, hub_ids in tag_to_hub_ids.items():
+        if len(hub_ids) != 1:
+            continue
+        phrase = t.replace("-", " ")
+        if phrase in _HUB_KEYWORD_TOO_GENERIC:
+            continue
+        hub_keywords[phrase] = hub_url(hub_ids[0])
+    write_text(
+        "assets/hub-keywords.js",
+        "window.__HUB_KEYWORDS__=" + json.dumps(hub_keywords, ensure_ascii=False) + ";",
+    )
+
     tags_sorted = sorted(tag_notes.items(), key=lambda kv: -len(kv[1]))
     tag_rows = "".join(
         f'<a class="row" href="{tag_url(t)}"><span class="row-title">#{t}</span>'
         f'<span class="row-count">{len(ids)}</span></a>'
         for t, ids in tags_sorted
     )
-    simple_list_page(su("/tags/"), "Все теги", f'<div class="rows">{tag_rows}</div>', su("/"))
+    tag_filter_html = (
+        '<input type="search" id="tagFilterInput" class="tag-filter-input" '
+        'placeholder="Найти тег…" aria-label="Найти тег">'
+    )
+    simple_list_page(su("/tags/"), "Все теги", f'{tag_filter_html}<div class="rows" id="tagRows">{tag_rows}</div>', su("/"))
 
     # ══════════════ главная ══════════════
     top_tags = [t for t, _ in tags_sorted if t not in ("Фрейд", "концепт")][:24]
@@ -561,7 +599,7 @@ def main():
 
     for asset_name in (
         "style.css", "app.js", "tg.js", "random.js", "search.js", "annotations.js", "mynotes.js",
-        "comments.js", "logo.svg", "hero-header.webp",
+        "comments.js", "conceptlinks.js", "logo.svg", "hero-header.webp",
     ):
         src = PROJECT_DIR / "assets" / asset_name
         if src.exists():
