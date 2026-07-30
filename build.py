@@ -337,7 +337,7 @@ def main():
     emit_page(su("/search/"), "Поиск", "", search_html, back_href=su("/"), pagefind_ignore=True)
 
     mynotes_html = pages.render_my_notes(ctx)
-    emit_page(su("/notes/"), "Мои пометки", "", mynotes_html, back_href=su("/"), pagefind_ignore=True)
+    emit_page(su("/notes/"), "Мои заметки", "", mynotes_html, back_href=su("/"), pagefind_ignore=True)
 
     # ══════════════ индексы: works/, tags/, maps/ ══════════════
     def simple_list_page(url, title, rows_html, back_href):

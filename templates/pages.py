@@ -336,7 +336,7 @@ def render_search(ctx):
 def render_my_notes(ctx):
     return f"""
 <article class="mynotes-page">
-  <h1 class="note-title">Мои пометки</h1>
+  <h1 class="note-title">Мои заметки</h1>
   <p class="work-meta">Закладки, выделения и заметки, которые вы оставили при чтении —
     хранятся у вас в браузере, а внутри Telegram ещё и синхронизируются между устройствами.</p>
   <div class="mynotes-empty" id="mynotesEmpty" hidden>Пока ничего нет — выделите текст на любой странице, чтобы отметить или прокомментировать его, или нажмите «В избранное» в шапке.</div>
