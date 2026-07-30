@@ -223,7 +223,7 @@ def main():
         return (text[:n] + "…") if len(text) > n else text
 
     def emit_page(url, title, description, body_html, back_href=None, back_label="Назад",
-                  pagefind_filters=None, pagefind_ignore=False):
+                  pagefind_filters=None, pagefind_ignore=False, pre_main_html=""):
         rel = url[len(SITE_BASE):] if SITE_BASE and url.startswith(SITE_BASE) else url
         html_out = layout.page(
             title=title,
@@ -235,6 +235,7 @@ def main():
             back_label=back_label,
             pagefind_filters=pagefind_filters,
             pagefind_ignore=pagefind_ignore,
+            pre_main_html=pre_main_html,
         )
         write_text(rel.rstrip("/") + "/index.html" if not rel.endswith(".html") else rel, html_out)
 
@@ -375,7 +376,8 @@ def main():
         "works": len(works),
     }
     home_html = pages.render_home(works, hubs, top_tags, stats, ctx)
-    emit_page(su("/"), "Фрейдариум", "Атомарная база работ Зигмунда Фрейда", home_html)
+    emit_page(su("/"), "Фрейдариум", "Атомарная база работ Зигмунда Фрейда", home_html,
+              pre_main_html=pages.render_home_banner(ctx))
 
     # ══════════════ резервный индекс поиска ══════════════
     # На случай, если pagefind (WASM + Web Worker) не запустится в вебвью

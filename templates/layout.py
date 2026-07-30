@@ -44,7 +44,8 @@ NAV_ITEMS = [
 def page(title: str, description: str, body_html: str, site_base: str,
          canonical_path: str, back_href: str | None = None,
          back_label: str = "Назад", extra_head: str = "",
-         pagefind_filters: dict | None = None, pagefind_ignore: bool = False) -> str:
+         pagefind_filters: dict | None = None, pagefind_ignore: bool = False,
+         pre_main_html: str = "") -> str:
     full_title = title if title == SITE_NAME else f"{title} — {SITE_NAME}"
     esc_title = html.escape(full_title)
     esc_title_raw = html.escape(title)
@@ -111,7 +112,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
     </button>
   </div>
 </header>
-
+{pre_main_html}
 <main {main_attrs}>
 <span data-pagefind-meta="title" hidden>{esc_title_raw}</span>
 {body_html}

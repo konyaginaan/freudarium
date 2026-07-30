@@ -405,6 +405,19 @@ def _decade_groups(works_sorted):
     return groups
 
 
+def render_home_banner(ctx):
+    # Баннер рендерится ВНЕ <main> (между шапкой и main, см. pre_main_html в
+    # layout.page): main несёт overflow-x:hidden против горизонтального скролла,
+    # а overflow режет и трансформированных потомков — любой трюк с расширением
+    # баннера изнутри колонки (margin: calc(50% - 50vw), transform) оказывался
+    # обрезан по ширине колонки на широких экранах. Снаружи main баннер — обычный
+    # блок на всю ширину body, резать его некому и расширять нечего.
+    return f"""
+  <figure class="hero-banner">
+    <img src="{ctx["assets_base"]}/hero-header.webp" alt="" width="1672" height="941" fetchpriority="high">
+  </figure>"""
+
+
 def render_home(works, hubs, tags_top, stats, ctx):
     works_sorted = sorted(works, key=lambda w: (w["year"] or "9999"))
     decades_html = ""
@@ -447,9 +460,6 @@ def render_home(works, hubs, tags_top, stats, ctx):
 
     return f"""
 <article class="home-page">
-  <figure class="hero-banner">
-    <img src="{ctx["assets_base"]}/hero-header.webp" alt="" width="1672" height="941" fetchpriority="high">
-  </figure>
   <section class="hero">
     <h1 class="hero-title">Фрейдариум</h1>
     <p>Атомарная база работ Зигмунда Фрейда — {stats["atomic"]} заметок,
