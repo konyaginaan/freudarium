@@ -185,7 +185,7 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
   <h1 class="note-title">{html.escape(work["title"])}</h1>
   <p class="work-meta">{html.escape(work["author"] or "Фрейд")}</p>
   <div class="stat-tiles">
-    <div class="stat-tile stat-tile-accent"><span class="stat-num">{html.escape(work["year"] or "—")}</span><span class="stat-label">год написания</span></div>
+    <div class="stat-tile stat-tile-accent"><span class="stat-num">{html.escape(work["year"] or "—")}</span><span class="stat-label">год публикации</span></div>
     <div class="stat-tile"><span class="stat-num">{work["atomic_note_count"]}</span><span class="stat-label">заметок</span></div>
   </div>
   <div class="work-actions">{ft_html}</div>

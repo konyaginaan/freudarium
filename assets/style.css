@@ -466,15 +466,24 @@ details.decade .rows .row:last-child { border-bottom: none; }
   content: ""; position: absolute; inset: auto 0 0 0; height: 40%;
   background: linear-gradient(to bottom, transparent, var(--surface));
 }
-/* Сама картинка светлая (пергамент на фоне) и не участвует в теме — в тёмной
-   теме она иначе выглядит «светлым пятном» наверху, будто тема не применилась.
-   Лёгкая тёмная вуаль поверх всего баннера решает это, не трогая исходный файл. */
-:root[data-theme="dark"] .hero-banner::before {
-  content: ""; position: absolute; inset: 0; background: rgba(10, 6, 12, .38); z-index: 1;
+/* Раньше тёмная вуаль (::before, z-index:1) и переход внизу (::after, без
+   z-index — это 0) были ДВУМЯ разными слоями — при равной высоте позиционных
+   потомков более поздний по z-index (вуаль) красился ПОВЕРХ перехода, отчего
+   на части устройств граница между картинкой и фоном страницы читалась как
+   резкая, а не как плавное затухание (баг, а не просто «менее заметно» — см.
+   присланный скриншот). Теперь в тёмной теме это ОДИН слой (::after, во весь
+   баннер, без второго ::before): вуаль постоянной непрозрачности до 60%
+   высоты, дальше — явный, гарантированный переход в var(--surface). Сама
+   картинка светлая (пергамент на фоне) и без вуали выглядела бы в тёмной
+   теме «светлым пятном» наверху, будто тема не применилась. */
+:root[data-theme="dark"] .hero-banner::after {
+  inset: 0; height: auto;
+  background: linear-gradient(to bottom, rgba(10, 6, 12, .38) 0%, rgba(10, 6, 12, .38) 60%, var(--surface) 100%);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="sepia"]) .hero-banner::before {
-    content: ""; position: absolute; inset: 0; background: rgba(10, 6, 12, .38); z-index: 1;
+  :root:not([data-theme="light"]):not([data-theme="sepia"]) .hero-banner::after {
+    inset: 0; height: auto;
+    background: linear-gradient(to bottom, rgba(10, 6, 12, .38) 0%, rgba(10, 6, 12, .38) 60%, var(--surface) 100%);
   }
 }
 .hero { text-align: center; padding: 8px 0 8px; }
