@@ -199,6 +199,12 @@ mark.user-mark-note {
 .crumbs { font-size: 13px; color: var(--ink-muted); margin-bottom: 10px; }
 .crumbs a { color: var(--ink-muted); }
 .work-meta { color: var(--ink-muted); font-size: 14px; margin: 0 0 16px; }
+/* Telegram-вебвью (особенно iOS) по умолчанию подавляет нативное выделение
+   текста внутри мини-приложений — явный user-select нужен, чтобы его
+   переопределить (без этого правила выделение не появляется вообще). */
+.note-body, .fulltext-body {
+  -webkit-user-select: text; user-select: text; -webkit-touch-callout: default;
+}
 .note-body p { margin: 0 0 1em; }
 .note-body h2 { font-size: 1.25em; margin: 1.4em 0 .5em; }
 .note-body h3 { font-size: 1.1em; margin: 1.2em 0 .4em; }
