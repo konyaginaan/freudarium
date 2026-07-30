@@ -185,7 +185,12 @@
     if (!container) return;
     var mine = loadAll().filter(function (a) { return a.url === pageUrl() && a.quote; });
     mine.forEach(function (a) {
-      var cls = "user-mark user-mark-" + (a.type === "note" ? "note" : a.color || "bruise");
+      // Цвет — ВСЕГДА (у заметок без явно выбранного цвета — bruise по
+      // умолчанию), а user-mark-note лишь добавляет пунктирное подчёркивание
+      // поверх цвета как признак «есть комментарий» — раньше комментарий
+      // вместо цвета получал одно только подчёркивание.
+      var cls = "user-mark user-mark-" + (a.color || "bruise");
+      if (a.type === "note") cls += " user-mark-note";
       highlightTextInContainer(container, a.quote, cls, a.id);
     });
   }

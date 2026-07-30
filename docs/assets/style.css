@@ -169,8 +169,13 @@ mark.user-mark { padding: .02em .1em; border-radius: 3px; cursor: pointer; }
 mark.user-mark-bruise { background: color-mix(in srgb, var(--bruise) 35%, transparent); }
 mark.user-mark-flesh { background: color-mix(in srgb, var(--flesh) 45%, transparent); }
 mark.user-mark-verdigris { background: color-mix(in srgb, var(--verdigris) 45%, transparent); }
+/* Раньше вместо цвета было только это подчёркивание (background:none) —
+   заметка с комментарием визуально теряла цвет маркера. Теперь подчёркивание
+   лишь ДОБАВЛЯЕТ признак «есть комментарий» поверх обычного цветного фона
+   (см. renderSavedMarks в annotations.js — класс цвета всегда есть, этот
+   класс просто идёт вторым). */
 mark.user-mark-note {
-  background: none; border-bottom: 2px dotted var(--bruise);
+  border-bottom: 2px dotted var(--bruise);
 }
 
 /* ── штамп сборки в меню разделов ── */
