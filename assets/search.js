@@ -10,6 +10,8 @@
 
   var activeType = "";
   var pagefind = null;
+  var pagefindFailed = false;
+  var fallbackIndex = null;
   var debounceTimer = null;
 
   var TYPE_LABEL = {
@@ -24,6 +26,39 @@
     pagefind = await import(SITE_BASE + "/pagefind/pagefind.js");
     await pagefind.init();
     return pagefind;
+  }
+
+  // pagefind — WASM + Web Worker; в вебвью Telegram (особенно iOS) это
+  // иногда не запускается вовсе. Резерв — простой поиск по заголовкам/
+  // тегам/работам без воркеров и WASM: беднее (не ищет внутри текста), но
+  // работает везде. Переключаемся на него, если pagefind реально упал —
+  // не заранее, чтобы не терять полнотекстовый поиск там, где он работает.
+  async function getFallbackIndex() {
+    if (fallbackIndex) return fallbackIndex;
+    var r = await fetch(SITE_BASE + "/assets/search-index.json");
+    fallbackIndex = await r.json();
+    return fallbackIndex;
+  }
+
+  function fallbackSearch(query, type) {
+    return getFallbackIndex().then(function (items) {
+      var q = query.toLowerCase();
+      return items
+        .filter(function (it) {
+          if (type && it.type !== type) return false;
+          var hay = it.title.toLowerCase() + " " + (it.tags || []).join(" ").toLowerCase();
+          return hay.indexOf(q) !== -1;
+        })
+        .slice(0, 40)
+        .map(function (it) {
+          return {
+            url: SITE_BASE + it.url,
+            meta: { title: it.title },
+            excerpt: (it.tags || []).map(function (t) { return "#" + t; }).join(" "),
+            filters: { type: [it.type], work: it.work ? [it.work] : [] },
+          };
+        });
+    });
   }
 
   function render(results) {
@@ -51,13 +86,28 @@
       emptyEl.hidden = true;
       return;
     }
-    var pf = await getPagefind();
-    var opts = activeType ? { filters: { type: activeType } } : {};
-    var search = await pf.search(query, opts);
-    var results = await Promise.all(
-      search.results.slice(0, 40).map(function (r) { return r.data(); })
-    );
-    render(results);
+    if (pagefindFailed) {
+      render(await fallbackSearch(query, activeType));
+      return;
+    }
+    try {
+      // Не только ошибка — иногда воркер/WASM в вебвью просто зависает,
+      // не бросая исключение вовсе; таймаут ловит и этот случай тоже.
+      var timeout = new Promise(function (_, reject) {
+        setTimeout(function () { reject(new Error("pagefind timeout")); }, 2500);
+      });
+      var pf = await Promise.race([getPagefind(), timeout]);
+      var opts = activeType ? { filters: { type: activeType } } : {};
+      var search = await Promise.race([pf.search(query, opts), timeout]);
+      var results = await Promise.all(
+        search.results.slice(0, 40).map(function (r) { return r.data(); })
+      );
+      render(results);
+    } catch (err) {
+      console.warn("pagefind недоступен, переключаюсь на резервный поиск", err);
+      pagefindFailed = true;
+      render(await fallbackSearch(query, activeType));
+    }
   }
 
   input.addEventListener("input", function () {

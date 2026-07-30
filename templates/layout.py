@@ -20,6 +20,7 @@ NAV_ITEMS = [
     ("/texts/", "Полные тексты"),
     ("/maps/", "Карты областей"),
     ("/tags/", "Все теги"),
+    ("/notes/", "Мои пометки"),
     ("/about/", "О проекте"),
 ]
 
@@ -80,6 +81,10 @@ def page(title: str, description: str, body_html: str, site_base: str,
     <span>{SITE_NAME}</span>
   </a>
   <div class="topbar-actions">
+    <button class="icon-btn" id="bookmarkBtn" title="Добавить в избранное" aria-label="Добавить в избранное" hidden data-pagefind-ignore>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3Z"/></svg>
+    </button>
     <button class="icon-btn" id="searchBtn" title="Поиск" aria-label="Поиск">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -97,6 +102,26 @@ def page(title: str, description: str, body_html: str, site_base: str,
 </main>
 
 <div class="toast" id="toast" data-pagefind-ignore></div>
+
+<div class="sel-toolbar" id="selToolbar" hidden data-pagefind-ignore>
+  <button class="sel-color" data-color="bruise" aria-label="Выделить лиловым"></button>
+  <button class="sel-color" data-color="flesh" aria-label="Выделить тёплым"></button>
+  <button class="sel-color" data-color="verdigris" aria-label="Выделить зелёным"></button>
+  <button class="sel-note-btn" data-action="note">Заметка</button>
+</div>
+
+<div class="sheet" id="noteComposer" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3>Заметка к выделенному</h3>
+    <blockquote class="composer-quote" id="composerQuoteView"></blockquote>
+    <input type="hidden" name="quote">
+    <textarea name="comment" class="composer-textarea" rows="4" placeholder="Ваш комментарий…"></textarea>
+    <div class="composer-actions">
+      <button class="btn btn-primary" data-composer-save>Сохранить</button>
+      <button class="btn" data-composer-cancel>Отмена</button>
+    </div>
+  </div>
+</div>
 
 <button class="fab-back" id="fabBack" data-back aria-label="Назад" hidden data-pagefind-ignore>
   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -139,6 +164,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
 </div>
 
 <script src="{assets}/app.js"></script>
+<script src="{assets}/annotations.js"></script>
 <script src="{assets}/tg.js"></script>
 </body>
 </html>"""

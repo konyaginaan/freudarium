@@ -90,8 +90,13 @@
   });
   var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   var isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
-  if (window.freudAddToHomeScreen) {
-    addBtn.hidden = false; // внутри Telegram — кнопка доступна сразу
+  if (window.freudHomeScreenSupported) {
+    addBtn.hidden = false; // внутри Telegram и API точно есть — кнопка сработает
+  } else if (window.freudAddToHomeScreen) {
+    // Внутри Telegram, но этот клиент не умеет addToHomeScreen — кнопку не
+    // показываем (она бы молча ничего не делала), сразу даём рабочий путь.
+    addHint.hidden = false;
+    addHint.textContent = "Откройте меню ⋮ в шапке Telegram (не сайта) — там есть «Добавить на главный экран».";
   } else if (isIOS && !isStandalone) {
     addHint.hidden = false;
     addHint.textContent = "На iPhone/iPad: откройте меню «Поделиться» внизу экрана и выберите «На экран «Домой»».";

@@ -72,6 +72,31 @@
       });
   };
 
+  // Личная заметка «просто текстом» — отдельным сообщением, не файлом
+  // (см. /notes/, экспорт заметки).
+  window.freudSendTextToChat = function (text) {
+    if (window.freudToast) window.freudToast("Отправляю в чат…", { duration: 4000 });
+    fetch(SERVER_URL + "/sendtext", {
+      method: "POST",
+      headers: { "X-Tg-Init-Data": tg.initData, "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text }),
+    })
+      .then(function (r) {
+        if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || String(r.status)); });
+        return r.json();
+      })
+      .then(function () {
+        if (window.freudToast) window.freudToast("Отправлено в чат с ботом", { duration: 3200 });
+      })
+      .catch(function (err) {
+        console.warn("send text failed", err);
+        var msg = /chat not started/.test(String(err.message))
+          ? "Сначала откройте чат с ботом и отправьте /start — потом попробуйте снова"
+          : "Не получилось отправить — проверьте связь и попробуйте ещё раз";
+        if (window.freudToast) window.freudToast(msg, { duration: 4500 });
+      });
+  };
+
   document.addEventListener(
     "click",
     function (e) {
@@ -111,10 +136,92 @@
     };
   }
 
+  // ── CloudStorage: личные пометки (закладки/заметки/выделения) между
+  // устройствами. Каждая запись — отдельный ключ (одно значение CloudStorage
+  // не может быть длиннее 4096 символов, а весь список легко превысит это),
+  // плюс один ключ-индекс со списком id (тоже под тем же лимитом — хватает
+  // на несколько сотен записей, для личных пометок с запасом). ──
+  var ANN_INDEX_KEY = "freud:ann:index";
+  var ANN_PREFIX = "freud:ann:";
+  if (tg.CloudStorage) {
+    tg.CloudStorage.getItem(ANN_INDEX_KEY, function (err, indexJson) {
+      if (err || !indexJson) return;
+      var ids;
+      try { ids = JSON.parse(indexJson); } catch (e) { return; }
+      if (!ids || !ids.length) return;
+      tg.CloudStorage.getItems(ids.map(function (id) { return ANN_PREFIX + id; }), function (err2, values) {
+        if (err2 || !values) return;
+        var cloudItems = [];
+        Object.keys(values).forEach(function (k) {
+          if (!values[k]) return;
+          try { cloudItems.push(JSON.parse(values[k])); } catch (e) {}
+        });
+        if (!cloudItems.length) return;
+        var local = window.freudAnnotationsAll ? window.freudAnnotationsAll() : [];
+        var byId = {};
+        local.concat(cloudItems).forEach(function (a) { byId[a.id] = a; });
+        var merged = Object.keys(byId).map(function (id) { return byId[id]; });
+        if (window.freudAnnotationsSaveAll) window.freudAnnotationsSaveAll(merged);
+        if (window.freudAnnotationsRefresh) window.freudAnnotationsRefresh();
+      });
+    });
+
+    // Пишем только то, чего в облаке ещё не было — не гоняем на каждое
+    // изменение весь список, а держим, что уже отправлено, в этой сессии.
+    var syncedIds = {};
+    window.freudCloudSyncAnnotations = function (list) {
+      var ids = list.map(function (a) { return a.id; });
+      var toWrite = list.filter(function (a) { return !syncedIds[a.id]; });
+      toWrite.forEach(function (a) {
+        try {
+          tg.CloudStorage.setItem(ANN_PREFIX + a.id, JSON.stringify(a).slice(0, 4090), function () {});
+          syncedIds[a.id] = true;
+        } catch (e) {}
+      });
+      // то, что удалили локально, но ещё числится в индексе — убрать и из облака
+      Object.keys(syncedIds).forEach(function (id) {
+        if (ids.indexOf(id) === -1) {
+          try { tg.CloudStorage.removeItem(ANN_PREFIX + id, function () {}); } catch (e) {}
+          delete syncedIds[id];
+        }
+      });
+      try { tg.CloudStorage.setItem(ANN_INDEX_KEY, JSON.stringify(ids).slice(0, 4090), function () {}); } catch (e) {}
+    };
+  }
+
   // ── добавить на домашний экран (Bot API 8.0+) ──
+  // Раньше кнопка показывалась всегда, стоило открыть сайт внутри Telegram,
+  // а по нажатию тихо ничего не делала, если tg.addToHomeScreen в принципе
+  // не было в этой версии клиента — снаружи выглядело как «не работает».
+  // Теперь честно проверяем возможность заранее и даём знать об ошибке.
+  function homeScreenSupported() {
+    try { return tg.isVersionAtLeast && tg.isVersionAtLeast("8.0") && !!tg.addToHomeScreen; }
+    catch (e) { return false; }
+  }
+  window.freudHomeScreenSupported = homeScreenSupported();
   window.freudAddToHomeScreen = function () {
+    if (!homeScreenSupported()) {
+      if (window.freudToast) {
+        window.freudToast(
+          "Эта версия Telegram не поддерживает добавление напрямую — откройте меню ⋮ в шапке мини-приложения (не нашего сайта, а самого Telegram) и поищите там «Добавить на главный экран».",
+          { duration: 6000 }
+        );
+      }
+      return;
+    }
     try {
-      if (tg.addToHomeScreen) tg.addToHomeScreen();
-    } catch (e) {}
+      tg.addToHomeScreen();
+    } catch (err) {
+      console.warn("addToHomeScreen failed", err);
+      if (window.freudToast) window.freudToast("Не получилось — попробуйте через меню ⋮ в шапке Telegram", { duration: 4500 });
+    }
   };
+  if (tg.onEvent) {
+    tg.onEvent("homeScreenAdded", function () {
+      if (window.freudToast) window.freudToast("Готово — иконка добавлена на главный экран", { duration: 3000 });
+    });
+    tg.onEvent("homeScreenChecked", function (data) {
+      console.log("homeScreenChecked", data);
+    });
+  }
 })();

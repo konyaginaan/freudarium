@@ -336,6 +336,9 @@ def main():
     search_html = pages.render_search(ctx)
     emit_page(su("/search/"), "Поиск", "", search_html, back_href=su("/"), pagefind_ignore=True)
 
+    mynotes_html = pages.render_my_notes(ctx)
+    emit_page(su("/notes/"), "Мои пометки", "", mynotes_html, back_href=su("/"), pagefind_ignore=True)
+
     # ══════════════ индексы: works/, tags/, maps/ ══════════════
     def simple_list_page(url, title, rows_html, back_href):
         body = f'<article class="index-page"><h1 class="note-title">{title}</h1>{rows_html}</article>'
@@ -371,6 +374,31 @@ def main():
     }
     home_html = pages.render_home(works, hubs, top_tags, stats, ctx)
     emit_page(su("/"), "Фрейдариум", "Атомарная база работ Зигмунда Фрейда", home_html)
+
+    # ══════════════ резервный индекс поиска ══════════════
+    # На случай, если pagefind (WASM + Web Worker) не запустится в вебвью
+    # Telegram — лёгкий JSON по заголовкам/тегам/работам, простой substring-
+    # поиск на клиенте без воркеров и WASM, см. assets/search.js.
+    TYPE_LABEL_RU = {"atomic": "заметка", "conspect": "работа", "full_text": "полный текст", "hub": "карта"}
+    search_index = []
+    for n in notes:
+        if n["type"] not in PUBLISHED_TYPES:
+            continue
+        u = note_url(n["id"])
+        if not u:
+            continue
+        title = pages._display_title(n["id"]) if n["type"] == "hub" else (
+            works_by_id[n["id"]]["title"] if n["type"] == "conspect" and n["id"] in works_by_id else n["id"]
+        )
+        work = works_by_id.get(n.get("source_work_id"))
+        search_index.append({
+            "title": title,
+            "url": u,
+            "type": TYPE_LABEL_RU.get(n["type"], n["type"]),
+            "work": work["title"] if work else None,
+            "tags": n.get("tags") or [],
+        })
+    write_text("assets/search-index.json", json.dumps(search_index, ensure_ascii=False))
 
     # ══════════════ случайная заметка ══════════════
     random_ids = [n["id"] for n in notes if n["type"] == "atomic"]
@@ -479,7 +507,10 @@ def main():
         for svg in IMAGES_DIR.glob("*.svg"):
             write_bytes(f"assets/images/{svg.name}", svg.read_bytes())
 
-    for asset_name in ("style.css", "app.js", "tg.js", "random.js", "search.js", "logo.svg", "hero-header.webp"):
+    for asset_name in (
+        "style.css", "app.js", "tg.js", "random.js", "search.js", "annotations.js", "mynotes.js",
+        "logo.svg", "hero-header.webp",
+    ):
         src = PROJECT_DIR / "assets" / asset_name
         if src.exists():
             write_bytes(f"assets/{asset_name}", src.read_bytes())

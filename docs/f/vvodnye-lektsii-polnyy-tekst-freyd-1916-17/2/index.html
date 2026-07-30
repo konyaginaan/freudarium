@@ -29,6 +29,10 @@
     <span>Фрейдариум</span>
   </a>
   <div class="topbar-actions">
+    <button class="icon-btn" id="bookmarkBtn" title="Добавить в избранное" aria-label="Добавить в избранное" hidden data-pagefind-ignore>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3Z"/></svg>
+    </button>
     <button class="icon-btn" id="searchBtn" title="Поиск" aria-label="Поиск">
       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -44,8 +48,12 @@
 <span data-pagefind-meta="title" hidden>Вводные лекции — Часть II. Сновидение</span>
 
 <article class="fulltext-page">
+  <header class="chapter-hero">
+    <div class="chapter-kicker"><span>ГЛАВА 02</span><span>1916-17</span></div>
+    <h1 class="chapter-title">Часть II. Сновидение</h1>
+    <div class="chapter-dashes"><span class="dash dash-bruise"></span><span class="dash dash-verdigris"></span></div>
+  </header>
   <div class="crumbs"><a href="/freudarium/w/vvodnye-lektsii-konspekt-freyd-1916-17/">Вводные лекции</a> · полный текст</div>
-  <h1 class="note-title">Часть II. Сновидение</h1>
   <nav class="chapter-nav"><a class="chapter-link" href="/freudarium/f/vvodnye-lektsii-polnyy-tekst-freyd-1916-17/">Часть I. Психология ошибочных действий</a><a class="chapter-link active" href="/freudarium/f/vvodnye-lektsii-polnyy-tekst-freyd-1916-17/2/">Часть II. Сновидение</a><a class="chapter-link" href="/freudarium/f/vvodnye-lektsii-polnyy-tekst-freyd-1916-17/3/">Часть III. Общая теория неврозов</a><a class="chapter-link" href="/freudarium/f/vvodnye-lektsii-polnyy-tekst-freyd-1916-17/4/">Часть III — итог</a></nav>
   <div class="note-body fulltext-body">
     <p id="p5"><strong>Лекция 5. Трудности и первый подступ.</strong> Сновидение выбрано следующим объектом по педагогическим и содержательным причинам: это тоже «отброс явлений», встречающийся у всех нормальных людей (в отличие от невроза), но, в отличие от ошибочных действий, изучение сна несёт клеймо ненаучности и подозрение в склонности к мистике — Фрейд разбирает и отвергает эти возражения (недостоверность пересказа не хуже путаницы навязчивых идей; незначительность снов опровергается тем, что настроение сна держится весь день, а психозы начинаются со сна). Экскурс в историю: у древних толкование снов было практическим искусством (Александр Македонский и толкователи под Тиром), затем интерес выродился в суеверие, а точная наука занялась только физиологией стимулов сна (Мори, Морли Вольд). Фрейд намеренно становится на сторону древних и «народного» отношения к сну против современной науки. Разбор общих признаков сна: (1) сновидение связано со сном — попытка психологической характеристики сна как ухода интереса от внешнего мира, регресса к внутриутробному состоянию (пробуждение как «новое рождение»); (2) качественное своеобразие сна — переживания преимущественно зрительные, «я мог бы нарисовать, но не знаю, как сказать». Разбор теории раздражителей: опыты Мори (запах одеколона → Каир; щипок за шею → горчичник; капля воды → Италия, вино), три сна Гильдебранда об одном будильнике (церковный колокол / бубенцы саней / грохот посуды) — сновидение не узнаёт раздражитель, а каждый раз по-разному его «истолковывает»; собственный сон Фрейда о смерти папы римского, объяснённый утренним колокольным звоном; телесные (соматические) раздражители (опыты Ширмера: ряды мальчиков = зубы, извилистые коридоры = кишечник). Оба источника раздражителей объясняют лишь малую часть сна — остаётся необъяснённым происхождение основной массы. Зацепка: <strong>дневные грёзы</strong> (Tagtraum) — фантазии честолюбия и эротики, сырьё поэтического творчества, названные «снами» при полном отсутствии обоих общих признаков сна (не во сне, не галлюцинаторны) — совпадение имени с чем-то пока неизвестным в природе сновидения.<span class="p-note-links"><a class="p-note-link" href="/freudarium/n/dnevnye-grezy-kak-klyuch-k-snovideniyu-freyd-1916-17/" title="Заметка об этом месте">●</a><a class="p-note-link" href="/freudarium/n/snovidenie-kak-reaktsiya-na-razdrazhitel-a-ne-ego-kopiya-tri-sna-gildebranda-o-b/" title="Заметка об этом месте">●</a><a class="p-note-link" href="/freudarium/n/son-kak-uhod-interesa-ot-mira-i-vozvrat-k-vnutriutrobnomu-sostoyaniyu-freyd-1916/" title="Заметка об этом месте">●</a></span></p>
@@ -67,6 +75,26 @@
 
 <div class="toast" id="toast" data-pagefind-ignore></div>
 
+<div class="sel-toolbar" id="selToolbar" hidden data-pagefind-ignore>
+  <button class="sel-color" data-color="bruise" aria-label="Выделить лиловым"></button>
+  <button class="sel-color" data-color="flesh" aria-label="Выделить тёплым"></button>
+  <button class="sel-color" data-color="verdigris" aria-label="Выделить зелёным"></button>
+  <button class="sel-note-btn" data-action="note">Заметка</button>
+</div>
+
+<div class="sheet" id="noteComposer" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3>Заметка к выделенному</h3>
+    <blockquote class="composer-quote" id="composerQuoteView"></blockquote>
+    <input type="hidden" name="quote">
+    <textarea name="comment" class="composer-textarea" rows="4" placeholder="Ваш комментарий…"></textarea>
+    <div class="composer-actions">
+      <button class="btn btn-primary" data-composer-save>Сохранить</button>
+      <button class="btn" data-composer-cancel>Отмена</button>
+    </div>
+  </div>
+</div>
+
 <button class="fab-back" id="fabBack" data-back aria-label="Назад" hidden data-pagefind-ignore>
   <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
     stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -75,7 +103,7 @@
 <div class="sheet" id="menuSheet" hidden data-pagefind-ignore>
   <div class="sheet-inner">
     <h3>Разделы</h3>
-    <nav class="nav-list"><a class="nav-link" href="/freudarium/">Главная</a><a class="nav-link" href="/freudarium/works/">Все работы</a><a class="nav-link" href="/freudarium/cases/">Клинические случаи</a><a class="nav-link" href="/freudarium/texts/">Полные тексты</a><a class="nav-link" href="/freudarium/maps/">Карты областей</a><a class="nav-link" href="/freudarium/tags/">Все теги</a><a class="nav-link" href="/freudarium/about/">О проекте</a></nav>
+    <nav class="nav-list"><a class="nav-link" href="/freudarium/">Главная</a><a class="nav-link" href="/freudarium/works/">Все работы</a><a class="nav-link" href="/freudarium/cases/">Клинические случаи</a><a class="nav-link" href="/freudarium/texts/">Полные тексты</a><a class="nav-link" href="/freudarium/maps/">Карты областей</a><a class="nav-link" href="/freudarium/tags/">Все теги</a><a class="nav-link" href="/freudarium/notes/">Мои пометки</a><a class="nav-link" href="/freudarium/about/">О проекте</a></nav>
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
   </div>
@@ -108,6 +136,7 @@
 </div>
 
 <script src="/freudarium/assets/app.js"></script>
+<script src="/freudarium/assets/annotations.js"></script>
 <script src="/freudarium/assets/tg.js"></script>
 </body>
 </html>

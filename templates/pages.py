@@ -224,10 +224,16 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
     pager += "</div>"
 
     title = chapter["title"] or work_title
+    year = (work_meta or {}).get("year") or ""
+    kicker = f"ГЛАВА {idx + 1:02d}" if chapter["title"] else "НАЧАЛО"
     return f"""
 <article class="fulltext-page">
+  <header class="chapter-hero">
+    <div class="chapter-kicker"><span>{html.escape(kicker)}</span><span>{html.escape(year)}</span></div>
+    <h1 class="chapter-title">{html.escape(title)}</h1>
+    <div class="chapter-dashes"><span class="dash dash-bruise"></span><span class="dash dash-verdigris"></span></div>
+  </header>
   <div class="crumbs"><a href="{ctx["work_url"](work_meta["id"])}">{html.escape(work_title)}</a> · полный текст</div>
-  <h1 class="note-title">{html.escape(title)}</h1>
   {nav_html}
   <div class="note-body fulltext-body">
     {body_html}
@@ -298,6 +304,7 @@ def render_about(ctx):
     по порядку.</p>
     <p>Собрано по методу Zettelkasten в Obsidian и опубликовано как открытый
     сайт и Telegram-приложение.</p>
+    <p>Автор проекта — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a> в Telegram.</p>
   </div>
 </article>
 """
@@ -323,6 +330,39 @@ def render_search(ctx):
   <p class="search-empty" id="searchEmpty" hidden>Ничего не нашлось.</p>
 </article>
 <script type="module" src="{ctx["assets_base"]}/search.js"></script>
+"""
+
+
+def render_my_notes(ctx):
+    return f"""
+<article class="mynotes-page">
+  <h1 class="note-title">Мои пометки</h1>
+  <p class="work-meta">Закладки, выделения и заметки, которые вы оставили при чтении —
+    хранятся у вас в браузере, а внутри Telegram ещё и синхронизируются между устройствами.</p>
+  <div class="mynotes-empty" id="mynotesEmpty" hidden>Пока ничего нет — выделите текст на любой странице, чтобы отметить или прокомментировать его, или нажмите «В избранное» в шапке.</div>
+  <section class="rel-block" id="mynotesBookmarks" hidden>
+    <h2>Закладки</h2>
+    <div class="rows" id="mynotesBookmarksList"></div>
+  </section>
+  <section class="rel-block" id="mynotesNotes" hidden>
+    <h2>Заметки</h2>
+    <div class="mynotes-list" id="mynotesNotesList"></div>
+  </section>
+  <section class="rel-block" id="mynotesHighlights" hidden>
+    <h2>Выделения</h2>
+    <div class="mynotes-list" id="mynotesHighlightsList"></div>
+  </section>
+</article>
+<div class="sheet" id="exportFormatSheet" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3>Отправить в чат с ботом</h3>
+    <button class="btn" data-export="md">MD-файл</button>
+    <button class="btn" data-export="doc">DOC-файл</button>
+    <button class="btn" data-export="text">Просто текст в чат</button>
+    <button class="sheet-close" data-close-sheet>Отмена</button>
+  </div>
+</div>
+<script src="{ctx["assets_base"]}/mynotes.js" defer></script>
 """
 
 

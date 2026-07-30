@@ -9,6 +9,11 @@
   --bruise: #6B3B4F;
   --flesh: #C08B7A;
   --verdigris: #9EAF95;
+  /* Тёмная плашка-заголовок (карточка главы и т.п.) — нарочно НЕ меняется
+     между темами (в отличие от --ink, который в тёмной теме светлеет для
+     читаемости текста): нужен постоянно тёмный фон под светлый текст. */
+  --panel-dark: #2A1F2D;
+  --panel-dark-ink: #EFE2D8;
   --border: color-mix(in srgb, var(--ink) 12%, transparent);
   --shadow: color-mix(in srgb, var(--ink) 18%, transparent);
   --radius: 16px;
@@ -58,7 +63,7 @@
 :root[data-fontsize="xl"] { --font-body: 24px; }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; overflow-x: hidden; }
+html, body { margin: 0; padding: 0; }
 body {
   background: var(--surface);
   color: var(--ink);
@@ -112,17 +117,65 @@ body:has(.hero-banner) .topbar { border-bottom-color: transparent; }
 }
 .icon-btn:hover { background: var(--surface-2); }
 
-main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; }
+/* overflow-x тут, а не на html/body: тот же эффект против горизонтального
+   скролла от full-bleed баннера (100vw шире фактической ширины окна на
+   толщину скроллбара), но не ломает position:sticky у шапки — сама шапка
+   вне main, и её родителям overflow трогать нельзя (это и было причиной
+   бага «шапка не липнет»). */
+main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; overflow-x: hidden; }
 
 /* ── всплывающее уведомление снизу (отправка файла в чат и т.п.) ── */
 .toast {
   position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom));
   transform: translateX(-50%); z-index: 60; max-width: min(92vw, 420px);
-  background: var(--ink); color: var(--surface); padding: 12px 18px; border-radius: 14px;
+  background: var(--panel-dark); color: var(--panel-dark-ink); padding: 12px 18px; border-radius: 14px;
   font-size: .92em; text-align: center; box-shadow: 0 8px 24px var(--shadow);
   opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── панель при выделении текста ── */
+.sel-toolbar {
+  position: absolute; z-index: 55; display: flex; align-items: center; gap: 6px;
+  background: var(--panel-dark); color: var(--panel-dark-ink); border-radius: 12px;
+  padding: 7px 8px; box-shadow: 0 8px 20px var(--shadow); transform: translateX(-50%);
+}
+.sel-toolbar[hidden] { display: none; }
+.sel-color {
+  width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0;
+}
+.sel-color[data-color="bruise"] { background: var(--bruise); }
+.sel-color[data-color="flesh"] { background: var(--flesh); }
+.sel-color[data-color="verdigris"] { background: var(--verdigris); }
+.sel-color:hover { border-color: var(--panel-dark-ink); }
+.sel-note-btn {
+  background: none; border: none; color: var(--panel-dark-ink); font-size: .85em;
+  padding: 4px 8px; cursor: pointer; border-left: 1px solid color-mix(in srgb, var(--panel-dark-ink) 25%, transparent);
+}
+
+/* ── композер заметки (шторка) ── */
+.composer-quote {
+  margin: 0 0 10px; padding: 8px 12px; border-left: 3px solid var(--flesh);
+  color: var(--ink-muted); font-style: italic; font-size: .92em; max-height: 5.5em; overflow-y: auto;
+}
+.composer-textarea {
+  width: 100%; min-height: 90px; border-radius: 12px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--ink); font: inherit; padding: 10px 12px; resize: vertical;
+}
+.composer-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+/* ── подсветка личных пометок в тексте ── */
+mark.user-mark { padding: .02em .1em; border-radius: 3px; cursor: default; }
+mark.user-mark-bruise { background: color-mix(in srgb, var(--bruise) 35%, transparent); }
+mark.user-mark-flesh { background: color-mix(in srgb, var(--flesh) 45%, transparent); }
+mark.user-mark-verdigris { background: color-mix(in srgb, var(--verdigris) 45%, transparent); }
+mark.user-mark-note {
+  background: none; border-bottom: 2px dotted var(--bruise);
+}
+
+/* ── кнопка «в избранное» в шапке ── */
+#bookmarkBtn.active { color: var(--bruise); }
+#bookmarkBtn.active svg { fill: var(--bruise); }
 
 /* ── плавающая кнопка «назад» ── */
 .fab-back {
@@ -263,7 +316,24 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .btn-primary:hover { background: color-mix(in srgb, var(--bruise) 88%, var(--ink)); }
 .downloads { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* ── глава полного текста ── */
+/* ── глава полного текста: тёмная карточка-заголовок, как в референсе ── */
+.chapter-hero {
+  background: var(--panel-dark); color: var(--panel-dark-ink); border-radius: 20px;
+  padding: 28px 26px 30px; margin: 0 0 18px;
+}
+.chapter-kicker {
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: .08em;
+  color: color-mix(in srgb, var(--panel-dark-ink) 75%, transparent); margin-bottom: 14px;
+}
+.chapter-title {
+  font-size: 1.9em; line-height: 1.15; margin: 0; color: var(--panel-dark-ink);
+}
+.chapter-dashes { display: flex; gap: 8px; margin-top: 16px; }
+.chapter-dashes .dash { display: block; width: 34px; height: 4px; border-radius: 2px; }
+.chapter-dashes .dash-bruise { background: var(--flesh); }
+.chapter-dashes .dash-verdigris { background: var(--verdigris); }
+
 .chapter-nav { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 20px; }
 .chapter-link { font-size: 12px; padding: 5px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-muted); }
 .chapter-link.active { background: var(--bruise); color: var(--surface); }
@@ -317,6 +387,17 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .search-result .sr-excerpt { font-size: .85em; color: var(--ink-muted); display: block; margin-top: 2px; }
 .search-result mark { background: var(--flesh); color: var(--ink); border-radius: 3px; }
 .search-empty { color: var(--ink-muted); padding: 20px 4px; }
+
+/* ── «Мои пометки» ── */
+.mynotes-empty { color: var(--ink-muted); padding: 24px 4px; }
+.mynotes-list { display: flex; flex-direction: column; gap: 12px; }
+.mynote-card { background: var(--surface-2); border-radius: var(--radius); padding: 16px 18px; }
+.mynote-page-link { display: block; font-size: .85em; color: var(--ink-muted); margin-bottom: 8px; }
+.mynote-page-link:hover { color: var(--bruise); }
+.mynote-quote { margin: 0 0 8px; padding: 6px 12px; border-left: 3px solid var(--flesh); font-style: italic; color: var(--ink-muted); font-size: .92em; }
+.mynote-comment { margin: 0; white-space: pre-wrap; }
+.mynote-actions { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.mynote-date { color: var(--ink-muted); font-size: .82em; margin-right: auto; }
 
 /* ── главная ── */
 /* ── баннер на главной: пробный вариант, легко убрать одним классом ── */
