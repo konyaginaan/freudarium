@@ -84,6 +84,9 @@ a:hover { text-decoration: underline; }
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
 }
+/* Баннер на главной сидит впритык под шапкой (нулевой отступ) — тонкая
+   граница шапки в этом случае читается как лишняя полоса поперёк картинки. */
+body:has(.hero-banner) .topbar { border-bottom-color: transparent; }
 .back-link {
   display: flex; align-items: center; gap: 4px; color: var(--ink);
   font-size: 14px; font-weight: 600;
