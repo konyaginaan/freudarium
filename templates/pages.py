@@ -338,21 +338,10 @@ def render_my_notes(ctx):
     return f"""
 <article class="mynotes-page">
   <h1 class="note-title">Мои заметки</h1>
-  <p class="work-meta">Закладки, выделения и заметки, которые вы оставили при чтении —
-    хранятся у вас в браузере, а внутри Telegram ещё и синхронизируются между устройствами.</p>
+  <p class="work-meta">Всё, что вы отметили при чтении, — закладки страниц, выделения, заметки с
+    комментарием, — хранится у вас в браузере, а внутри Telegram ещё и синхронизируется между устройствами.</p>
   <div class="mynotes-empty" id="mynotesEmpty" hidden>Пока ничего нет — выделите текст на любой странице, чтобы отметить или прокомментировать его, или нажмите «В избранное» в шапке.</div>
-  <section class="rel-block" id="mynotesBookmarks" hidden>
-    <h2>Закладки</h2>
-    <div class="rows" id="mynotesBookmarksList"></div>
-  </section>
-  <section class="rel-block" id="mynotesNotes" hidden>
-    <h2>Заметки</h2>
-    <div class="mynotes-list" id="mynotesNotesList"></div>
-  </section>
-  <section class="rel-block" id="mynotesHighlights" hidden>
-    <h2>Выделения</h2>
-    <div class="mynotes-list" id="mynotesHighlightsList"></div>
-  </section>
+  <div class="mynotes-list" id="mynotesList"></div>
 </article>
 <script src="{ctx["assets_base"]}/mynotes.js?v={asset_v("mynotes.js")}" defer></script>
 """

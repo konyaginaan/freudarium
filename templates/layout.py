@@ -6,6 +6,7 @@ site_base — корень сайта (например "" локально ил
 домена); assets — всегда site_base + "/assets"."""
 import hashlib
 import html
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -94,7 +95,17 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <meta name="theme-color" content="#2A1F2D" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="{assets}/icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{assets}/icons/icon.svg">
-<script>window.__SITE_BASE__={html.escape(repr(site_base)).replace("'", '"')};</script>
+<!-- БАГ, исправленный 30.07.2026: html.escape(repr(x)) экранирует кавычку
+     в HTML-сущность &#x27;, а .replace("'", '"') после этого уже ничего не
+     находит (кавычки-то больше нет, есть &#x27;) — сущность утекала прямо в
+     JS внутри <script>, где HTML-сущности НЕ раскрываются браузером (это не
+     HTML-контент, а сырой текст скрипта). Получался синтаксис вида
+     window.__SITE_BASE__=&#x27;/freudarium&#x27; — ошибка парсинга JS, и
+     переменная НИКОГДА не устанавливалась (весь код читал её как ""). Отсюда
+     404 у поиска (SITE_BASE+"/search/" превращался в "/search/" без
+     префикса) и неправильные ссылки в экспорте/«Моих заметках». json.dumps
+     даёт валидный JS-литерал в двойных кавычках — без этой ловушки. -->
+<script>window.__SITE_BASE__={json.dumps(site_base)};</script>
 <!-- Официальный SDK Telegram Mini Apps. Без него window.Telegram вообще не
      существует — tg.js (см. assets/tg.js) молча выключает себя целиком, а
      значит и класс .in-telegram никогда не появляется, и все завязанные на
