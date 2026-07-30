@@ -13,6 +13,15 @@
 <link rel="icon" href="/freudarium/assets/icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/freudarium/assets/icons/icon.svg">
 <script>window.__SITE_BASE__=&#x27;/freudarium&#x27;;</script>
+<!-- Официальный SDK Telegram Mini Apps. Без него window.Telegram вообще не
+     существует — tg.js (см. assets/tg.js) молча выключает себя целиком, а
+     значит и класс .in-telegram никогда не появляется, и все завязанные на
+     него функции (наше выделение долгим тапом, синхронизация заметок в
+     CloudStorage, вибрация, кнопка «назад») не работают — не потому что
+     сломаны, а потому что сами не видят, что находятся внутри Telegram.
+     Грузится синхронно в head, как рекомендует официальная документация —
+     чтобы объект был готов ещё до тела страницы. -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 </head>
 <body>
@@ -295,7 +304,7 @@
     <nav class="nav-list"><a class="nav-link" href="/freudarium/">Главная</a><a class="nav-link" href="/freudarium/works/">Все работы</a><a class="nav-link" href="/freudarium/cases/">Клинические случаи</a><a class="nav-link" href="/freudarium/texts/">Полные тексты</a><a class="nav-link" href="/freudarium/maps/">Карты областей</a><a class="nav-link" href="/freudarium/tags/">Все теги</a><a class="nav-link" href="/freudarium/notes/">Мои заметки</a><a class="nav-link" href="/freudarium/about/">О проекте</a></nav>
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
-    <p class="build-stamp">сборка 30.07 19:26 · 5f8c8d</p>
+    <p class="build-stamp">сборка 30.07 19:37 · 5f8c8d</p>
   </div>
 </div>
 

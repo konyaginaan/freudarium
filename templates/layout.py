@@ -95,6 +95,15 @@ def page(title: str, description: str, body_html: str, site_base: str,
 <link rel="icon" href="{assets}/icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{assets}/icons/icon.svg">
 <script>window.__SITE_BASE__={html.escape(repr(site_base)).replace("'", '"')};</script>
+<!-- Официальный SDK Telegram Mini Apps. Без него window.Telegram вообще не
+     существует — tg.js (см. assets/tg.js) молча выключает себя целиком, а
+     значит и класс .in-telegram никогда не появляется, и все завязанные на
+     него функции (наше выделение долгим тапом, синхронизация заметок в
+     CloudStorage, вибрация, кнопка «назад») не работают — не потому что
+     сломаны, а потому что сами не видят, что находятся внутри Telegram.
+     Грузится синхронно в head, как рекомендует официальная документация —
+     чтобы объект был готов ещё до тела страницы. -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 {extra_head}
 </head>
 <body>
