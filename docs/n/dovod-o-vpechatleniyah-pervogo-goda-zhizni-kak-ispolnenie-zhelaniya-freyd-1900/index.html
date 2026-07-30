@@ -6,7 +6,7 @@
 <title>Довод о впечатлениях первого года жизни как исполнение желания (Фрейд, 1900) — Фрейдариум</title>
 <meta name="description" content="Фрейду мучительно думать, что предпосылки его теории (впечатления второго и даже первого года жизни оставляют прочный след и дают глубочайше…">
 <link rel="canonical" href="/freudarium/n/dovod-o-vpechatleniyah-pervogo-goda-zhizni-kak-ispolnenie-zhelaniya-freyd-1900/">
-<link rel="stylesheet" href="/freudarium/assets/style.css?v=4f4e7bf4">
+<link rel="stylesheet" href="/freudarium/assets/style.css?v=d13222ea">
 <link rel="manifest" href="/freudarium/manifest.webmanifest">
 <meta name="theme-color" content="#EFE2D8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#2A1F2D" media="(prefers-color-scheme: dark)">
@@ -82,6 +82,20 @@
   <button class="sel-color" data-color="flesh" aria-label="Выделить тёплым"></button>
   <button class="sel-color" data-color="verdigris" aria-label="Выделить зелёным"></button>
   <button class="sel-note-btn" data-action="note">Заметка</button>
+  <button class="sel-note-btn" data-action="send">Отправить</button>
+</div>
+
+<!-- Панель по тапу на уже сохранённое выделение/заметку (mark.user-mark в
+     тексте) — перекрасить, отредактировать комментарий, отправить в чат,
+     удалить. Тот же принцип, что у selToolbar выше, просто для существующей
+     записи, а не для нового выделения. -->
+<div class="sel-toolbar" id="noteQuickBar" hidden data-pagefind-ignore>
+  <button class="sel-color" data-color="bruise" aria-label="Перекрасить лиловым"></button>
+  <button class="sel-color" data-color="flesh" aria-label="Перекрасить тёплым"></button>
+  <button class="sel-color" data-color="verdigris" aria-label="Перекрасить зелёным"></button>
+  <button class="sel-note-btn" data-action="edit">Заметка</button>
+  <button class="sel-note-btn" data-action="send">Отправить</button>
+  <button class="sel-note-btn" data-action="delete">Удалить</button>
 </div>
 
 <div class="sheet" id="noteComposer" hidden data-pagefind-ignore>
@@ -94,6 +108,18 @@
       <button class="btn btn-primary" data-composer-save>Сохранить</button>
       <button class="btn" data-composer-cancel>Отмена</button>
     </div>
+  </div>
+</div>
+
+<!-- Раньше жил только на /notes/ — теперь нужен и в панелях выделения на
+     любой странице (кнопка «Отправить»), поэтому здесь, в общем layout. -->
+<div class="sheet" id="exportFormatSheet" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3>Отправить в чат с ботом</h3>
+    <button class="btn" data-export="md">MD-файл</button>
+    <button class="btn" data-export="doc">DOC-файл</button>
+    <button class="btn" data-export="text">Просто текст в чат</button>
+    <button class="sheet-close" data-close-sheet>Отмена</button>
   </div>
 </div>
 
@@ -120,7 +146,7 @@
     <nav class="nav-list"><a class="nav-link" href="/freudarium/">Главная</a><a class="nav-link" href="/freudarium/works/">Все работы</a><a class="nav-link" href="/freudarium/cases/">Клинические случаи</a><a class="nav-link" href="/freudarium/texts/">Полные тексты</a><a class="nav-link" href="/freudarium/maps/">Карты областей</a><a class="nav-link" href="/freudarium/tags/">Все теги</a><a class="nav-link" href="/freudarium/notes/">Мои заметки</a><a class="nav-link" href="/freudarium/about/">О проекте</a></nav>
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
-    <p class="build-stamp">сборка 30.07 19:48 · 5f8c8d</p>
+    <p class="build-stamp">сборка 30.07 20:47 · d27631</p>
   </div>
 </div>
 
@@ -158,6 +184,6 @@
      проверки, и кнопка внутри Telegram никогда бы не показывалась. -->
 <script src="/freudarium/assets/tg.js?v=cd6b1f31"></script>
 <script src="/freudarium/assets/app.js?v=a82d5114"></script>
-<script src="/freudarium/assets/annotations.js?v=5f8c8db3"></script>
+<script src="/freudarium/assets/annotations.js?v=d2763194"></script>
 </body>
 </html>

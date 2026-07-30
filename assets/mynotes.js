@@ -1,6 +1,8 @@
 // Страница «Мои заметки» — читает freud:annotations (см. annotations.js) и
 // рисует три списка: закладки, заметки, выделения. Экспорт заметки — в чат
-// с ботом Telegram, в одном из трёх форматов (MD/DOC/текст сообщением).
+// с ботом Telegram (лист выбора формата и вся логика сборки MD/DOC теперь
+// общие в annotations.js, т.к. нужны и в панели выделения на любой странице —
+// здесь только вызываем window.freudOpenExportSheet(id)).
 (function () {
   "use strict";
   var SITE_BASE = window.__SITE_BASE__ || "";
@@ -53,7 +55,7 @@
     });
     document.querySelectorAll("[data-export-note]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        openExportSheet(btn.getAttribute("data-export-note"));
+        if (window.freudOpenExportSheet) window.freudOpenExportSheet(btn.getAttribute("data-export-note"));
       });
     });
   }
@@ -77,75 +79,13 @@
       '<div class="mynote-card">' +
       '<a class="mynote-page-link" href="' + SITE_BASE + esc(a.url) + '">' + esc(a.pageTitle) + "</a>" +
       '<mark class="user-mark user-mark-' + esc(a.color || "bruise") + '">' + esc(a.quote) + "</mark>" +
+      (a.comment ? '<p class="mynote-comment">' + esc(a.comment) + "</p>" : "") +
       '<div class="mynote-actions">' +
       '<span class="mynote-date">' + fmtDate(a.createdAt) + "</span>" +
+      '<button class="btn" data-export-note="' + a.id + '">Отправить в чат</button>' +
       '<button class="btn" data-remove="' + a.id + '">Удалить</button>' +
       "</div></div>"
     );
-  }
-
-  // ── экспорт заметки в чат ──
-  var exportSheet = document.getElementById("exportFormatSheet");
-  var exportingId = null;
-
-  function openExportSheet(id) {
-    if (!window.freudSendToChat) {
-      if (window.freudToast) window.freudToast("Отправка в чат работает только внутри Telegram");
-      return;
-    }
-    exportingId = id;
-    exportSheet.hidden = false;
-  }
-
-  function findAnnotation(id) {
-    return (window.freudAnnotationsAll ? window.freudAnnotationsAll() : []).find(function (a) { return a.id === id; });
-  }
-
-  function noteFileTitle(a) {
-    return (a.pageTitle || "Заметка").slice(0, 60);
-  }
-
-  function buildMd(a) {
-    var lines = ["# " + noteFileTitle(a), ""];
-    if (a.quote) lines.push("> " + a.quote, "");
-    lines.push(a.comment, "", "—", SITE_BASE + a.url);
-    return lines.join("\n");
-  }
-
-  // Простейший «.doc» без внешних библиотек: Word и большинство читалок
-  // открывают HTML-документ с этим MIME/расширением как обычный документ —
-  // общеизвестный приём, не требующий генерации настоящего .docx (zip+XML).
-  function buildDocHtml(a) {
-    return (
-      "<html><head><meta charset='utf-8'></head><body>" +
-      "<h2>" + esc(noteFileTitle(a)) + "</h2>" +
-      (a.quote ? "<blockquote><i>" + esc(a.quote) + "</i></blockquote>" : "") +
-      "<p>" + esc(a.comment).replace(/\n/g, "<br>") + "</p>" +
-      "<p><a href='" + location.origin + SITE_BASE + esc(a.url) + "'>" + location.origin + SITE_BASE + esc(a.url) + "</a></p>" +
-      "</body></html>"
-    );
-  }
-
-  if (exportSheet) {
-    exportSheet.addEventListener("click", function (e) {
-      if (e.target === exportSheet || e.target.closest("[data-close-sheet]")) {
-        exportSheet.hidden = true;
-        return;
-      }
-      var btn = e.target.closest("[data-export]");
-      if (!btn || !exportingId) return;
-      var a = findAnnotation(exportingId);
-      if (!a) return;
-      var format = btn.getAttribute("data-export");
-      exportSheet.hidden = true;
-      if (format === "md") {
-        window.freudSendToChat(new Blob([buildMd(a)], { type: "text/markdown" }), noteFileTitle(a) + ".md");
-      } else if (format === "doc") {
-        window.freudSendToChat(new Blob([buildDocHtml(a)], { type: "application/msword" }), noteFileTitle(a) + ".doc");
-      } else if (format === "text" && window.freudSendTextToChat) {
-        window.freudSendTextToChat(buildMd(a));
-      }
-    });
   }
 
   render();

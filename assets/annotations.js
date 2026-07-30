@@ -55,6 +55,18 @@
   }
   window.freudAnnotationRemove = remove;
 
+  function update(id, patch) {
+    var list = loadAll();
+    var found = list.find(function (a) { return a.id === id; });
+    if (!found) return null;
+    Object.assign(found, patch);
+    saveAll(list);
+    return found;
+  }
+  function findAnnotation(id) {
+    return loadAll().find(function (a) { return a.id === id; });
+  }
+
   // ── подсветка сохранённого текста на странице ──
   // Простой посимвольный поиск по конкатенации текстовых узлов контейнера;
   // если совпадение пересекает несколько узлов (например, часть выделения
@@ -93,6 +105,79 @@
         try { range.surroundContents(mark); } catch (e) {}
       });
     return true;
+  }
+
+  // ── экспорт в чат (MD/DOC/просто текст) — общее для панели выделения,
+  // панели по тапу на уже сохранённое и страницы «Мои заметки» (mynotes.js
+  // зовёт window.freudOpenExportSheet). Раньше этот лист жил только на
+  // /notes/ и работал только с уже сохранённой записью по id; теперь
+  // принимает и «виртуальную», ещё не сохранённую запись — {quote, comment,
+  // pageTitle, url} — чтобы можно было отправить прямо из панели выделения,
+  // не заставляя сначала обязательно сохранять её в «Мои заметки».
+  var exportSheet = document.getElementById("exportFormatSheet");
+  var exportingAnnotation = null;
+
+  function noteFileTitle(a) {
+    return (a.pageTitle || "Заметка").slice(0, 60);
+  }
+  function buildMd(a) {
+    var lines = ["# " + noteFileTitle(a), ""];
+    if (a.quote) lines.push("> " + a.quote, "");
+    if (a.comment) lines.push(a.comment, "");
+    lines.push("—", SITE_BASE + a.url);
+    return lines.join("\n");
+  }
+  // Простейший «.doc» без внешних библиотек: Word и большинство читалок
+  // открывают HTML-документ с этим MIME/расширением как обычный документ.
+  function escHtml(s) {
+    var div = document.createElement("div");
+    div.textContent = s || "";
+    return div.innerHTML;
+  }
+  function buildDocHtml(a) {
+    return (
+      "<html><head><meta charset='utf-8'></head><body>" +
+      "<h2>" + escHtml(noteFileTitle(a)) + "</h2>" +
+      (a.quote ? "<blockquote><i>" + escHtml(a.quote) + "</i></blockquote>" : "") +
+      (a.comment ? "<p>" + escHtml(a.comment).replace(/\n/g, "<br>") + "</p>" : "") +
+      "<p><a href='" + location.origin + SITE_BASE + escHtml(a.url) + "'>" + location.origin + SITE_BASE + escHtml(a.url) + "</a></p>" +
+      "</body></html>"
+    );
+  }
+  function openExportSheetFor(annotationLike) {
+    if (!exportSheet) return;
+    if (!window.freudSendToChat) {
+      if (window.freudToast) window.freudToast("Отправка в чат работает только внутри Telegram");
+      return;
+    }
+    exportingAnnotation = annotationLike;
+    exportSheet.hidden = false;
+  }
+  // Публичная обёртка по id — её вызывает mynotes.js (страница «Мои заметки»),
+  // где записи уже сохранены.
+  window.freudOpenExportSheet = function (id) {
+    var a = findAnnotation(id);
+    if (a) openExportSheetFor(a);
+  };
+  if (exportSheet) {
+    exportSheet.addEventListener("click", function (e) {
+      if (e.target === exportSheet || e.target.closest("[data-close-sheet]")) {
+        exportSheet.hidden = true;
+        return;
+      }
+      var btn = e.target.closest("[data-export]");
+      if (!btn || !exportingAnnotation) return;
+      var a = exportingAnnotation;
+      var format = btn.getAttribute("data-export");
+      exportSheet.hidden = true;
+      if (format === "md") {
+        window.freudSendToChat(new Blob([buildMd(a)], { type: "text/markdown" }), noteFileTitle(a) + ".md");
+      } else if (format === "doc") {
+        window.freudSendToChat(new Blob([buildDocHtml(a)], { type: "application/msword" }), noteFileTitle(a) + ".doc");
+      } else if (format === "text" && window.freudSendTextToChat) {
+        window.freudSendTextToChat(buildMd(a));
+      }
+    });
   }
 
   function renderSavedMarks() {
@@ -384,10 +469,26 @@
     if (e.target && e.target.closest && e.target.closest(CONTENT_SELECTOR)) e.preventDefault();
   });
 
+  // composerEditingId: null — композер создаёт НОВУЮ заметку из текущего
+  // выделения (как раньше); id — редактирует комментарий УЖЕ существующей
+  // записи (открыт из noteQuickBar по тапу на сохранённое), тогда сохранение
+  // обновляет её вместо создания дубликата.
+  var composerEditingId = null;
+  function openComposer(quote, comment, editingId) {
+    if (!composer) return;
+    composerEditingId = editingId || null;
+    composer.querySelector("[name=quote]").value = quote || "";
+    composer.querySelector("[name=comment]").value = comment || "";
+    composer.querySelector("#composerQuoteView").textContent = quote || "";
+    composer.hidden = false;
+    composer.querySelector("textarea[name=comment]").focus();
+  }
+
   if (toolbar) {
     toolbar.addEventListener("click", function (e) {
       var colorBtn = e.target.closest("[data-color]");
       var noteBtn = e.target.closest("[data-action='note']");
+      var sendBtn = e.target.closest("[data-action='send']");
       if (colorBtn) {
         add({ type: "highlight", color: colorBtn.getAttribute("data-color"), quote: pendingQuote });
         hideToolbar();
@@ -397,13 +498,16 @@
         if (window.freudToast) window.freudToast("Выделено");
       } else if (noteBtn) {
         hideToolbar();
-        if (composer) {
-          composer.querySelector("[name=quote]").value = pendingQuote;
-          composer.querySelector("[name=comment]").value = "";
-          composer.querySelector("#composerQuoteView").textContent = pendingQuote;
-          composer.hidden = false;
-          composer.querySelector("textarea[name=comment]").focus();
-        }
+        openComposer(pendingQuote, "", null);
+      } else if (sendBtn) {
+        hideToolbar();
+        // Ещё не сохранено — отправляем цитату как есть, не заставляя сперва
+        // класть её в «Мои заметки» (можно и то, и другое отдельно).
+        openExportSheetFor({
+          quote: pendingQuote, comment: "",
+          pageTitle: (document.querySelector(".note-title") || {}).textContent || document.title,
+          url: pageUrl(),
+        });
       }
     });
   }
@@ -413,19 +517,83 @@
       var quote = composer.querySelector("[name=quote]").value;
       var comment = composer.querySelector("[name=comment]").value.trim();
       if (!comment) return;
-      add({ type: "note", quote: quote, comment: comment });
+      if (composerEditingId) {
+        update(composerEditingId, { comment: comment });
+        if (window.freudToast) window.freudToast("Заметка обновлена");
+      } else {
+        add({ type: "note", quote: quote, comment: comment });
+        if (window.freudToast) window.freudToast("Заметка сохранена");
+      }
+      composerEditingId = null;
       composer.hidden = true;
       window.getSelection().removeAllRanges();
       clearCustomSelection();
       renderSavedMarks();
-      if (window.freudToast) window.freudToast("Заметка сохранена");
     });
     composer.querySelector("[data-composer-cancel]").addEventListener("click", function () {
       composer.hidden = true;
+      composerEditingId = null;
       clearCustomSelection();
     });
     composer.addEventListener("click", function (e) {
-      if (e.target === composer) composer.hidden = true;
+      if (e.target === composer) { composer.hidden = true; composerEditingId = null; }
+    });
+  }
+
+  // ── панель по тапу на уже сохранённое выделение/заметку ──
+  var quickBar = document.getElementById("noteQuickBar");
+  var activeAnnotationId = null;
+
+  function hideQuickBar() {
+    if (quickBar) quickBar.hidden = true;
+    activeAnnotationId = null;
+  }
+  function showQuickBarFor(id, markEl) {
+    if (!quickBar) return;
+    activeAnnotationId = id;
+    hideToolbar();
+    quickBar.hidden = false;
+    var top = window.scrollY + markEl.getBoundingClientRect().top - quickBar.offsetHeight - 10;
+    var left = window.scrollX + markEl.getBoundingClientRect().left + markEl.getBoundingClientRect().width / 2;
+    quickBar.style.top = Math.max(window.scrollY + 8, top) + "px";
+    quickBar.style.left = left + "px";
+  }
+  // Тап по своему тексту заметки — если попали в уже сохранённую отметку,
+  // открываем панель редактирования вместо начала нового выделения.
+  document.addEventListener("click", function (e) {
+    var mark = e.target.closest && e.target.closest("mark.user-mark[data-ann-id]");
+    if (!mark) return;
+    var id = mark.getAttribute("data-ann-id");
+    if (!findAnnotation(id)) return;
+    showQuickBarFor(id, mark);
+  });
+  if (quickBar) {
+    quickBar.addEventListener("click", function (e) {
+      if (!activeAnnotationId) return;
+      var id = activeAnnotationId;
+      var a = findAnnotation(id);
+      if (!a) { hideQuickBar(); return; }
+      var colorBtn = e.target.closest("[data-color]");
+      var editBtn = e.target.closest("[data-action='edit']");
+      var sendBtn = e.target.closest("[data-action='send']");
+      var delBtn = e.target.closest("[data-action='delete']");
+      if (colorBtn) {
+        update(id, { color: colorBtn.getAttribute("data-color") });
+        hideQuickBar();
+        window.freudAnnotationsRefresh();
+        if (window.freudToast) window.freudToast("Перекрашено");
+      } else if (editBtn) {
+        hideQuickBar();
+        openComposer(a.quote, a.comment || "", id);
+      } else if (sendBtn) {
+        hideQuickBar();
+        openExportSheetFor(a);
+      } else if (delBtn) {
+        remove(id);
+        hideQuickBar();
+        window.freudAnnotationsRefresh();
+        if (window.freudToast) window.freudToast("Удалено");
+      }
     });
   }
 
@@ -434,6 +602,7 @@
   ["mousedown", "touchstart"].forEach(function (evt) {
     document.addEventListener(evt, function (e) {
       if (toolbar && !toolbar.hidden && !toolbar.contains(e.target)) hideToolbar();
+      if (quickBar && !quickBar.hidden && !quickBar.contains(e.target)) hideQuickBar();
     });
   });
 

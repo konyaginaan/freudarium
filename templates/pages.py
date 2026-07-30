@@ -354,15 +354,6 @@ def render_my_notes(ctx):
     <div class="mynotes-list" id="mynotesHighlightsList"></div>
   </section>
 </article>
-<div class="sheet" id="exportFormatSheet" hidden data-pagefind-ignore>
-  <div class="sheet-inner">
-    <h3>Отправить в чат с ботом</h3>
-    <button class="btn" data-export="md">MD-файл</button>
-    <button class="btn" data-export="doc">DOC-файл</button>
-    <button class="btn" data-export="text">Просто текст в чат</button>
-    <button class="sheet-close" data-close-sheet>Отмена</button>
-  </div>
-</div>
 <script src="{ctx["assets_base"]}/mynotes.js?v={asset_v("mynotes.js")}" defer></script>
 """
 

@@ -165,7 +165,7 @@ main { max-width: var(--col-width); margin: 0 auto; padding: 24px 20px 96px; ove
 .composer-actions { display: flex; gap: 8px; margin-top: 12px; }
 
 /* ── подсветка личных пометок в тексте ── */
-mark.user-mark { padding: .02em .1em; border-radius: 3px; cursor: default; }
+mark.user-mark { padding: .02em .1em; border-radius: 3px; cursor: pointer; }
 mark.user-mark-bruise { background: color-mix(in srgb, var(--bruise) 35%, transparent); }
 mark.user-mark-flesh { background: color-mix(in srgb, var(--flesh) 45%, transparent); }
 mark.user-mark-verdigris { background: color-mix(in srgb, var(--verdigris) 45%, transparent); }

@@ -141,6 +141,20 @@ def page(title: str, description: str, body_html: str, site_base: str,
   <button class="sel-color" data-color="flesh" aria-label="Выделить тёплым"></button>
   <button class="sel-color" data-color="verdigris" aria-label="Выделить зелёным"></button>
   <button class="sel-note-btn" data-action="note">Заметка</button>
+  <button class="sel-note-btn" data-action="send">Отправить</button>
+</div>
+
+<!-- Панель по тапу на уже сохранённое выделение/заметку (mark.user-mark в
+     тексте) — перекрасить, отредактировать комментарий, отправить в чат,
+     удалить. Тот же принцип, что у selToolbar выше, просто для существующей
+     записи, а не для нового выделения. -->
+<div class="sel-toolbar" id="noteQuickBar" hidden data-pagefind-ignore>
+  <button class="sel-color" data-color="bruise" aria-label="Перекрасить лиловым"></button>
+  <button class="sel-color" data-color="flesh" aria-label="Перекрасить тёплым"></button>
+  <button class="sel-color" data-color="verdigris" aria-label="Перекрасить зелёным"></button>
+  <button class="sel-note-btn" data-action="edit">Заметка</button>
+  <button class="sel-note-btn" data-action="send">Отправить</button>
+  <button class="sel-note-btn" data-action="delete">Удалить</button>
 </div>
 
 <div class="sheet" id="noteComposer" hidden data-pagefind-ignore>
@@ -153,6 +167,18 @@ def page(title: str, description: str, body_html: str, site_base: str,
       <button class="btn btn-primary" data-composer-save>Сохранить</button>
       <button class="btn" data-composer-cancel>Отмена</button>
     </div>
+  </div>
+</div>
+
+<!-- Раньше жил только на /notes/ — теперь нужен и в панелях выделения на
+     любой странице (кнопка «Отправить»), поэтому здесь, в общем layout. -->
+<div class="sheet" id="exportFormatSheet" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3>Отправить в чат с ботом</h3>
+    <button class="btn" data-export="md">MD-файл</button>
+    <button class="btn" data-export="doc">DOC-файл</button>
+    <button class="btn" data-export="text">Просто текст в чат</button>
+    <button class="sheet-close" data-close-sheet>Отмена</button>
   </div>
 </div>
 
