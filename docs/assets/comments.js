@@ -130,10 +130,11 @@
     }
     var text = textEl.value.trim();
     if (!text) return;
+    var pageTitle = (document.querySelector(".note-title, .chapter-title") || {}).textContent || document.title;
     fetch(SERVER_URL + "/comments", {
       method: "POST",
       headers: { "X-Tg-Init-Data": initData(), "Content-Type": "application/json" },
-      body: JSON.stringify({ page: pageUrl, text: text, replyTo: replyTo }),
+      body: JSON.stringify({ page: pageUrl, text: text, replyTo: replyTo, pageTitle: pageTitle }),
     })
       .then(function (r) {
         if (!r.ok) return r.json().then(function (d) { throw new Error(d.error || String(r.status)); });
