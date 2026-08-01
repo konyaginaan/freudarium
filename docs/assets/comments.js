@@ -79,13 +79,28 @@
   // «Вы вошли как…» и кнопку выхода; если нет — вставить сам виджет
   // (его официальный скрипт сам рисует кнопку «Log in with Telegram»
   // внутри тега, где его разместили).
-  function renderAuth() {
+  //
+  // attemptsLeft — на случай, если сюда попали через диплинк-редирект из
+  // уведомления (t.me/bot/app?startapp=r-<код> → tg.js резолвит код →
+  // location.replace на эту же страницу, см. tg.js): initData Telegram,
+  // похоже, не всегда успевает «приложиться» к странице мгновенно после
+  // такого JS-редиректа (баг, найденный пользователем 01.08.2026 — виджет
+  // входа показывался ей внутри самого Telegram). Если СРАЗУ ни initData,
+  // ни сохранённого логина нет — даём Telegram секунду-полторы, прежде
+  // чем решить, что это действительно не Telegram, и показать виджет.
+  // Обычный случай (initData есть сразу или его точно нет) ничего не ждёт.
+  function renderAuth(attemptsLeft) {
     if (!authEl) return;
     if (initData()) {
       authEl.hidden = true;
       return;
     }
     var login = loginData();
+    if (!login && attemptsLeft === undefined) attemptsLeft = 10;
+    if (!login && attemptsLeft > 0) {
+      setTimeout(function () { renderAuth(attemptsLeft - 1); }, 150);
+      return;
+    }
     authEl.hidden = false;
     if (login) {
       authEl.innerHTML =
