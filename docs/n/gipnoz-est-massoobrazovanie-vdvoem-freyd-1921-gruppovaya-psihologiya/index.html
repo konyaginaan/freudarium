@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/freudarium/assets/style.css?v=d7267775">
+<link rel="stylesheet" href="/freudarium/assets/style.css?v=d0ab7931">
 <link rel="manifest" href="/freudarium/manifest.webmanifest">
 <meta name="theme-color" content="#EFE2D8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#2A1F2D" media="(prefers-color-scheme: dark)">
@@ -175,12 +175,13 @@ svg.s050ae5f8 { --flesh: #C08B7A; }
 <section class="comments-section" id="commentsSection" data-pagefind-ignore>
   <h2>Комментарии</h2>
   <div class="comments-list"><p class="comments-empty">Загрузка…</p></div>
+  <div class="comments-auth" id="commentsAuth" hidden></div>
   <div class="comments-reply-banner" hidden>
     В ответ <span class="comments-reply-name"></span>
     <button type="button" data-cancel-reply aria-label="Отменить ответ">✕</button>
   </div>
   <form class="comments-form">
-    <textarea rows="3" placeholder="Написать комментарий… (нужен Telegram)"></textarea>
+    <textarea rows="3" placeholder="Написать комментарий… (нужен вход через Telegram)"></textarea>
     <button type="submit" class="btn btn-primary">Отправить</button>
   </form>
 </section>
@@ -308,7 +309,7 @@ svg.s050ae5f8 { --flesh: #C08B7A; }
     <button class="btn" id="openSettingsBtn">Настройки</button>
     <button class="sheet-close" data-close-sheet>Закрыть</button>
     <p class="menu-author">Автор — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a></p>
-    <p class="build-stamp">сборка 01.08 19:02 · cc5da6</p>
+    <p class="build-stamp">сборка 01.08 19:54 · cc5da6</p>
   </div>
 </div>
 
@@ -347,7 +348,7 @@ svg.s050ae5f8 { --flesh: #C08B7A; }
 <script src="/freudarium/assets/tg.js?v=03e23ef3"></script>
 <script src="/freudarium/assets/app.js?v=318193ac"></script>
 <script src="/freudarium/assets/annotations.js?v=cc5da673"></script>
-<script src="/freudarium/assets/comments.js?v=d0d2ccba"></script>
+<script src="/freudarium/assets/comments.js?v=0610381c"></script>
 <!-- hub-keywords.js — не файл из assets/, а сгенерированный build.py
      словарь понятие→карта (word-list меняется вместе с логикой куда чаще,
      чем сам по себе), поэтому версионируем общим хэшем с conceptlinks.js,

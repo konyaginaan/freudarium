@@ -64,12 +64,13 @@ _COMMENTS_SECTION_HTML = """
 <section class="comments-section" id="commentsSection" data-pagefind-ignore>
   <h2>Комментарии</h2>
   <div class="comments-list"><p class="comments-empty">Загрузка…</p></div>
+  <div class="comments-auth" id="commentsAuth" hidden></div>
   <div class="comments-reply-banner" hidden>
     В ответ <span class="comments-reply-name"></span>
     <button type="button" data-cancel-reply aria-label="Отменить ответ">✕</button>
   </div>
   <form class="comments-form">
-    <textarea rows="3" placeholder="Написать комментарий… (нужен Telegram)"></textarea>
+    <textarea rows="3" placeholder="Написать комментарий… (нужен вход через Telegram)"></textarea>
     <button type="submit" class="btn btn-primary">Отправить</button>
   </form>
 </section>

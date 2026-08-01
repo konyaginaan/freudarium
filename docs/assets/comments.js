@@ -1,21 +1,28 @@
 // Публичные комментарии читателей — видны всем на странице (в т.ч. вне
-// Telegram), писать может только настоящий Telegram-пользователь (та же
-// initData-подпись, что у freudSendFeedback в tg.js). Плоский список с
-// необязательной ссылкой «в ответ на», без вложенных веток — по решению
-// пользователя 31.07.2026. Модерация постфактум: автору сайта (initData
-// совпадает с OWNER_CHAT_ID на сервере) сервер отдаёт isOwner — только
-// тогда рисуем кнопку «удалить» у чужих комментариев.
+// Telegram). Писать может настоящий Telegram-пользователь — двумя
+// способами: изнутри Mini App (initData, как у freudSendFeedback в
+// tg.js) или с обычного сайта через Telegram Login Widget (кнопка «Войти
+// через Telegram», добавлено 01.08.2026 по просьбе пользователя — чтобы
+// комментировать можно было и не открывая мини-приложение). Плоский
+// список с необязательной ссылкой «в ответ на», без вложенных веток —
+// по решению пользователя 31.07.2026. Модерация постфактум: автору сайта
+// (id — свой в обоих способах входа — совпадает с OWNER_CHAT_ID на
+// сервере) сервер отдаёт isOwner — только тогда рисуем «удалить».
 (function () {
   "use strict";
   var root = document.getElementById("commentsSection");
   if (!root) return;
 
   var SERVER_URL = "https://freudarium.norevia.workers.dev";
+  var BOT_USERNAME = "freudarium_bot";
+  var LOGIN_KEY = "freud:tglogin";
+
   var listEl = root.querySelector(".comments-list");
   var formEl = root.querySelector(".comments-form");
   var textEl = formEl.querySelector("textarea");
   var replyBanner = root.querySelector(".comments-reply-banner");
   var replyNameEl = replyBanner.querySelector(".comments-reply-name");
+  var authEl = root.querySelector("#commentsAuth");
   var pageUrl = location.pathname;
 
   var comments = [];
@@ -28,6 +35,27 @@
   function initData() {
     var t = tg();
     return t && t.initData ? t.initData : null;
+  }
+  function loginData() {
+    try {
+      var raw = localStorage.getItem(LOGIN_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  // Заголовки авторизации — Mini App в приоритете (если открыто внутри
+  // Telegram, там всегда самая свежая подпись); вне Telegram — то, что
+  // осталось в localStorage от Login Widget.
+  function authHeaders() {
+    var id = initData();
+    if (id) return { "X-Tg-Init-Data": id };
+    var login = loginData();
+    if (login) return { "X-Tg-Login-Data": JSON.stringify(login) };
+    return {};
+  }
+  function hasAuth() {
+    return !!(initData() || loginData());
   }
 
   function escHtml(s) {
@@ -45,6 +73,49 @@
       return "";
     }
   }
+
+  // Внутри Mini App виджет не нужен — там уже есть подлинная identity.
+  // Вне Telegram: если уже вошли (в localStorage что-то есть) — показать
+  // «Вы вошли как…» и кнопку выхода; если нет — вставить сам виджет
+  // (его официальный скрипт сам рисует кнопку «Log in with Telegram»
+  // внутри тега, где его разместили).
+  function renderAuth() {
+    if (!authEl) return;
+    if (initData()) {
+      authEl.hidden = true;
+      return;
+    }
+    var login = loginData();
+    authEl.hidden = false;
+    if (login) {
+      authEl.innerHTML =
+        "Вы вошли как <b>" + escHtml(login.username ? "@" + login.username : login.first_name || "читатель") + "</b> · " +
+        '<button type="button" class="chip-muted-btn" id="commentsLogout">Выйти</button>';
+      authEl.querySelector("#commentsLogout").addEventListener("click", function () {
+        localStorage.removeItem(LOGIN_KEY);
+        renderAuth();
+        load();
+      });
+    } else {
+      authEl.innerHTML = "";
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = "https://telegram.org/js/telegram-widget.js?22";
+      s.setAttribute("data-telegram-login", BOT_USERNAME);
+      s.setAttribute("data-size", "medium");
+      s.setAttribute("data-radius", "10");
+      s.setAttribute("data-onauth", "freudTelegramLoginAuth(user)");
+      s.setAttribute("data-request-access", "write");
+      authEl.appendChild(s);
+    }
+  }
+  // Колбэк самого виджета (data-onauth) — вызывается Telegram напрямую,
+  // поэтому глобальный, а не внутри замыкания.
+  window.freudTelegramLoginAuth = function (user) {
+    localStorage.setItem(LOGIN_KEY, JSON.stringify(user));
+    renderAuth();
+    load();
+  };
 
   function render() {
     if (!comments.length) {
@@ -74,10 +145,7 @@
   }
 
   function load() {
-    var headers = {};
-    var id = initData();
-    if (id) headers["X-Tg-Init-Data"] = id;
-    fetch(SERVER_URL + "/comments?page=" + encodeURIComponent(pageUrl), { headers: headers })
+    fetch(SERVER_URL + "/comments?page=" + encodeURIComponent(pageUrl), { headers: authHeaders() })
       .then(function (r) {
         if (!r.ok) throw new Error(String(r.status));
         return r.json();
@@ -109,7 +177,7 @@
       if (!window.confirm("Удалить комментарий?")) return;
       fetch(SERVER_URL + "/comments/delete", {
         method: "POST",
-        headers: { "X-Tg-Init-Data": initData(), "Content-Type": "application/json" },
+        headers: Object.assign({ "Content-Type": "application/json" }, authHeaders()),
         body: JSON.stringify({ page: pageUrl, id: delBtn.getAttribute("data-id") }),
       })
         .then(function (r) { return r.json(); })
@@ -124,8 +192,8 @@
 
   formEl.addEventListener("submit", function (e) {
     e.preventDefault();
-    if (!initData()) {
-      if (window.freudToast) window.freudToast("Комментировать можно только внутри Telegram");
+    if (!hasAuth()) {
+      if (window.freudToast) window.freudToast("Войдите через Telegram, чтобы комментировать");
       return;
     }
     var text = textEl.value.trim();
@@ -133,7 +201,7 @@
     var pageTitle = (document.querySelector(".note-title, .chapter-title") || {}).textContent || document.title;
     fetch(SERVER_URL + "/comments", {
       method: "POST",
-      headers: { "X-Tg-Init-Data": initData(), "Content-Type": "application/json" },
+      headers: Object.assign({ "Content-Type": "application/json" }, authHeaders()),
       body: JSON.stringify({ page: pageUrl, text: text, replyTo: replyTo, pageTitle: pageTitle }),
     })
       .then(function (r) {
@@ -150,5 +218,6 @@
       });
   });
 
+  renderAuth();
   load();
 })();

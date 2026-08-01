@@ -419,6 +419,12 @@ details.decade .rows .row:last-child { border-bottom: none; }
   color: var(--ink-muted); text-decoration: underline; cursor: pointer;
 }
 .comment-reply-btn:hover { color: var(--bruise); }
+.comments-auth {
+  display: flex; align-items: center; gap: 6px; font-size: .9em; color: var(--ink-muted);
+  margin-bottom: 10px; min-height: 40px;
+}
+.comments-auth[hidden] { display: none; }
+.comments-auth b { color: var(--ink); }
 .comments-reply-banner {
   display: flex; align-items: center; gap: 8px; font-size: .85em; color: var(--ink-muted);
   background: var(--surface-2); border-radius: 10px; padding: 6px 12px; margin-bottom: 8px;
