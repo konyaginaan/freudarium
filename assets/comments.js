@@ -86,8 +86,9 @@
   // похоже, не всегда успевает «приложиться» к странице мгновенно после
   // такого JS-редиректа (баг, найденный пользователем 01.08.2026 — виджет
   // входа показывался ей внутри самого Telegram). Если СРАЗУ ни initData,
-  // ни сохранённого логина нет — даём Telegram секунду-полторы, прежде
-  // чем решить, что это действительно не Telegram, и показать виджет.
+  // ни сохранённого логина нет — даём Telegram до 4 секунд (изначально
+  // было 1.5с — не хватило, см. тот же баг), прежде чем решить, что это
+  // действительно не Telegram, и показать виджет.
   // Обычный случай (initData есть сразу или его точно нет) ничего не ждёт.
   function renderAuth(attemptsLeft) {
     if (!authEl) return;
@@ -96,9 +97,9 @@
       return;
     }
     var login = loginData();
-    if (!login && attemptsLeft === undefined) attemptsLeft = 10;
+    if (!login && attemptsLeft === undefined) attemptsLeft = 20;
     if (!login && attemptsLeft > 0) {
-      setTimeout(function () { renderAuth(attemptsLeft - 1); }, 150);
+      setTimeout(function () { renderAuth(attemptsLeft - 1); }, 200);
       return;
     }
     authEl.hidden = false;
