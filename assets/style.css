@@ -390,7 +390,10 @@ details.decade .rows .row:last-child { border-bottom: none; }
 .chip-bruise:hover, .chip-flesh:hover, .chip-verdigris:hover { filter: brightness(0.95); }
 
 /* ── связи ── */
-.feedback-link { margin: 2em 0 0; }
+/* Раньше — внизу страницы (margin-top:2em, 0 после), теперь — наверху,
+   под заголовком/источником (фидбек пользователя 01.08.2026), поэтому
+   отступ снизу важнее, чем сверху. */
+.feedback-link { margin: .8em 0 1.6em; }
 .chip-muted-btn {
   background: none; border: none; padding: 0; font: inherit; font-size: .88em;
   color: var(--ink-muted); text-decoration: underline; cursor: pointer; text-align: left;

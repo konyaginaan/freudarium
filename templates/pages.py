@@ -207,13 +207,13 @@ def render_note(note, ctx):
 <article class="note-page">
   <h1 class="note-title">{html.escape(_display_title(note["id"]))}</h1>
   {source_html}
+  {_FEEDBACK_LINK_HTML}
   <div class="note-body">
     {body_html}
   </div>
   {tags_html}
   {downloads_html}
   {rel_html}
-  {_FEEDBACK_LINK_HTML}
   {_COMMENTS_SECTION_HTML}
 </article>
 """
@@ -266,6 +266,7 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     <div class="stat-tile"><span class="stat-num">{work["atomic_note_count"]}</span><span class="stat-label">заметок</span></div>
   </div>
   <div class="work-actions">{ft_html}</div>
+  {_FEEDBACK_LINK_HTML}
   <div class="note-body">
     {body_html}
   </div>
@@ -275,7 +276,6 @@ def render_work(conspect_note, work, atomic_notes, source_note, ctx):
     <h2>Заметки этой работы</h2>
     <div class="card-grid">{cards}</div>
   </section>
-  {_FEEDBACK_LINK_HTML}
   {_COMMENTS_SECTION_HTML}
 </article>
 """
@@ -379,6 +379,7 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
     <div class="chapter-dashes"><span class="dash dash-bruise"></span><span class="dash dash-verdigris"></span></div>
   </header>
   <div class="crumbs"><a href="{ctx["work_url"](work_meta["id"])}">{html.escape(work_title)}</a> · {"полный текст" if prov and prov["cls"] == "translation" else "пересказ"}</div>
+  {_FEEDBACK_LINK_HTML}
   {banner_html}
   {nav_html}
   <div class="note-body fulltext-body">
@@ -386,7 +387,6 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
     {body_html}
   </div>
   {pager}
-  {_FEEDBACK_LINK_HTML}
   {_COMMENTS_SECTION_HTML}
 </article>
 """
@@ -422,11 +422,11 @@ def render_hub(hub_note, ctx):
     <div class="stat-tile stat-tile-accent"><span class="stat-num">{len(linked_atomic)}</span><span class="stat-label">заметок в карте</span></div>
     <div class="stat-tile"><span class="stat-num">{len(work_ids)}</span><span class="stat-label">работ</span></div>
   </div>
+  {_FEEDBACK_LINK_HTML}
   <div class="note-body">
     {body_html}
   </div>
   {downloads_html}
-  {_FEEDBACK_LINK_HTML}
   {_COMMENTS_SECTION_HTML}
 </article>
 """
