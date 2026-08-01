@@ -125,14 +125,7 @@
   formEl.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!initData()) {
-      // ВРЕМЕННАЯ диагностика (снять после того, как поймём причину бага
-      // «ответ другому не проходит, себе — проходит», 01.08.2026): не
-      // нашли механизм чтением кода — initData() никак не зависит от
-      // replyTo, а видимая разница воспроизводится стабильно. Показываем
-      // состояние прямо в тосте, раз консоль на телефоне недоступна.
-      var t = tg();
-      var diag = "tg=" + (!!window.Telegram) + " webapp=" + (!!t) + " initData=" + (t && t.initData ? t.initData.length + "chars" : "empty") + " replyTo=" + (replyTo || "none");
-      if (window.freudToast) window.freudToast("Комментировать можно только внутри Telegram [" + diag + "]", { duration: 9000 });
+      if (window.freudToast) window.freudToast("Комментировать можно только внутри Telegram");
       return;
     }
     var text = textEl.value.trim();

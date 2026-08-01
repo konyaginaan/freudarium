@@ -18,12 +18,22 @@
     tg.disableVerticalSwipes && tg.disableVerticalSwipes();
   } catch (e) {}
 
-  // ── переход по start_param (ссылка вида t.me/bot/app?startapp=n-<slug>) ──
+  // ── переход по start_param (ссылка вида t.me/bot/app?startapp=n-<slug>,
+  // или t.me/bot/app?startapp=r-<код> — короткий код из ссылок в
+  // уведомлениях о комментариях/правках, см. worker.js:toOpenLink; сам
+  // slug почти всегда длиннее лимита Telegram в 64 символа на
+  // start_param, поэтому там код, а не slug, и путь узнаём отдельным
+  // запросом /resolve) ──
   try {
     var startParam = tg.initDataUnsafe && tg.initDataUnsafe.start_param;
     if (startParam && location.pathname === (window.__SITE_BASE__ || "") + "/") {
       var m = /^([a-z]+)-(.+)$/.exec(startParam);
-      if (m) {
+      if (m && m[1] === "r") {
+        fetch("https://freudarium.norevia.workers.dev/resolve?code=" + encodeURIComponent(m[2]))
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (d && d.page) location.replace(d.page); })
+          .catch(function () {});
+      } else if (m) {
         var prefixMap = { n: "n", w: "w", f: "f", m: "m", t: "t" };
         var prefix = prefixMap[m[1]];
         if (prefix) location.replace((window.__SITE_BASE__ || "") + "/" + prefix + "/" + m[2] + "/");
