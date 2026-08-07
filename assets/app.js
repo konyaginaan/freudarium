@@ -182,21 +182,30 @@
   if (svgLightbox) {
     var lightboxStage = svgLightbox.querySelector(".svg-lightbox-stage");
     var lightboxHome = null; // {parent, next} — куда вернуть svg при закрытии
-    document.querySelectorAll("figure.svg-embed").forEach(function (fig) {
-      fig.setAttribute("role", "button");
-      fig.setAttribute("tabindex", "0");
-      function openLightbox() {
-        var svg = fig.querySelector("svg");
-        if (!svg) return;
-        lightboxHome = { parent: fig, next: svg.nextSibling };
-        lightboxStage.appendChild(svg);
-        svgLightbox.hidden = false;
-      }
-      fig.addEventListener("click", openLightbox);
-      fig.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(); }
+    // window.freudBindSvgLightbox — тело карты области подгружается позже,
+    // скриптом (платный контент, см. assets/hub-gate.js), уже после разбора
+    // этого файла — нужно уметь повесить лайтбокс на свежевставленные схемы.
+    // data-lightbox-bound страхует от повторной привязки уже связанных фигур
+    // при повторном вызове на той же странице.
+    window.freudBindSvgLightbox = function () {
+      document.querySelectorAll("figure.svg-embed:not([data-lightbox-bound])").forEach(function (fig) {
+        fig.setAttribute("data-lightbox-bound", "");
+        fig.setAttribute("role", "button");
+        fig.setAttribute("tabindex", "0");
+        function openLightbox() {
+          var svg = fig.querySelector("svg");
+          if (!svg) return;
+          lightboxHome = { parent: fig, next: svg.nextSibling };
+          lightboxStage.appendChild(svg);
+          svgLightbox.hidden = false;
+        }
+        fig.addEventListener("click", openLightbox);
+        fig.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLightbox(); }
+        });
       });
-    });
+    };
+    window.freudBindSvgLightbox();
     new MutationObserver(function () {
       if (svgLightbox.hidden && lightboxHome) {
         lightboxHome.parent.insertBefore(lightboxStage.firstChild, lightboxHome.next);
@@ -433,6 +442,13 @@
   document.addEventListener("click", function (e) {
     var openBtn = e.target.closest("[data-open-download]");
     if (openBtn) {
+      // Скачивание — платный инструмент (см. assets/access.js) — сам
+      // текст заметки/работы остаётся бесплатным на странице, продаётся
+      // только удобство выгрузки файлом.
+      if (!window.freudEntitled) {
+        if (window.freudOpenBuySheet) window.freudOpenBuySheet();
+        return;
+      }
       pendingDownload = {
         mdUrl: openBtn.getAttribute("data-dl-md-url"),
         noteId: openBtn.getAttribute("data-dl-note-id"),

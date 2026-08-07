@@ -214,11 +214,17 @@ def main():
         )
 
     def downloads_widget_hub(hub_note):
+        # Раньше — прямая ссылка на статический dl/m/*.zip; карта области
+        # теперь платная (см. render_hub), поэтому кнопка ведёт не на файл,
+        # а через access.js/hub-gate.js: у оплативших — запрос в воркер за
+        # текстом карты (GET /hub-content?kind=md), у остальных — шторка
+        # «Купить».
+        import html as html_mod
         s = slug_of(hub_note["id"])
-        zip_url = su(f"/dl/m/{s}.zip")
         return (
             f'<section class="rel-block downloads">'
-            f'<a class="btn btn-primary" href="{zip_url}" download>Скачать всю тему (.zip)</a>'
+            f'<button class="btn btn-primary" data-hub-download data-hub-slug="{html_mod.escape(s)}">'
+            f"Скачать текст карты</button>"
             f"</section>"
         )
 
@@ -238,6 +244,7 @@ def main():
         "assets_base": assets_base,
         "images_dir": IMAGES_DIR,
         "by_id": by_id,
+        "slug_of": slug_of,
         "downloads_widget": downloads_widget,
         "downloads_widget_work": downloads_widget_work,
         "downloads_widget_hub": downloads_widget_hub,
@@ -312,7 +319,13 @@ def main():
 
         elif n["type"] == "hub":
             body_html = pages.render_hub(n, ctx)
-            emit_page(url, pages._display_title(n["id"]), snippet(n), body_html, back_href=su("/maps/"),
+            # snippet(n) — обычно первые ~140 символов тела заметки для
+            # <meta description> (SEO); карта области платная, а
+            # description — открытый текст HTML-страницы, значит нельзя
+            # брать снипет из настоящего тела, иначе платный текст утечёт
+            # туда мимо всей проверки доступа.
+            hub_description = "Карта области «Фрейдариума» — платный доступ."
+            emit_page(url, pages._display_title(n["id"]), hub_description, body_html, back_href=su("/maps/"),
                       pagefind_filters={"type": "карта"})
 
         elif n["type"] == "full_text":
@@ -361,6 +374,12 @@ def main():
 
     about_html = pages.render_about(ctx)
     emit_page(su("/about/"), "О проекте", "", about_html, back_href=su("/"), pagefind_ignore=True)
+
+    privacy_html = pages.render_privacy(ctx)
+    emit_page(
+        su("/privacy/"), "Политика обработки персональных данных", "", privacy_html,
+        back_href=su("/"), pagefind_ignore=True,
+    )
 
     search_html = pages.render_search(ctx)
     emit_page(su("/search/"), "Поиск", "", search_html, back_href=su("/"), pagefind_ignore=True)
@@ -506,14 +525,17 @@ def main():
     # ══════════════ скачивание: .md на заметку ══════════════
     prefix_by_type = {"atomic": "n", "conspect": "w", "hub": "m", "full_text": "f"}
 
+    # Карта области (type=="hub") — платный контент (см. render_hub):
+    # её .md не публикуется статически, тело живёт только в HUB_CONTENT_KV
+    # воркера (наполняется push_hubs.py) и отдаётся авторизованным запросом.
     def dl_url(nid):
         n = by_id.get(nid)
-        if not n or n["type"] not in PUBLISHED_TYPES:
+        if not n or n["type"] not in PUBLISHED_TYPES or n["type"] == "hub":
             return None
         return su(f"/dl/{prefix_by_type[n['type']]}/{slug_of(nid)}.md")
 
     for n in notes:
-        if n["type"] not in PUBLISHED_TYPES:
+        if n["type"] not in PUBLISHED_TYPES or n["type"] == "hub":
             continue
         s = slug_of(n["id"])
         prefix = prefix_by_type[n["type"]]
@@ -564,33 +586,32 @@ def main():
                 entries[f"Изображения/{img}"] = fp.read_bytes()
         write_bytes(f"dl/w/{slug_of(w['id'])}.zip", downloads.build_zip(entries))
 
-    # ── zip на карту области ──
-    for h in hubs:
-        entries = {f"{h['id']}.md": downloads.reconstruct_md(h).encode("utf-8")}
-        images_needed = set(h.get("embeds", []))
-        for target_id in h.get("links_out", []):
-            tn = by_id.get(target_id)
-            if tn and tn["type"] == "atomic":
-                entries[f"{tn['id']}.md"] = downloads.reconstruct_md(tn).encode("utf-8")
-                images_needed.update(tn.get("embeds", []))
-        for img in images_needed:
-            fp = IMAGES_DIR / img
-            if fp.exists():
-                entries[f"Изображения/{img}"] = fp.read_bytes()
-        write_bytes(f"dl/m/{slug_of(h['id'])}.zip", downloads.build_zip(entries))
+    # Карты областей больше не бандлятся в zip (см. пометку у dl_url выше) —
+    # их собственный текст доступен для скачивания только после оплаты,
+    # через воркер (assets/hub-gate.js → GET /hub-content?kind=md).
 
     # ── вся база ──
+    # Карты областей исключены и отсюда — иначе их платный текст утекал бы
+    # одним архивом мимо любой проверки доступа.
     vault_entries = {}
     for n in notes:
-        if n["type"] in PUBLISHED_TYPES:
+        if n["type"] in PUBLISHED_TYPES and n["type"] != "hub":
             vault_entries[f"{n['id']}.md"] = downloads.reconstruct_md(n).encode("utf-8")
     for img in asset_files:
         fp = IMAGES_DIR / img
         vault_entries[f"Изображения/{img}"] = fp.read_bytes()
     write_bytes("dl/freud-vault.zip", downloads.build_zip(vault_entries))
     if (EXPORT_DIR / "notes.json").exists():
-        for fname in ("notes.json", "works.json", "tags.json", "stats.json"):
-            write_bytes(f"dl/data/{fname}", (EXPORT_DIR / fname).read_bytes())
+        # Сырой notes.json поставщика содержит тела ВСЕХ заметок, включая
+        # карты областей — те платные. Публикуем копию с пустыми телами
+        # у карт вместо байт-в-байт копии исходника (works/tags/stats —
+        # структурные данные без прозы, их можно копировать как есть).
+        public_notes = [dict(n, body="") if n["type"] == "hub" else n for n in notes]
+        write_text("dl/data/notes.json", json.dumps(public_notes, ensure_ascii=False))
+        for fname in ("works.json", "tags.json", "stats.json"):
+            src = EXPORT_DIR / fname
+            if src.exists():
+                write_bytes(f"dl/data/{fname}", src.read_bytes())
 
     # ══════════════ статика ══════════════
     if IMAGES_DIR.exists():
@@ -599,7 +620,7 @@ def main():
 
     for asset_name in (
         "style.css", "app.js", "tg.js", "random.js", "search.js", "annotations.js", "mynotes.js",
-        "comments.js", "conceptlinks.js", "logo.svg", "hero-header.webp",
+        "comments.js", "conceptlinks.js", "access.js", "hub-gate.js", "logo.svg", "hero-header.webp",
     ):
         src = PROJECT_DIR / "assets" / asset_name
         if src.exists():

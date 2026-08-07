@@ -25,6 +25,17 @@
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   }
 
+  // Личные инструменты (закладки/заметки/выделения/экспорт в чат) — платная
+  // часть сайта (см. templates/pages.py:render_hub — тот же платный доступ,
+  // одна покупка открывает и карты, и это). Уже СОХРАНЁННЫЕ раньше записи
+  // остаются видимыми/редактируемыми/удаляемыми всегда — гейтится только
+  // СОЗДАНИЕ новых (add() ниже) и отправка в чат (openExportSheetFor).
+  function requireEntitled() {
+    if (window.freudEntitled) return true;
+    if (window.freudOpenBuySheet) window.freudOpenBuySheet();
+    return false;
+  }
+
   function loadAll() {
     try { return JSON.parse(localStorage.getItem(KEY) || "[]"); }
     catch (e) { return []; }
@@ -41,6 +52,7 @@
   }
 
   function add(entry) {
+    if (!requireEntitled()) return null;
     var list = loadAll();
     entry.id = uid();
     entry.url = pageUrl();
@@ -146,6 +158,7 @@
   }
   function openExportSheetFor(annotationLike) {
     if (!exportSheet) return;
+    if (!requireEntitled()) return;
     if (!window.freudSendToChat) {
       if (window.freudToast) window.freudToast("Отправка в чат работает только внутри Telegram");
       return;
@@ -549,14 +562,17 @@
       var sendBtn = e.target.closest("[data-action='send']");
       var reportBtn = e.target.closest("[data-action='report']");
       if (colorBtn) {
-        add({ type: "highlight", color: colorBtn.getAttribute("data-color"), quote: pendingQuote });
+        var created = add({ type: "highlight", color: colorBtn.getAttribute("data-color"), quote: pendingQuote });
         hideToolbar();
         window.getSelection().removeAllRanges();
         clearCustomSelection();
-        renderSavedMarks();
-        if (window.freudToast) window.freudToast("Выделено");
+        if (created) {
+          renderSavedMarks();
+          if (window.freudToast) window.freudToast("Выделено");
+        }
       } else if (noteBtn) {
         hideToolbar();
+        if (!requireEntitled()) return;
         openComposer(pendingQuote, "", null);
       } else if (sendBtn) {
         hideToolbar();
@@ -582,11 +598,15 @@
       var saved;
       if (composerEditingId) {
         saved = update(composerEditingId, { comment: comment });
-        if (window.freudToast) window.freudToast("Заметка обновлена");
+        if (saved && window.freudToast) window.freudToast("Заметка обновлена");
       } else {
+        // add() сама открывает шторку «Купить» и возвращает null, если
+        // доступ ещё не куплен — оставляем композер открытым с набранным
+        // текстом (не теряем его), а не закрываем как при успехе.
         saved = add({ type: "note", quote: quote, comment: comment });
-        if (window.freudToast) window.freudToast("Заметка сохранена");
+        if (saved && window.freudToast) window.freudToast("Заметка сохранена");
       }
+      if (!saved) return;
       composerEditingId = null;
       composer.hidden = true;
       window.getSelection().removeAllRanges();
@@ -595,7 +615,7 @@
       // Сразу предлагаем отправить только что написанное в чат (MD/DOC/
       // текст) — в листе есть «Отмена», так что это предложение, а не
       // навязанное действие.
-      if (saved) openExportSheetFor(saved);
+      openExportSheetFor(saved);
     });
     composer.querySelector("[data-composer-cancel]").addEventListener("click", function () {
       composer.hidden = true;
@@ -606,6 +626,9 @@
     // как и в панели выделения: отправляет то, что сейчас в поле, в чат
     // (выбор формата — тот же поп-ап), не требуя сначала жать «Сохранить».
     composer.querySelector("[data-composer-send]").addEventListener("click", function () {
+      // Проверяем ДО того, как прятать композер — иначе набранный текст
+      // терялся бы даже когда доступ не куплен и ничего не отправилось.
+      if (!requireEntitled()) return;
       var quote = composer.querySelector("[name=quote]").value;
       var comment = composer.querySelector("[name=comment]").value.trim();
       composer.hidden = true;
@@ -708,8 +731,8 @@
         remove(existing.id);
         if (window.freudToast) window.freudToast("Убрано из избранного");
       } else {
-        add({ type: "bookmark" });
-        if (window.freudToast) window.freudToast("Добавлено в избранное");
+        var created = add({ type: "bookmark" });
+        if (created && window.freudToast) window.freudToast("Добавлено в избранное");
       }
       updateBookmarkBtn();
     });

@@ -393,8 +393,14 @@ def render_fulltext_chapter(work_title, work_meta, chapters, idx, ctx, base_url,
 
 
 def render_hub(hub_note, ctx):
-    body_html = mdconv.render_body(hub_note["body"], ctx["resolve_link"], ctx["assets_base"], images_dir=ctx["images_dir"])
+    # Карта области — платный контент (см. план «Платный доступ»): тело
+    # НЕ рендерится здесь и не попадает в статический docs/ вовсе — только
+    # тизер (шапка-карточка, stat-tiles — это просто счётчики, не проза) и
+    # заглушка .paywall. Настоящее тело живёт в HUB_CONTENT_KV воркера
+    # (наполняется отдельным скриптом push_hubs.py) и догружается на
+    # клиенте после проверки оплаты, см. assets/hub-gate.js.
     downloads_html = ctx["downloads_widget_hub"](hub_note)
+    slug = ctx["slug_of"](hub_note["id"])
 
     # Шапка-карточка по референсу дизайн-обогащения (30.07.2026) — та же
     # тёмная «глава»-шапка, что у полных текстов (.chapter-hero), плюс пара
@@ -423,9 +429,13 @@ def render_hub(hub_note, ctx):
     <div class="stat-tile"><span class="stat-num">{len(work_ids)}</span><span class="stat-label">работ</span></div>
   </div>
   {_FEEDBACK_LINK_HTML}
-  <div class="note-body">
-    {body_html}
+  <div class="paywall" id="hubPaywall" data-hub-slug="{html.escape(slug)}">
+    <p>Карта области — платный доступ. Разовая покупка 1500₽ / 15€ открывает
+    все карты сразу, вместе с личными инструментами сайта (закладки,
+    заметки на полях, экспорт в чат, скачивание).</p>
+    <button class="btn btn-primary" data-buy-open>Купить</button>
   </div>
+  <div class="note-body" id="hubBody" hidden></div>
   {downloads_html}
   {_COMMENTS_SECTION_HTML}
 </article>
@@ -509,6 +519,37 @@ def render_about(ctx):
     не выдаётся за перевод: на каждой такой странице сказано об этом прямо,
     рядом — ссылка на настоящий перевод там, где он есть в открытом доступе.</p>
     <p>Автор проекта — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a> в Telegram.</p>
+  </div>
+</article>
+"""
+
+
+def render_privacy(ctx):
+    return f"""
+<article class="index-page">
+  <h1 class="note-title">Политика обработки персональных данных</h1>
+  <div class="note-body">
+    <p>Эта страница описывает, какие персональные данные собирает
+    «Фрейдариум» при оформлении платного доступа и как автор с ними
+    обращается.</p>
+    <p><strong>Оператор</strong> — автор проекта «Фрейдариум», контакт:
+    <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a>
+    в Telegram.</p>
+    <p><strong>Какие данные собираются</strong> — при покупке платного
+    доступа: идентификатор и имя пользователя Telegram (id, username,
+    имя), фотография или файл квитанции об оплате, которую вы сами
+    присылаете боту.</p>
+    <p><strong>Зачем</strong> — чтобы сверить оплату с конкретным
+    покупателем и открыть именно ему доступ к платной части сайта.
+    Данные не передаются третьим лицам и не используются ни для чего,
+    кроме подтверждения оплаты и последующего доступа.</p>
+    <p><strong>Срок хранения</strong> — пока действует ваш доступ; вы
+    можете попросить удалить данные о покупке в любой момент, написав
+    автору по контакту выше.</p>
+    <p><strong>Согласие</strong> — отправляя реквизиты запроса на покупку,
+    вы подтверждаете согласие на обработку перечисленных данных в
+    указанных целях. Согласие можно отозвать в любой момент тем же
+    способом.</p>
   </div>
 </article>
 """

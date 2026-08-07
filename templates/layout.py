@@ -154,7 +154,8 @@ def page(title: str, description: str, body_html: str, site_base: str,
      в шапке; когда пришлют собственное лого, заменить только эту иконку. -->
 <footer class="site-footer" data-pagefind-ignore>
   <span class="site-footer-mark">{_PROFILE_MARK}</span>
-  <span>Автор — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a> в Telegram</span>
+  <span>Автор — <a href="https://t.me/chtotonapsy" target="_blank" rel="noopener">@chtotonapsy</a> в Telegram
+  · <a href="{site_base}/privacy/">Политика конфиденциальности</a></span>
 </footer>
 
 <div class="toast" id="toast" data-pagefind-ignore></div>
@@ -238,6 +239,33 @@ def page(title: str, description: str, body_html: str, site_base: str,
   </div>
 </div>
 
+<!-- Покупка платного доступа (карты областей + личные инструменты) —
+     вручную: реквизиты и приём квитанции идут через чат с ботом, эта
+     шторка только берёт согласие на обработку персональных данных и
+     запускает заявку (см. assets/access.js, POST /purchase/start). -->
+<div class="sheet" id="purchaseSheet" hidden data-pagefind-ignore>
+  <div class="sheet-inner">
+    <h3>Купить полный доступ</h3>
+    <div id="purchaseSheetBody">
+      <p class="sheet-hint">Разовая покупка — 1500₽ / 15€. Открывает карты
+        областей и личные инструменты: закладки, заметки на полях,
+        отправку в чат, скачивание.</p>
+      <label class="consent-row">
+        <input type="checkbox" id="purchaseConsent">
+        <span>Я даю согласие на обработку персональных данных согласно
+          <a href="{site_base}/privacy/" target="_blank" rel="noopener">Политике</a></span>
+      </label>
+      <button class="btn btn-primary" id="purchaseSubmitBtn" disabled>Отправить реквизиты</button>
+    </div>
+    <p class="sheet-hint" id="purchaseOutsideTelegramHint" hidden>
+      Купить можно только внутри Telegram — бот присылает реквизиты и
+      принимает квитанцию прямо в чате.
+      <a href="https://t.me/freudarium_bot/app">Открыть в Telegram →</a>
+    </p>
+    <button class="sheet-close" data-close-sheet>Отмена</button>
+  </div>
+</div>
+
 <div class="sheet" id="svgLightbox" hidden data-pagefind-ignore>
   <div class="sheet-inner svg-lightbox-inner">
     <button class="sheet-close svg-lightbox-close" data-close-sheet>Закрыть ✕</button>
@@ -298,6 +326,7 @@ def page(title: str, description: str, body_html: str, site_base: str,
      показывать ли кнопку «Добавить на экран „Домой“» — если бы tg.js
      выполнялся позже, эти переменные ещё не существовали бы в момент
      проверки, и кнопка внутри Telegram никогда бы не показывалась. -->
+<script src="{assets}/access.js?v={asset_v("access.js")}"></script>
 <script src="{assets}/tg.js?v={asset_v("tg.js")}"></script>
 <script src="{assets}/app.js?v={asset_v("app.js")}"></script>
 <script src="{assets}/annotations.js?v={asset_v("annotations.js")}"></script>
@@ -308,5 +337,6 @@ def page(title: str, description: str, body_html: str, site_base: str,
      а не своим отдельным (его нет в исходном дереве assets/ для asset_v). -->
 <script src="{assets}/hub-keywords.js?v={asset_v("conceptlinks.js")}"></script>
 <script src="{assets}/conceptlinks.js?v={asset_v("conceptlinks.js")}"></script>
+<script src="{assets}/hub-gate.js?v={asset_v("hub-gate.js")}"></script>
 </body>
 </html>"""
